@@ -61,10 +61,6 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section className="pt-20 pb-16 md:pt-32 md:pb-24 px-4 text-center max-w-5xl mx-auto">
-        <div className="inline-flex items-center gap-2 bg-orange-50 text-orange-700 border border-orange-100 rounded-full px-4 py-1.5 text-sm font-semibold mb-8 animate-fadeIn">
-          <TrendingUp className="w-4 h-4" />
-          The #1 Way to Sell on WhatsApp
-        </div>
 
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 mb-6 max-w-4xl mx-auto leading-[1.1]">
           Your business needs a <span className="text-orange-600">simple online page</span> that brings customers
