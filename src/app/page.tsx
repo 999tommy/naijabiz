@@ -39,7 +39,7 @@ export default async function HomePage() {
               </div>
             </Link>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <Link href="/directory" className="hidden sm:block">
                 <Button variant="ghost" className="text-gray-500 hover:text-orange-600 font-medium">Directory</Button>
               </Link>
@@ -47,10 +47,10 @@ export default async function HomePage() {
                 <Button variant="ghost" className="text-gray-500 hover:text-orange-600 font-medium">Pricing</Button>
               </Link>
               <Link href="/login">
-                <Button variant="outline" className="border-gray-200 text-gray-600 hover:border-gray-300">Login</Button>
+                <Button variant="outline" className="h-8 px-2 text-xs sm:h-10 sm:px-4 sm:text-sm border-gray-200 text-gray-600 hover:border-gray-300">Login</Button>
               </Link>
               <Link href="/signup">
-                <Button className="bg-orange-600 hover:bg-orange-700 text-white font-semibold shadow-md shadow-orange-100">
+                <Button className="h-8 px-2 text-xs sm:h-10 sm:px-4 sm:text-sm bg-orange-600 hover:bg-orange-700 text-white font-semibold shadow-md shadow-orange-100">
                   Get Verified
                 </Button>
               </Link>

@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: '--font-montserrat',
+  weight: ['300', '400', '500', '600', '700']
+});
 
 export const metadata: Metadata = {
   title: {
@@ -43,7 +46,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${outfit.variable} font-sans antialiased text-gray-900 bg-white`}>
+      <body className={`${montserrat.variable} font-sans antialiased text-gray-900 bg-white`}>
         {children}
         <Toaster />
       </body>
