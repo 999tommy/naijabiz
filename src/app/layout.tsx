@@ -34,8 +34,12 @@ export const metadata: Metadata = {
     creator: "@naijabiz",
   },
   icons: {
-    icon: "/small-logo.png",
-    apple: "/apple-touch-icon.png",
+    icon: [
+      { url: "/small-logo.png", type: "image/png" },
+      { url: "/logo.png", sizes: "512x512", type: "image/png" }
+    ],
+    apple: "/logo.png",
+    shortcut: "/small-logo.png",
   },
 };
 
