@@ -32,10 +32,10 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/logo.png" alt="NaijaBiz" width={32} height={32} />
-              <div className="flex flex-col">
+              <Image src="/small-logo.png" alt="NaijaBiz" width={32} height={32} />
+              <div className="flex items-center gap-1">
                 <span className="font-bold text-xl text-gray-900 leading-none tracking-tight">NaijaBiz</span>
-                <span className="text-[10px] text-green-600 font-medium tracking-wide">VERIFIED</span>
+                <VerifiedBadge size="sm" showText={false} />
               </div>
             </Link>
 
@@ -61,6 +61,10 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section className="pt-20 pb-16 md:pt-32 md:pb-24 px-4 text-center max-w-5xl mx-auto">
+        <div className="inline-flex items-center gap-2 bg-orange-50 text-orange-700 border border-orange-100 rounded-full px-4 py-1.5 text-sm font-semibold mb-8 animate-fadeIn">
+          <TrendingUp className="w-4 h-4" />
+          The #1 Way to Sell on WhatsApp
+        </div>
 
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 mb-6 max-w-4xl mx-auto leading-[1.1]">
           Your business needs a <span className="text-orange-600">simple online page</span> that brings customers
@@ -363,11 +367,12 @@ export default async function HomePage() {
       {/* Footer */}
       <footer className="py-12 bg-white border-t border-gray-100 text-center">
         <div className="flex items-center justify-center gap-2 mb-4 opacity-80">
-          <Image src="/logo.png" alt="NaijaBiz" width={24} height={24} />
+          <Image src="/small-logo.png" alt="NaijaBiz" width={24} height={24} />
           <span className="font-bold text-gray-900">NaijaBiz</span>
         </div>
         <p className="text-gray-400 text-sm mb-6">
-          © {new Date().getFullYear()} NaijaBiz. Made with ❤️ in Lagos.
+          © {new Date().getFullYear()} NaijaBiz. Made with ❤️ in Lagos. <br />
+          <span className="mt-2 block">Powered by <a href="https://www.axist.cc" target="_blank" rel="noopener noreferrer" className="hover:text-orange-600 underline">Axist</a></span>
         </p>
         <div className="flex justify-center gap-6 text-sm text-gray-500">
           <Link href="/terms" className="hover:text-orange-600">Terms</Link>

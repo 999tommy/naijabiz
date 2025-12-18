@@ -23,20 +23,11 @@ export const metadata: Metadata = {
     siteName: "NaijaBiz",
     title: "NaijaBiz - Verified Vendor Directory",
     description: "Stop losing sales to trust issues. Get your verified green badge and WhatsApp order link today.",
-    images: [
-      {
-        url: "/og-image.jpg", // We should ideally create this image
-        width: 1200,
-        height: 630,
-        alt: "NaijaBiz Preview",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "NaijaBiz - Verified Vendor Directory",
+    title: "NaijaBiz - Verified Your Business Page",
     description: "The link that proves you are legit. Get verified and sell more.",
-    images: ["/og-image.jpg"],
     creator: "@naijabiz",
   },
   icons: {
