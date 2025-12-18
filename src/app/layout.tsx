@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     creator: "@naijabiz",
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: "/small-logo.png",
     apple: "/apple-touch-icon.png",
   },
 };
