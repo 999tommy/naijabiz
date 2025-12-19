@@ -77,6 +77,51 @@ async function recordPageView(businessId: string) {
     })
 }
 
+import type { Metadata } from 'next'
+
+// ... (existing imports)
+
+// (keep interface BusinessPageProps and helper functions)
+
+export async function generateMetadata({ params }: BusinessPageProps): Promise<Metadata> {
+    const { slug } = await params
+    const business = await getBusiness(slug)
+
+    if (!business || !business.business_name) {
+        return {
+            title: 'Business Not Found',
+        }
+    }
+
+    const title = `${business.business_name} | NaijaBiz`
+    const description = business.description || `Order from ${business.business_name} on NaijaBiz. View products, prices, and reviews.`
+    const imageUrl = business.logo_url || '/logo.png'
+
+    return {
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            type: 'website',
+            images: [
+                {
+                    url: imageUrl,
+                    width: 800,
+                    height: 600,
+                    alt: business.business_name,
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+            images: [imageUrl],
+        },
+    }
+}
+
 export default async function BusinessPage({ params }: BusinessPageProps) {
     const { slug } = await params
     const business = await getBusiness(slug)
@@ -84,6 +129,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
     if (!business || !business.business_name) {
         notFound()
     }
+    // ... rest of component
 
     const isPro = business.plan === 'pro'
 
