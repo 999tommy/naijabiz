@@ -15,6 +15,7 @@ import {
     Share2,
     Package
 } from 'lucide-react'
+import { UpvoteButton } from '@/components/UpvoteButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -149,6 +150,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                     {business.business_name}
                                 </h1>
                                 {isVerified && <VerifiedBadge size="md" />}
+                                <UpvoteButton userId={business.id} initialUpvotes={business.upvotes || 0} size="sm" />
                             </div>
 
                             {business.description && (
@@ -200,6 +202,20 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                         </Button>
                                     </a>
                                 )}
+                                {business.tiktok_handle && (
+                                    <a
+                                        href={`https://tiktok.com/@${business.tiktok_handle.replace('@', '')}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <Button size="sm" variant="outline" className="border-gray-300 hover:bg-gray-50">
+                                            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+                                            </svg>
+                                            TikTok
+                                        </Button>
+                                    </a>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -228,51 +244,53 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
             </div>
 
             {/* Reviews (Pro only) */}
-            {isPro && reviews.length > 0 && (
-                <div className="max-w-4xl mx-auto px-4 pb-8">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                        Customer Reviews ({reviews.length})
-                    </h2>
-                    <div className="space-y-4">
-                        {reviews.map(review => (
-                            <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <div className="flex">
-                                        {[...Array(5)].map((_, i) => (
-                                            <Star
-                                                key={i}
-                                                className={`w-4 h-4 ${i < review.rating
-                                                    ? 'text-yellow-500 fill-yellow-500'
-                                                    : 'text-gray-300'
-                                                    }`}
-                                            />
-                                        ))}
+            {
+                isPro && reviews.length > 0 && (
+                    <div className="max-w-4xl mx-auto px-4 pb-8">
+                        <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                            Customer Reviews ({reviews.length})
+                        </h2>
+                        <div className="space-y-4">
+                            {reviews.map(review => (
+                                <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-4">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="flex">
+                                            {[...Array(5)].map((_, i) => (
+                                                <Star
+                                                    key={i}
+                                                    className={`w-4 h-4 ${i < review.rating
+                                                        ? 'text-yellow-500 fill-yellow-500'
+                                                        : 'text-gray-300'
+                                                        }`}
+                                                />
+                                            ))}
+                                        </div>
+                                        <span className="text-sm font-medium text-gray-900">
+                                            {review.customer_name}
+                                        </span>
+                                        <span className="text-xs text-gray-400">
+                                            {new Date(review.created_at).toLocaleDateString()}
+                                        </span>
                                     </div>
-                                    <span className="text-sm font-medium text-gray-900">
-                                        {review.customer_name}
-                                    </span>
-                                    <span className="text-xs text-gray-400">
-                                        {new Date(review.created_at).toLocaleDateString()}
-                                    </span>
+                                    {review.comment && (
+                                        <p className="text-gray-600 text-sm">{review.comment}</p>
+                                    )}
                                 </div>
-                                {review.comment && (
-                                    <p className="text-gray-600 text-sm">{review.comment}</p>
-                                )}
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
 
-                    {/* Leave a review CTA */}
-                    <div className="mt-6 text-center">
-                        <Link href={`/${slug}/review`}>
-                            <Button variant="outline">
-                                <Star className="w-4 h-4 mr-2" />
-                                Leave a Review
-                            </Button>
-                        </Link>
+                        {/* Leave a review CTA */}
+                        <div className="mt-6 text-center">
+                            <Link href={`/${slug}/review`}>
+                                <Button variant="outline">
+                                    <Star className="w-4 h-4 mr-2" />
+                                    Leave a Review
+                                </Button>
+                            </Link>
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Footer */}
             <footer className="bg-white border-t border-gray-200 py-6">
@@ -286,6 +304,6 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                     </p>
                 </div>
             </footer>
-        </div>
+        </div >
     )
 }

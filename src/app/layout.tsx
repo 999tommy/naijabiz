@@ -11,7 +11,7 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: {
-    default: "NaijaBiz - Verified Vendor Directory & WhatsApp Ordering",
+    default: "NaijaBiz - Verified Vendor Directory & Online Ordering",
     template: "%s | NaijaBiz"
   },
   description: "The only link you need in your bio. Create a verified business page, look professional, and receive organized WhatsApp orders. Join 500+ Nigerian businesses.",
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
     locale: "en_NG",
     url: "/",
     siteName: "NaijaBiz",
-    title: "NaijaBiz - Verified Vendor Directory",
-    description: "Stop losing sales to trust issues. Get your verified green badge and WhatsApp order link today.",
+    title: "NaijaBiz - Get free Customers and grow your business",
+    description: "Stop losing sales to trust issues. Get your verified green badge and Business Page today.",
   },
   twitter: {
     card: "summary_large_image",

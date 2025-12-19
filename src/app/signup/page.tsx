@@ -8,18 +8,17 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Mail, Phone, ArrowLeft, Loader2, Store, CheckCircle, ShieldCheck } from 'lucide-react'
+import { Mail, Key, Loader2, Store, CheckCircle, ShieldCheck, Sparkles } from 'lucide-react'
 import type { Category } from '@/lib/types'
 
-type AuthMethod = 'email' | 'phone'
-type SignupStep = 'auth' | 'otp' | 'business'
+type AuthMethod = 'password' | 'magic-link'
+type SignupStep = 'auth' | 'business'
 
 export default function SignupPage() {
-    const [authMethod, setAuthMethod] = useState<AuthMethod>('email')
+    const [authMethod, setAuthMethod] = useState<AuthMethod>('password')
     const [step, setStep] = useState<SignupStep>('auth')
-    const [email, setEmail] = useState('')
-    const [phone, setPhone] = useState('')
-    const [otp, setOtp] = useState('')
+    const [emailOrPhone, setEmailOrPhone] = useState('')
+    const [password, setPassword] = useState('')
     const [businessName, setBusinessName] = useState('')
     const [whatsappNumber, setWhatsappNumber] = useState('')
     const [location, setLocation] = useState('')
@@ -39,39 +38,49 @@ export default function SignupPage() {
         fetchCategories()
     }, [supabase])
 
-    const handleSendOTP = async (e: React.FormEvent) => {
+    const isPhone = (value: string) => {
+        const cleaned = value.replace(/\D/g, '')
+        return cleaned.length >= 10 && /^[0-9+]+$/.test(value.replace(/\s/g, ''))
+    }
+
+    const formatPhoneNumber = (phone: string): string => {
+        let formattedPhone = phone.replace(/\D/g, '')
+        if (formattedPhone.startsWith('0')) {
+            formattedPhone = '234' + formattedPhone.slice(1)
+        }
+        if (!formattedPhone.startsWith('+')) {
+            formattedPhone = '+' + formattedPhone
+        }
+        return formattedPhone
+    }
+
+    const handlePasswordSignup = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
         setError('')
         setMessage('')
 
         try {
-            if (authMethod === 'email') {
-                const { error } = await supabase.auth.signInWithOtp({
-                    email,
+            if (isPhone(emailOrPhone)) {
+                // Phone + Password signup
+                const formattedPhone = formatPhoneNumber(emailOrPhone)
+                const { error } = await supabase.auth.signUp({
+                    phone: formattedPhone,
+                    password,
+                })
+                if (error) throw error
+            } else {
+                // Email + Password signup
+                const { error } = await supabase.auth.signUp({
+                    email: emailOrPhone,
+                    password,
                     options: {
                         emailRedirectTo: `${window.location.origin}/auth/callback?signup=true`,
                     },
                 })
                 if (error) throw error
-                setMessage('Check your email for the magic link! It might be in spam.')
-                setStep('otp')
-            } else {
-                let formattedPhone = phone.replace(/\D/g, '')
-                if (formattedPhone.startsWith('0')) {
-                    formattedPhone = '234' + formattedPhone.slice(1)
-                }
-                if (!formattedPhone.startsWith('+')) {
-                    formattedPhone = '+' + formattedPhone
-                }
-
-                const { error } = await supabase.auth.signInWithOtp({
-                    phone: formattedPhone,
-                })
-                if (error) throw error
-                setMessage('OTP sent! It may take up to a minute.')
-                setStep('otp')
             }
+            setStep('business')
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'An error occurred'
             setError(errorMessage)
@@ -80,30 +89,23 @@ export default function SignupPage() {
         }
     }
 
-    const handleVerifyOTP = async (e: React.FormEvent) => {
+    const handleMagicLink = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
         setError('')
+        setMessage('')
 
         try {
-            let formattedPhone = phone.replace(/\D/g, '')
-            if (formattedPhone.startsWith('0')) {
-                formattedPhone = '234' + formattedPhone.slice(1)
-            }
-            if (!formattedPhone.startsWith('+')) {
-                formattedPhone = '+' + formattedPhone
-            }
-
-            const { error } = await supabase.auth.verifyOtp({
-                phone: formattedPhone,
-                token: otp,
-                type: 'sms',
+            const { error } = await supabase.auth.signInWithOtp({
+                email: emailOrPhone,
+                options: {
+                    emailRedirectTo: `${window.location.origin}/auth/callback?signup=true`,
+                },
             })
-
             if (error) throw error
-            setStep('business')
+            setMessage('Check your email for the magic link! It might be in spam.')
         } catch (err: unknown) {
-            const errorMessage = err instanceof Error ? err.message : 'Invalid OTP'
+            const errorMessage = err instanceof Error ? err.message : 'An error occurred'
             setError(errorMessage)
         } finally {
             setLoading(false)
@@ -187,8 +189,8 @@ export default function SignupPage() {
 
                 {/* Progress Steps */}
                 <div className="flex items-center justify-center mb-8 gap-2">
-                    <div className={`flex items-center gap-2 ${step === 'auth' || step === 'otp' ? 'text-orange-600 font-medium' : 'text-gray-400'}`}>
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${step === 'auth' || step === 'otp' ? 'border-orange-600 bg-orange-50' : 'border-gray-200'}`}>1</div>
+                    <div className={`flex items-center gap-2 ${step === 'auth' ? 'text-orange-600 font-medium' : 'text-gray-400'}`}>
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${step === 'auth' ? 'border-orange-600 bg-orange-50' : 'border-gray-200'}`}>1</div>
                         <span className="text-sm">Account</span>
                     </div>
                     <div className={`w-12 h-0.5 ${step === 'business' ? 'bg-orange-600' : 'bg-gray-200'}`}></div>
@@ -209,13 +211,12 @@ export default function SignupPage() {
                             ) : (
                                 <>
                                     <ShieldCheck className="w-5 h-5 text-green-500" />
-                                    {step === 'auth' ? 'Secure Sign Up' : 'Verify Identity'}
+                                    Secure Sign Up
                                 </>
                             )}
                         </CardTitle>
                         <CardDescription className="text-base text-gray-500">
-                            {step === 'auth' && 'Choose a method to secure your account.'}
-                            {step === 'otp' && 'We sent a code to check it\'s really you.'}
+                            {step === 'auth' && 'Create your account with email/phone and password, or use a magic link.'}
                             {step === 'business' && 'This information will appear on your public page.'}
                         </CardDescription>
                     </CardHeader>
@@ -224,25 +225,75 @@ export default function SignupPage() {
                             <>
                                 <div className="grid grid-cols-2 gap-3 mb-6">
                                     <Button
-                                        variant={authMethod === 'email' ? 'default' : 'outline'}
-                                        className={`h-12 ${authMethod === 'email' ? 'bg-gray-900 hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900'}`}
-                                        onClick={() => setAuthMethod('email')}
+                                        variant={authMethod === 'password' ? 'default' : 'outline'}
+                                        className={`h-12 ${authMethod === 'password' ? 'bg-gray-900 hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900'}`}
+                                        onClick={() => setAuthMethod('password')}
                                     >
-                                        <Mail className="w-4 h-4 mr-2" />
-                                        Email
+                                        <Key className="w-4 h-4 mr-2" />
+                                        Password
                                     </Button>
                                     <Button
-                                        variant={authMethod === 'phone' ? 'default' : 'outline'}
-                                        className={`h-12 ${authMethod === 'phone' ? 'bg-gray-900 hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900'}`}
-                                        onClick={() => setAuthMethod('phone')}
+                                        variant={authMethod === 'magic-link' ? 'default' : 'outline'}
+                                        className={`h-12 ${authMethod === 'magic-link' ? 'bg-gray-900 hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900'}`}
+                                        onClick={() => setAuthMethod('magic-link')}
                                     >
-                                        <Phone className="w-4 h-4 mr-2" />
-                                        Phone
+                                        <Sparkles className="w-4 h-4 mr-2" />
+                                        Magic Link
                                     </Button>
                                 </div>
 
-                                <form onSubmit={handleSendOTP} className="space-y-5">
-                                    {authMethod === 'email' ? (
+                                {authMethod === 'password' ? (
+                                    <form onSubmit={handlePasswordSignup} className="space-y-5">
+                                        <div className="space-y-2">
+                                            <label htmlFor="emailOrPhone" className="text-sm font-medium text-gray-700">
+                                                Email or Phone Number
+                                            </label>
+                                            <Input
+                                                id="emailOrPhone"
+                                                type="text"
+                                                placeholder="you@business.com or 08012345678"
+                                                value={emailOrPhone}
+                                                onChange={(e) => setEmailOrPhone(e.target.value)}
+                                                className="h-11"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label htmlFor="password" className="text-sm font-medium text-gray-700">
+                                                Password
+                                            </label>
+                                            <Input
+                                                id="password"
+                                                type="password"
+                                                placeholder="Create a strong password"
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                className="h-11"
+                                                minLength={6}
+                                                required
+                                            />
+                                        </div>
+
+                                        {error && (
+                                            <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg flex items-center gap-2">
+                                                <span className="block w-1.5 h-1.5 rounded-full bg-red-600"></span>
+                                                {error}
+                                            </div>
+                                        )}
+
+                                        <Button type="submit" className="w-full h-12 text-base bg-orange-600 hover:bg-orange-700 shadow-lg shadow-orange-100" disabled={loading}>
+                                            {loading ? (
+                                                <>
+                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                    Creating account...
+                                                </>
+                                            ) : (
+                                                'Create Account'
+                                            )}
+                                        </Button>
+                                    </form>
+                                ) : (
+                                    <form onSubmit={handleMagicLink} className="space-y-5">
                                         <div className="space-y-2">
                                             <label htmlFor="email" className="text-sm font-medium text-gray-700">
                                                 Email Address
@@ -251,110 +302,43 @@ export default function SignupPage() {
                                                 id="email"
                                                 type="email"
                                                 placeholder="you@business.com"
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
+                                                value={emailOrPhone}
+                                                onChange={(e) => setEmailOrPhone(e.target.value)}
                                                 className="h-11"
                                                 required
                                             />
                                         </div>
-                                    ) : (
-                                        <div className="space-y-2">
-                                            <label htmlFor="phone" className="text-sm font-medium text-gray-700">
-                                                Phone Number
-                                            </label>
-                                            <Input
-                                                id="phone"
-                                                type="tel"
-                                                placeholder="080 1234 5678"
-                                                value={phone}
-                                                onChange={(e) => setPhone(e.target.value)}
-                                                className="h-11"
-                                                required
-                                            />
-                                            <p className="text-xs text-gray-500 flex items-center gap-1">
-                                                <Image src="https://flagcdn.com/w20/ng.png" alt="NG" width={16} height={12} className="rounded-sm opacity-80" />
-                                                Please use your Nigerian phone number
-                                            </p>
-                                        </div>
-                                    )}
 
-                                    {error && (
-                                        <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg flex items-center gap-2">
-                                            <span className="block w-1.5 h-1.5 rounded-full bg-red-600"></span>
-                                            {error}
-                                        </div>
-                                    )}
-
-                                    {message && (
-                                        <div className="text-sm text-green-700 bg-green-50 p-3 rounded-lg flex items-center gap-2">
-                                            <CheckCircle className="w-4 h-4 text-green-600" />
-                                            {message}
-                                        </div>
-                                    )}
-
-                                    <Button type="submit" className="w-full h-12 text-base bg-orange-600 hover:bg-orange-700 shadow-lg shadow-orange-100" disabled={loading}>
-                                        {loading ? (
-                                            <>
-                                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                Sending secure code...
-                                            </>
-                                        ) : (
-                                            authMethod === 'email' ? 'Send Magic Link' : 'Send One-Time Password'
+                                        {error && (
+                                            <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg flex items-center gap-2">
+                                                <span className="block w-1.5 h-1.5 rounded-full bg-red-600"></span>
+                                                {error}
+                                            </div>
                                         )}
-                                    </Button>
-                                </form>
-                            </>
-                        )}
 
-                        {step === 'otp' && (
-                            <form onSubmit={handleVerifyOTP} className="space-y-5">
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    onClick={() => setStep('auth')}
-                                    className="mb-2 -ml-2 text-gray-500 hover:text-gray-900"
-                                >
-                                    <ArrowLeft className="w-4 h-4 mr-2" />
-                                    Change {authMethod}
-                                </Button>
+                                        {message && (
+                                            <div className="text-sm text-green-700 bg-green-50 p-3 rounded-lg flex items-center gap-2">
+                                                <CheckCircle className="w-4 h-4 text-green-600" />
+                                                {message}
+                                            </div>
+                                        )}
 
-                                <div className="space-y-3">
-                                    <label htmlFor="otp" className="text-sm font-medium text-gray-700 block text-center">
-                                        Enter the 6-digit code
-                                    </label>
-                                    <Input
-                                        id="otp"
-                                        type="text"
-                                        placeholder="• • • • • •"
-                                        value={otp}
-                                        onChange={(e) => setOtp(e.target.value)}
-                                        maxLength={6}
-                                        className="text-center text-3xl tracking-[1em] h-16 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
-                                        required
-                                        autoFocus
-                                    />
-                                    <p className="text-xs text-gray-500 text-center">
-                                        Sent to {authMethod === 'email' ? email : phone}
-                                    </p>
-                                </div>
-
-                                {error && (
-                                    <p className="text-sm text-center text-red-600 bg-red-50 p-2 rounded-lg">
-                                        {error}
-                                    </p>
+                                        <Button type="submit" className="w-full h-12 text-base bg-orange-600 hover:bg-orange-700 shadow-lg shadow-orange-100" disabled={loading}>
+                                            {loading ? (
+                                                <>
+                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                    Sending magic link...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Mail className="w-4 h-4 mr-2" />
+                                                    Send Magic Link
+                                                </>
+                                            )}
+                                        </Button>
+                                    </form>
                                 )}
-
-                                <Button type="submit" className="w-full h-12 text-base font-semibold bg-green-600 hover:bg-green-700 shadow-md" disabled={loading}>
-                                    {loading ? (
-                                        <>
-                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                            Verifying...
-                                        </>
-                                    ) : (
-                                        'Verify & Continue'
-                                    )}
-                                </Button>
-                            </form>
+                            </>
                         )}
 
                         {step === 'business' && (

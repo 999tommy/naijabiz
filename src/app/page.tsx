@@ -2,7 +2,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
-import { SearchDirectory } from '@/components/SearchDirectory'
 import { VerifiedBadge } from '@/components/VerifiedBadge'
 import {
   ArrowRight,
@@ -13,21 +12,40 @@ import {
   MapPin,
   Smartphone,
   TrendingUp,
-  Shield
+  Shield,
+  Trophy,
+  Flame
 } from 'lucide-react'
+import { UpvoteButton } from '@/components/UpvoteButton'
 
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const supabase = await createClient()
+
   const { count: verifiedCount } = await supabase
     .from('users')
     .select('*', { count: 'exact', head: true })
     .eq('is_verified', true)
 
+  const { data: businessOfTheDay } = await supabase
+    .from('users')
+    .select('id, business_name, business_slug, description, logo_url, upvotes, category:categories(icon)')
+    .eq('is_verified', true)
+    .gt('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
+    .order('upvotes', { ascending: false })
+    .limit(3)
+
+  const { data: topBusinesses } = await supabase
+    .from('users')
+    .select('id, business_name, business_slug, description, logo_url, upvotes, category:categories(icon)')
+    .eq('is_verified', true)
+    .order('upvotes', { ascending: false })
+    .limit(5)
+
   return (
     <div className="min-h-screen bg-[#faf8f3] font-sans text-[#4b587c]">
-      {/* Old Navbar Style */}
+      {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -61,7 +79,6 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section className="pt-20 pb-16 md:pt-32 md:pb-24 px-4 text-center max-w-5xl mx-auto">
-
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 mb-6 max-w-4xl mx-auto leading-[1.1]">
           Your business needs a <span className="text-orange-600">simple online page</span> that brings customers
         </h1>
@@ -76,9 +93,9 @@ export default async function HomePage() {
               Create my free business page
             </Button>
           </Link>
-          <Link href="/directory" className="w-full sm:w-auto">
+          <Link href="/example-business" className="w-full sm:w-auto">
             <Button variant="outline" size="lg" className="w-full sm:w-auto h-14 px-8 text-lg bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300">
-              See example pages
+              See example page
             </Button>
           </Link>
         </div>
@@ -90,6 +107,115 @@ export default async function HomePage() {
           <span className="hidden sm:inline text-gray-300">•</span>
           <span>Takes 2 minutes</span>
         </p>
+      </section>
+
+      {/* Leaderboards */}
+      <section className="py-16 bg-white border-y border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12">
+            {/* Business of the Day */}
+            <div>
+              <div className="flex items-center gap-2 mb-6">
+                <Flame className="w-6 h-6 text-orange-500 fill-orange-500" />
+                <h2 className="text-2xl font-bold text-gray-900">Business of the Day</h2>
+                <span className="text-xs font-semibold bg-orange-100 text-orange-700 px-2 py-1 rounded-full">New</span>
+              </div>
+              {businessOfTheDay && businessOfTheDay.length > 0 ? (
+                <div className="space-y-4">
+                  {businessOfTheDay.map((biz: any, i: number) => (
+                    <div key={biz.id} className="group relative flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-white hover:border-orange-200 hover:shadow-md transition-all">
+                      <div className="flex-shrink-0 relative">
+                        <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden relative">
+                          {biz.logo_url ? (
+                            <Image src={biz.logo_url} alt={biz.business_name || ''} fill className="object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-2xl bg-orange-100 text-orange-600 font-bold">
+                              {(biz.business_name || 'B').charAt(0)}
+                            </div>
+                          )}
+                        </div>
+                        <div className="absolute -top-2 -left-2 w-6 h-6 bg-gray-900 text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-white">
+                          {i + 1}
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <Link href={`/${biz.business_slug}`} className="focus:outline-none">
+                          <span className="absolute inset-0" aria-hidden="true" />
+                          <h3 className="text-base font-bold text-gray-900 truncate flex items-center gap-1">
+                            {biz.business_name}
+                            <VerifiedBadge size="sm" showText={false} />
+                          </h3>
+                          <p className="text-sm text-gray-500 truncate">{biz.description || 'No description provided.'}</p>
+                        </Link>
+                      </div>
+                      <div className="relative z-10">
+                        <UpvoteButton userId={biz.id} initialUpvotes={biz.upvotes || 0} size="sm" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center p-8 border border-dashed border-gray-200 rounded-xl bg-gray-50">
+                  <p className="text-gray-500 text-sm">No new businesses today. Be the first!</p>
+                  <Link href="/signup">
+                    <Button variant="link" className="text-orange-600">Create Page</Button>
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Overall Leaderboard */}
+            <div>
+              <div className="flex items-center gap-2 mb-6">
+                <Trophy className="w-6 h-6 text-yellow-500 fill-yellow-500" />
+                <h2 className="text-2xl font-bold text-gray-900">Community Favorites</h2>
+              </div>
+              {topBusinesses && topBusinesses.length > 0 ? (
+                <div className="space-y-4">
+                  {topBusinesses.map((biz: any, i: number) => (
+                    <div key={biz.id} className="group relative flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-white hover:border-orange-200 hover:shadow-md transition-all">
+                      <div className="flex-shrink-0 relative">
+                        <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden relative">
+                          {biz.logo_url ? (
+                            <Image src={biz.logo_url} alt={biz.business_name || ''} fill className="object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-2xl bg-orange-100 text-orange-600 font-bold">
+                              {(biz.business_name || 'B').charAt(0)}
+                            </div>
+                          )}
+                        </div>
+                        <div className={`absolute -top-2 -left-2 w-6 h-6 text-xs font-bold rounded-full flex items-center justify-center border-2 border-white ${i === 0 ? 'bg-yellow-400 text-yellow-900' :
+                          i === 1 ? 'bg-gray-300 text-gray-800' :
+                            i === 2 ? 'bg-orange-300 text-orange-900' :
+                              'bg-gray-100 text-gray-500'
+                          }`}>
+                          {i + 1}
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <Link href={`/${biz.business_slug}`} className="focus:outline-none">
+                          <span className="absolute inset-0" aria-hidden="true" />
+                          <h3 className="text-base font-bold text-gray-900 truncate flex items-center gap-1">
+                            {biz.business_name}
+                            <VerifiedBadge size="sm" showText={false} />
+                          </h3>
+                          <p className="text-sm text-gray-500 truncate">{biz.description || 'No description provided.'}</p>
+                        </Link>
+                      </div>
+                      <div className="relative z-10">
+                        <UpvoteButton userId={biz.id} initialUpvotes={biz.upvotes || 0} size="sm" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center p-8 border border-dashed border-gray-200 rounded-xl bg-gray-50">
+                  <p className="text-gray-500 text-sm">No businesses yet.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* How It Works */}
@@ -288,7 +414,7 @@ export default async function HomePage() {
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-2">Pro Plan</h3>
               <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-4xl font-bold text-orange-600">₦1,400</span>
+                <span className="text-4xl font-bold text-orange-600">₦1,000</span>
                 <span className="text-gray-500">/month</span>
               </div>
 

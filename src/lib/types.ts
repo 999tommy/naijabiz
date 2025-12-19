@@ -16,6 +16,7 @@ export interface User {
     category_id: string | null
     whatsapp_number: string | null
     instagram_handle: string | null
+    tiktok_handle: string | null
     logo_url: string | null
     is_verified: boolean
     verification_document_url: string | null
@@ -23,6 +24,7 @@ export interface User {
     plan: 'free' | 'pro'
     subscription_id: string | null
     subscription_ends_at: string | null
+    upvotes: number
     created_at: string
     updated_at: string
     category?: Category

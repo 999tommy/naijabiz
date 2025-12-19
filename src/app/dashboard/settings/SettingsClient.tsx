@@ -42,6 +42,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
     const [description, setDescription] = useState(user.description || '')
     const [whatsappNumber, setWhatsappNumber] = useState(user.whatsapp_number || '')
     const [instagramHandle, setInstagramHandle] = useState(user.instagram_handle || '')
+    const [tiktokHandle, setTiktokHandle] = useState(user.tiktok_handle || '')
     const [location, setLocation] = useState(user.location || '')
     const [categoryId, setCategoryId] = useState(user.category_id || '')
 
@@ -149,6 +150,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                     description,
                     whatsapp_number: formattedWhatsApp,
                     instagram_handle: instagramHandle.replace('@', ''),
+                    tiktok_handle: tiktokHandle.replace('@', ''),
                     location,
                     category_id: categoryId || null,
                     logo_url: logoUrl,
@@ -178,11 +180,13 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
 
             if (!uploadedUrl) throw new Error('Failed to upload document')
 
+            // Auto-approve verification upon document upload
             const { error } = await supabase
                 .from('users')
                 .update({
                     verification_document_url: uploadedUrl,
-                    verification_status: 'pending',
+                    verification_status: 'approved',
+                    is_verified: true,
                 })
                 .eq('id', user.id)
 
@@ -190,7 +194,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
 
             await fetchUser()
             setVerificationFile(null)
-            setMessage({ type: 'success', text: 'Verification document submitted! We will review it shortly.' })
+            setMessage({ type: 'success', text: 'You are now verified! Your green tick is active.' })
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Failed to upload document'
             setMessage({ type: 'error', text: errorMessage })
@@ -351,6 +355,15 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                         </div>
 
                         <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">TikTok Handle</label>
+                            <Input
+                                value={tiktokHandle}
+                                onChange={(e) => setTiktokHandle(e.target.value)}
+                                placeholder="@yourbusiness"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
                             <label className="text-sm font-medium text-gray-700">Location</label>
                             <Input
                                 value={location}
@@ -460,7 +473,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                 ) : (
                                     <>
                                         <Crown className="w-4 h-4 mr-2" />
-                                        Upgrade to Pro - ₦1,400/mo
+                                        Upgrade to Pro - ₦1,000/mo
                                     </>
                                 )}
                             </Button>

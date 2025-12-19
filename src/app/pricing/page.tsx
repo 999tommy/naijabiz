@@ -94,7 +94,7 @@ export default function PricingPage() {
                                 <VerifiedBadge size="sm" />
                             </h3>
                             <div className="text-5xl font-bold text-gray-900">
-                                ₦1,400<span className="text-xl font-normal text-gray-500">/mo</span>
+                                ₦1,000<span className="text-xl font-normal text-gray-500">/mo</span>
                             </div>
                             <p className="text-gray-500 mt-2">Everything you need</p>
                         </div>
