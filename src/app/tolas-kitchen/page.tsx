@@ -159,7 +159,14 @@ export default function ExampleBusinessPage() {
                         <span className="hidden sm:inline">Back to Home</span>
                     </Link>
                     <div className="flex items-center gap-2">
-                        <span className="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        {/* Mobile CTA */}
+                        <Link href="/signup" className="md:hidden">
+                            <Button size="sm" className="bg-orange-600 hover:bg-orange-700 text-white font-bold h-8 text-xs">
+                                Create Page
+                            </Button>
+                        </Link>
+
+                        <span className="hidden md:inline-block bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
                             Example Page
                         </span>
                         <MockHeaderActions />
@@ -240,7 +247,6 @@ export default function ExampleBusinessPage() {
                     businessName={business.business_name}
                     whatsappNumber={business.whatsapp_number}
                     instagramHandle={business.instagram_handle}
-                    extraBottomSpacing={true}
                 />
             </div>
 
@@ -300,13 +306,6 @@ export default function ExampleBusinessPage() {
             </footer>
 
             {/* CTA Overlay for non-logged in users (optional, but good for conversion) */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-50 md:hidden">
-                <Link href="/signup">
-                    <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold h-12 shadow-lg">
-                        Create your own page like this
-                    </Button>
-                </Link>
-            </div>
             <div className="hidden md:block fixed bottom-6 right-6 z-40">
                 <Link href="/signup">
                     <Button className="bg-orange-600 hover:bg-orange-700 text-white font-bold h-12 px-6 shadow-xl rounded-full">
