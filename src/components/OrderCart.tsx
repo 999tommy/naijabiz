@@ -20,9 +20,10 @@ interface OrderCartProps {
     businessName: string
     whatsappNumber: string
     instagramHandle?: string | null
+    extraBottomSpacing?: boolean
 }
 
-export function OrderCart({ products, businessName, whatsappNumber, instagramHandle }: OrderCartProps) {
+export function OrderCart({ products, businessName, whatsappNumber, instagramHandle, extraBottomSpacing = false }: OrderCartProps) {
     const [cart, setCart] = useState<CartItem[]>([])
     const [isOpen, setIsOpen] = useState(false)
     const [customerName, setCustomerName] = useState('')
@@ -157,7 +158,7 @@ Please confirm my order. Thank you!`
             {cart.length > 0 && (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="fixed bottom-6 right-6 z-40 bg-orange-500 text-white rounded-full p-4 shadow-lg shadow-orange-500/25 hover:bg-orange-600 transition-all animate-pulse-glow"
+                    className={`fixed right-6 z-40 bg-orange-500 text-white rounded-full p-4 shadow-lg shadow-orange-500/25 hover:bg-orange-600 transition-all animate-pulse-glow ${extraBottomSpacing ? 'bottom-24' : 'bottom-6'}`}
                 >
                     <ShoppingCart className="w-6 h-6" />
                     <span className="absolute -top-2 -right-2 bg-gray-900 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
@@ -294,8 +295,8 @@ Please confirm my order. Thank you!`
                                             <button
                                                 onClick={() => setOrderMethod('whatsapp')}
                                                 className={`flex-1 p-3 rounded-lg border-2 flex items-center justify-center gap-2 transition-colors ${orderMethod === 'whatsapp'
-                                                        ? 'border-green-500 bg-green-50 text-green-700'
-                                                        : 'border-gray-200 hover:border-gray-300'
+                                                    ? 'border-green-500 bg-green-50 text-green-700'
+                                                    : 'border-gray-200 hover:border-gray-300'
                                                     }`}
                                             >
                                                 <MessageCircle className="w-5 h-5" />
@@ -305,8 +306,8 @@ Please confirm my order. Thank you!`
                                                 <button
                                                     onClick={() => setOrderMethod('instagram')}
                                                     className={`flex-1 p-3 rounded-lg border-2 flex items-center justify-center gap-2 transition-colors ${orderMethod === 'instagram'
-                                                            ? 'border-pink-500 bg-pink-50 text-pink-700'
-                                                            : 'border-gray-200 hover:border-gray-300'
+                                                        ? 'border-pink-500 bg-pink-50 text-pink-700'
+                                                        : 'border-gray-200 hover:border-gray-300'
                                                         }`}
                                                 >
                                                     📷 Instagram
