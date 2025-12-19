@@ -12,11 +12,11 @@ import {
     MessageCircle,
     Star,
     ArrowLeft,
-    Share2,
     Package,
     Instagram
 } from 'lucide-react'
 import { UpvoteButton } from '@/components/UpvoteButton'
+import { BusinessShareButton } from '@/components/BusinessShareButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -156,23 +156,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                         <ArrowLeft className="w-5 h-5" />
                         <span className="hidden sm:inline">Back to Directory</span>
                     </Link>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                            if (typeof navigator !== 'undefined' && navigator.share) {
-                                navigator.share({
-                                    title: business.business_name || '',
-                                    url: window.location.href
-                                })
-                            } else if (typeof navigator !== 'undefined') {
-                                navigator.clipboard.writeText(window.location.href)
-                            }
-                        }}
-                    >
-                        <Share2 className="w-4 h-4 mr-2" />
-                        Share
-                    </Button>
+                    <BusinessShareButton businessName={business.business_name} />
                 </div>
             </header>
 
