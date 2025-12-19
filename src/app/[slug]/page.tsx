@@ -34,14 +34,20 @@ async function getBusiness(slug: string) {
     return data
 }
 
-async function getProducts(userId: string) {
+async function getProducts(userId: string, limit?: number) {
     const supabase = await createClient()
-    const { data } = await supabase
+    let query = supabase
         .from('products')
         .select('*')
         .eq('user_id', userId)
         .eq('is_active', true)
         .order('created_at', { ascending: false })
+
+    if (limit) {
+        query = query.limit(limit)
+    }
+
+    const { data } = await query
 
     return data || []
 }
@@ -79,15 +85,16 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
         notFound()
     }
 
+    const isPro = business.plan === 'pro'
+
     const [products, reviews] = await Promise.all([
-        getProducts(business.id),
+        getProducts(business.id, isPro ? undefined : 3),
         getReviews(business.id),
     ])
 
     // Record page view (async, don't await)
     recordPageView(business.id)
 
-    const isPro = business.plan === 'pro'
     const isVerified = business.is_verified && isPro
     const averageRating = reviews.length > 0
         ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)

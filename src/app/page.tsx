@@ -93,7 +93,7 @@ export default async function HomePage() {
               Create my free business page
             </Button>
           </Link>
-          <Link href="/example-business" className="w-full sm:w-auto">
+          <Link href="/tolas-kitchen" className="w-full sm:w-auto">
             <Button variant="outline" size="lg" className="w-full sm:w-auto h-14 px-8 text-lg bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300">
               See example page
             </Button>
@@ -389,6 +389,10 @@ export default async function HomePage() {
                 </li>
                 <li className="flex items-center gap-3 text-gray-600">
                   <CheckCircle2 className="w-5 h-5 text-gray-300" />
+                  <strong>Up to 3 products</strong>
+                </li>
+                <li className="flex items-center gap-3 text-gray-600">
+                  <CheckCircle2 className="w-5 h-5 text-gray-300" />
                   WhatsApp contact button
                 </li>
                 <li className="flex items-center gap-3 text-gray-600">
@@ -422,6 +426,10 @@ export default async function HomePage() {
                 <li className="flex items-center gap-3 font-medium text-gray-900">
                   <CheckCircle2 className="w-5 h-5 text-orange-500" />
                   Everything in Free
+                </li>
+                <li className="flex items-center gap-3 font-medium text-gray-900">
+                  <CheckCircle2 className="w-5 h-5 text-orange-500" />
+                  <strong>Unlimited products</strong>
                 </li>
                 <li className="flex items-center gap-3 font-medium text-gray-900">
                   <CheckCircle2 className="w-5 h-5 text-orange-500" />
