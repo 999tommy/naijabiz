@@ -202,7 +202,12 @@ export default async function HomePage() {
                             {biz.business_name}
                             {biz.is_verified && <VerifiedBadge size="sm" showText={false} />}
                           </h3>
-                          <p className="text-sm text-gray-500 truncate">{biz.description || 'No description provided.'}</p>
+                          <p
+                            className="text-sm text-gray-500 leading-snug break-words"
+                            style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                          >
+                            {biz.description || 'No description provided.'}
+                          </p>
                         </Link>
                       </div>
                       <div className="relative z-10">
@@ -262,7 +267,12 @@ export default async function HomePage() {
                             {biz.business_name}
                             {biz.is_verified && <VerifiedBadge size="sm" showText={false} />}
                           </h3>
-                          <p className="text-sm text-gray-500 truncate">{biz.description || 'No description provided.'}</p>
+                          <p
+                            className="text-sm text-gray-500 leading-snug break-words"
+                            style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                          >
+                            {biz.description || 'No description provided.'}
+                          </p>
                         </Link>
                       </div>
                       <div className="relative z-10">

@@ -1,7 +1,6 @@
 'use client'
 
-import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Rocket, ThumbsUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -17,15 +16,13 @@ export function UpvoteButton({ userId, initialUpvotes, size = 'default', classNa
     const [upvotes, setUpvotes] = useState(initialUpvotes)
     const [hasUpvoted, setHasUpvoted] = useState(false)
     const [loading, setLoading] = useState(false)
-    const supabase = createClient()
 
     // Check if user has already upvoted this business on this device
-    useState(() => {
-        if (typeof window !== 'undefined') {
-            const voted = localStorage.getItem(`upvoted_${userId}`)
-            if (voted) setHasUpvoted(true)
-        }
-    })
+    useEffect(() => {
+        if (typeof window === 'undefined') return
+        const voted = localStorage.getItem(`upvoted_${userId}`)
+        if (voted) setHasUpvoted(true)
+    }, [userId])
 
     const handleUpvote = async (e: React.MouseEvent) => {
         e.preventDefault()
@@ -44,15 +41,16 @@ export function UpvoteButton({ userId, initialUpvotes, size = 'default', classNa
         }
 
         try {
-            const { error } = await supabase.rpc('increment_upvotes', { row_id: userId })
-            if (error) {
-                console.error('Upvote failed:', error)
-                // Revert optimistic update
-                setUpvotes(prev => prev - 1)
-                setHasUpvoted(false)
-                if (typeof window !== 'undefined') {
-                    localStorage.removeItem(`upvoted_${userId}`)
-                }
+            const response = await fetch('/api/upvote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId }),
+            })
+
+            if (!response.ok) {
+                throw new Error('Failed to record upvote')
             }
         } catch (err) {
             console.error('Upvote error:', err)
