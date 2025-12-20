@@ -26,12 +26,21 @@ export const metadata: Metadata = {
     siteName: "NaijaBiz",
     title: "NaijaBiz - Get free Customers and grow your business",
     description: "Stop losing sales to trust issues. Get your verified green badge and Business Page today.",
+    images: [
+      {
+        url: '/logo.png',
+        width: 512,
+        height: 512,
+        alt: 'NaijaBiz Logo',
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "NaijaBiz - Verified Your Business Page",
     description: "The link that proves you are legit. Get verified and sell more.",
     creator: "@naijabiz",
+    images: ['/logo.png'],
   },
   icons: {
     icon: [
@@ -48,9 +57,30 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "NaijaBiz",
+    "url": "https://naijabiz.org",
+    "logo": "https://naijabiz.org/logo.png",
+    "sameAs": [
+      "https://twitter.com/naijabiz",
+      "https://instagram.com/naijabiz"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "email": "hello@naijabiz.org"
+    }
+  }
+
   return (
     <html lang="en">
       <body className={`${montserrat.variable} font-sans antialiased text-gray-900 bg-white`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         {children}
         <Toaster />
       </body>

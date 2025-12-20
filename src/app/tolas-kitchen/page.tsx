@@ -128,12 +128,13 @@ export const metadata: Metadata = {
         title: "Tola's Kitchen | NaijaBiz",
         description: "Authentic Nigerian Jollof, Fried Rice, and Soups delivering to all parts of Lagos. Taste the difference today!",
         type: 'website',
-        // In a real app we'd use absolute URLs, but relative should work with metadataBase in layout
+        images: ['/tolas-kitchen.png'],
     },
     twitter: {
         card: "summary_large_image",
         title: "Tola's Kitchen | NaijaBiz",
         description: "Authentic Nigerian Jollof, Fried Rice, and Soups delivering to all parts of Lagos. Taste the difference today!",
+        images: ['/tolas-kitchen.png'],
     }
 }
 

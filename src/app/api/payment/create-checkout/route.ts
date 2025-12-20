@@ -14,6 +14,17 @@ export async function POST(request: NextRequest) {
             ? process.env.DODOPAYMENT_PRODUCT_ID_YEARLY
             : process.env.DODOPAYMENT_PRODUCT_ID
 
+        if (!process.env.DODOPAYMENT_API_KEY) {
+            console.error('Missing DODOPAYMENT_API_KEY')
+            return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
+        }
+
+        if (!productId) {
+            console.error('Missing Product ID for billing:', billing)
+            return NextResponse.json({ error: 'Product not available' }, { status: 400 })
+        }
+
+
         // Get user
         const supabase = await createServiceClient()
         const { data: user } = await supabase
