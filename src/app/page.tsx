@@ -85,7 +85,7 @@ export default async function HomePage() {
         </h1>
 
         <p className="text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed">
-          Create a free business page you can share on WhatsApp and Instagram — so customers can message you, find you, and place orders easily.
+          Create a free business page with NaijaBiz you can share on WhatsApp and Instagram — so customers can message you, find you, and place orders easily.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
@@ -337,7 +337,7 @@ export default async function HomePage() {
       <section className="py-24 bg-white border-y border-gray-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Everything you get for free</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Everything you get for free on NaijaBiz</h2>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">

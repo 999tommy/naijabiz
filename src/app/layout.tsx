@@ -11,10 +11,10 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: {
-    default: "NaijaBiz - Verified Vendor Directory & Online Ordering",
+    default: "NaijaBiz – Nigerian Business Directory & Online Store Builder",
     template: "%s | NaijaBiz"
   },
-  description: "The only link you need in your bio. Create a verified business page, look professional, and receive organized WhatsApp orders. Join 500+ Nigerian businesses.",
+  description: "NaijaBiz helps Nigerian businesses create verified online pages, accept WhatsApp orders, and grow online.",
   keywords: ["Nigeria Business Directory", "WhatsApp Store", "Instagram Vendor Tool", "Legit Vendor", "NaijaBiz", "Sell on WhatsApp"],
   authors: [{ name: "NaijaBiz Team" }],
   creator: "NaijaBiz",
