@@ -196,7 +196,7 @@ export default function PricingPage() {
                             </h3>
                             <p className="text-gray-600">
                                 We accept all Nigerian bank cards, bank transfers, and mobile money
-                                through DodoPayment.
+                                through Paystack.
                             </p>
                         </div>
 

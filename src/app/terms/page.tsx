@@ -51,7 +51,7 @@ export default function TermsPage() {
                     <section className="mb-8">
                         <h2 className="text-xl font-semibold text-gray-900 mb-4">5. Payments & Subscriptions</h2>
                         <p className="mb-4">
-                            Pro plan subscriptions are billed monthly. Payments are processed securely via DodoPayment. You may cancel your subscription at any time, but no refunds will be provided for partial months.
+                            Pro plan subscriptions are billed monthly/annualy. Payments are processed securely via PayStack. You may cancel your subscription at any time, but no refunds will be provided for partial months.
                         </p>
                     </section>
 

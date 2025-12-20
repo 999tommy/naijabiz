@@ -251,7 +251,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
     const handleUpgrade = async () => {
         setLoading(true)
         try {
-            const response = await fetch('/api/payment/create-checkout', {
+            const response = await fetch('/api/paystack/initialize', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -31,7 +31,7 @@ export default function PrivacyPage() {
                         <ul className="list-disc pl-5 space-y-2 mb-4">
                             <li>Provide and maintain the Platform.</li>
                             <li>Verify the legitimacy of your business.</li>
-                            <li>Process payments handling via DodoPayment.</li>
+                            <li>Process payments handling via Paystack.</li>
                             <li>Display your business profile to potential customers.</li>
                             <li>Send transaction notifications and updates.</li>
                         </ul>
