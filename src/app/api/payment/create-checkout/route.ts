@@ -38,14 +38,14 @@ export async function POST(request: NextRequest) {
         }
 
         // Determine API URL based on environment or key
-        // Dodo Payments uses separate domains for test and live
-        const isLive = process.env.DODOPAYMENT_MODE === 'live' || process.env.DODOPAYMENT_API_KEY?.startsWith('live_')
-        const baseUrl = isLive ? 'https://live.dodopayments.com' : 'https://test.dodopayments.com'
+        // Fix: Default to LIVE unless explicitly using a test key or mode
+        const isTest = process.env.DODOPAYMENT_MODE === 'test' || process.env.DODOPAYMENT_API_KEY?.startsWith('test_')
+        const baseUrl = isTest ? 'https://test.dodopayments.com' : 'https://live.dodopayments.com'
 
-        console.log(`Using Dodo Payments Environment: ${isLive ? 'LIVE' : 'TEST'} (${baseUrl})`)
+        console.log(`Using Dodo Payments Environment: ${isTest ? 'TEST' : 'LIVE'} (${baseUrl})`)
 
         // Create DodoPayment checkout session
-        const response = await fetch(`${baseUrl}/v1/checkout/sessions`, {
+        const response = await fetch(`${baseUrl}/checkouts`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -64,8 +64,12 @@ export async function POST(request: NextRequest) {
                     street: 'N/A',
                     zipcode: '100001',
                 },
-                product_id: productId,
-                quantity: 1,
+                product_cart: [
+                    {
+                        product_id: productId,
+                        quantity: 1,
+                    }
+                ],
                 metadata: {
                     user_id: userId,
                     billing_cycle: isYearly ? 'yearly' : 'monthly',
@@ -75,14 +79,37 @@ export async function POST(request: NextRequest) {
             }),
         })
 
-        const data = await response.json()
+        const rawResponse = await response.text()
+        console.log('Dodo Payments Response:', rawResponse)
+
+        let data
+        try {
+            data = rawResponse ? JSON.parse(rawResponse) : {}
+        } catch (e) {
+            console.error('Failed to parse Dodo response')
+            return NextResponse.json({ error: 'Invalid response from payment provider' }, { status: 502 })
+        }
 
         if (!response.ok) {
             console.error('DodoPayment error:', data)
-            return NextResponse.json({ error: data.message || 'Payment failed' }, { status: 400 })
+            return NextResponse.json({ error: data.message || `Payment failed: ${response.statusText}` }, { status: response.status })
         }
 
-        return NextResponse.json({ url: data.url })
+        if (!data.payment_link) {
+            // If using payment_link: false, the API might return differently.
+            // Based on docs, it should return an object.
+            // Let's ensure we find the URL.
+        }
+
+        // Check for url in different possible locations based on API variation
+        const checkoutUrl = data.checkout_url || data.url || data.payment_link
+
+        if (!checkoutUrl) {
+            console.error('No checkout URL in response', data)
+            return NextResponse.json({ error: 'Could not generate checkout URL' }, { status: 500 })
+        }
+
+        return NextResponse.json({ url: checkoutUrl })
     } catch (error) {
         console.error('Checkout error:', error)
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
