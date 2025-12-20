@@ -70,7 +70,7 @@ export default function RootLayout({
     "contactPoint": {
       "@type": "ContactPoint",
       "contactType": "customer support",
-      "email": "hello@naijabiz.org"
+      "email": "support@naijabiz.org"
     }
   }
 

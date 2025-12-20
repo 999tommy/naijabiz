@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -49,6 +49,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
     const [categoryId, setCategoryId] = useState(user.category_id || '')
 
     const router = useRouter()
+    const searchParams = useSearchParams()
     const supabase = createClient()
 
     const isPro = user.plan === 'pro'
@@ -66,6 +67,48 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
     useEffect(() => {
         fetchUser()
     }, [fetchUser])
+
+    useEffect(() => {
+        if (searchParams.get('upgraded') !== 'true') return
+
+        let cancelled = false
+        const startedAt = Date.now()
+
+        setMessage({ type: 'success', text: 'Payment received. Activating Pro...' })
+
+        const interval = window.setInterval(async () => {
+            if (cancelled) return
+
+            const { data, error } = await supabase
+                .from('users')
+                .select('plan')
+                .eq('id', user.id)
+                .single()
+
+            if (!error && data?.plan === 'pro') {
+                window.clearInterval(interval)
+                if (!cancelled) {
+                    await fetchUser()
+                    setMessage({ type: 'success', text: 'Upgrade successful! You are now on Pro.' })
+                    router.replace('/dashboard/settings#upgrade')
+                    router.refresh()
+                }
+                return
+            }
+
+            if (Date.now() - startedAt > 20000) {
+                window.clearInterval(interval)
+                if (!cancelled) {
+                    setMessage({ type: 'error', text: 'Payment received but upgrade is still pending. Please refresh in a minute.' })
+                }
+            }
+        }, 2000)
+
+        return () => {
+            cancelled = true
+            window.clearInterval(interval)
+        }
+    }, [fetchUser, router, searchParams, supabase, user.id])
 
     const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -471,7 +514,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                             }`}
                                     >
                                         <div className="text-sm font-medium text-gray-500">Monthly</div>
-                                        <div className="text-xl font-bold text-gray-900 mt-1">₦1,000<span className="text-xs font-normal">/mo</span></div>
+                                        <div className="text-xl font-bold text-gray-900 mt-1">₦1,500<span className="text-xs font-normal">/mo</span></div>
                                     </button>
                                     <button
                                         type="button"
@@ -504,7 +547,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                     ) : (
                                         <>
                                             <Crown className="w-4 h-4 mr-2" />
-                                            {upgradeBillingCycle === 'yearly' ? 'Upgrade Yearly - ₦7,500' : 'Upgrade Monthly - ₦1,000'}
+                                            {upgradeBillingCycle === 'yearly' ? 'Upgrade Yearly - ₦7,500' : 'Upgrade Monthly - ₦1,500'}
                                         </>
                                     )}
                                 </Button>

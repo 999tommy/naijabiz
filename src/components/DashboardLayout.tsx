@@ -166,7 +166,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                                     href="/dashboard/settings#upgrade"
                                     className="block text-center bg-white text-orange-600 rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-50 transition-colors"
                                 >
-                                    Upgrade Now - ₦1000/mo
+                                    Upgrade Now - ₦1500/mo
                                 </Link>
                             </div>
                         </div>

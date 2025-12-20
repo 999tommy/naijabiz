@@ -113,7 +113,7 @@ export default function PricingPage() {
                                 <VerifiedBadge size="sm" />
                             </h3>
                             <div className="text-5xl font-bold text-gray-900 font-display">
-                                {billingCycle === 'monthly' ? '₦1,000' : '₦7,500'}
+                                {billingCycle === 'monthly' ? '₦' : '₦7,500'}
                                 <span className="text-xl font-normal text-gray-500">
                                     /{billingCycle === 'monthly' ? 'mo' : 'yr'}
                                 </span>
