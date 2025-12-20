@@ -391,6 +391,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                                         alt={product.name}
                                         fill
                                         className="object-cover"
+                                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                                     />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-gray-400">

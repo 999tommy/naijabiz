@@ -213,6 +213,8 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
             if (error) throw error
 
             await fetchUser()
+            setLogoFile(null)
+            setLogoPreview(logoUrl)
             setMessage({ type: 'success', text: 'Profile updated successfully!' })
             router.refresh()
         } catch (err: unknown) {
@@ -352,7 +354,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                             </div>
                             <div className="text-sm text-gray-500">
                                 <p className="font-medium text-gray-700">Business Logo</p>
-                            
+
                             </div>
                         </div>
 

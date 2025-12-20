@@ -178,7 +178,13 @@ export default async function HomePage() {
                       <div className="flex-shrink-0 relative">
                         <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden relative">
                           {biz.logo_url ? (
-                            <Image src={biz.logo_url} alt={biz.business_name || ''} fill className="object-cover" />
+                            <Image
+                              src={biz.logo_url}
+                              alt={biz.business_name || ''}
+                              fill
+                              className="object-cover"
+                              sizes="64px"
+                            />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-2xl bg-orange-100 text-orange-600 font-bold">
                               {(biz.business_name || 'B').charAt(0)}
@@ -228,7 +234,13 @@ export default async function HomePage() {
                       <div className="flex-shrink-0 relative">
                         <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden relative">
                           {biz.logo_url ? (
-                            <Image src={biz.logo_url} alt={biz.business_name || ''} fill className="object-cover" />
+                            <Image
+                              src={biz.logo_url}
+                              alt={biz.business_name || ''}
+                              fill
+                              className="object-cover"
+                              sizes="64px"
+                            />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-2xl bg-orange-100 text-orange-600 font-bold">
                               {(biz.business_name || 'B').charAt(0)}

@@ -184,6 +184,9 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                     width={100}
                                     height={100}
                                     className="rounded-xl object-cover"
+                                    priority
+                                    loading="eager"
+                                    unoptimized={business.logo_url.includes('supabase.co/storage/v1/object/public/')}
                                 />
                             ) : (
                                 <div className="w-[100px] h-[100px] rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-3xl font-bold">
