@@ -12,11 +12,9 @@ import { Mail, Key, Loader2, Store, CheckCircle, ShieldCheck, Sparkles } from 'l
 import { CategorySelect } from '@/components/CategorySelect'
 import type { Category } from '@/lib/types'
 
-type AuthMethod = 'password' | 'magic-link'
 type SignupStep = 'auth' | 'business'
 
 export default function SignupPage() {
-    const [authMethod, setAuthMethod] = useState<AuthMethod>('password')
     const [step, setStep] = useState<SignupStep>('auth')
     const [emailOrPhone, setEmailOrPhone] = useState('')
     const [password, setPassword] = useState('')
@@ -91,28 +89,6 @@ export default function SignupPage() {
         }
     }
 
-    const handleMagicLink = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setLoading(true)
-        setError('')
-        setMessage('')
-
-        try {
-            const { error } = await supabase.auth.signInWithOtp({
-                email: emailOrPhone,
-                options: {
-                    emailRedirectTo: `${window.location.origin}/auth/callback?signup=true&next=/dashboard`,
-                },
-            })
-            if (error) throw error
-            setMessage('Check your email for the magic link! It might be in spam.')
-        } catch (err: unknown) {
-            const errorMessage = err instanceof Error ? err.message : 'An error occurred'
-            setError(errorMessage)
-        } finally {
-            setLoading(false)
-        }
-    }
 
     const handleCreateBusiness = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -218,157 +194,75 @@ export default function SignupPage() {
                             )}
                         </CardTitle>
                         <CardDescription className="text-base text-gray-500">
-                            {step === 'auth' && 'Create your account with email/phone and password, or use a magic link.'}
+                            {step === 'auth' && 'Create your account with email and password.'}
                             {step === 'business' && 'This information will appear on your public page.'}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="pt-6">
                         {step === 'auth' && (
-                            <>
-                                <div className="grid grid-cols-2 gap-3 mb-6">
-                                    <Button
-                                        variant={authMethod === 'password' ? 'default' : 'outline'}
-                                        className={`h-12 ${authMethod === 'password' ? 'bg-gray-900 hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900'}`}
-                                        onClick={() => setAuthMethod('password')}
-                                    >
-                                        <Key className="w-4 h-4 mr-2" />
+                            <form onSubmit={handlePasswordSignup} className="space-y-5">
+                                <div className="space-y-2">
+                                    <label htmlFor="emailOrPhone" className="text-sm font-medium text-gray-700">
+                                        Email
+                                    </label>
+                                    <Input
+                                        id="emailOrPhone"
+                                        type="text"
+                                        placeholder="you@business.com"
+                                        value={emailOrPhone}
+                                        onChange={(e) => setEmailOrPhone(e.target.value)}
+                                        className="h-11"
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label htmlFor="password" className="text-sm font-medium text-gray-700">
                                         Password
-                                    </Button>
-                                    <Button
-                                        variant={authMethod === 'magic-link' ? 'default' : 'outline'}
-                                        className={`h-12 ${authMethod === 'magic-link' ? 'bg-gray-900 hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900'}`}
-                                        onClick={() => setAuthMethod('magic-link')}
-                                    >
-                                        <Sparkles className="w-4 h-4 mr-2" />
-                                        Magic Link
-                                    </Button>
+                                    </label>
+                                    <Input
+                                        id="password"
+                                        type="password"
+                                        placeholder="Create a strong password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="h-11"
+                                        minLength={6}
+                                        required
+                                    />
                                 </div>
 
-                                {authMethod === 'password' ? (
-                                    <form onSubmit={handlePasswordSignup} className="space-y-5">
-                                        <div className="space-y-2">
-                                            <label htmlFor="emailOrPhone" className="text-sm font-medium text-gray-700">
-                                                Email
-                                            </label>
-                                            <Input
-                                                id="emailOrPhone"
-                                                type="text"
-                                                placeholder="you@business.com or 08012345678"
-                                                value={emailOrPhone}
-                                                onChange={(e) => setEmailOrPhone(e.target.value)}
-                                                className="h-11"
-                                                required
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label htmlFor="password" className="text-sm font-medium text-gray-700">
-                                                Password
-                                            </label>
-                                            <Input
-                                                id="password"
-                                                type="password"
-                                                placeholder="Create a strong password"
-                                                value={password}
-                                                onChange={(e) => setPassword(e.target.value)}
-                                                className="h-11"
-                                                minLength={6}
-                                                required
-                                            />
-                                        </div>
-
-                                        {error && (
-                                            <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg flex items-center gap-2">
-                                                <span className="block w-1.5 h-1.5 rounded-full bg-red-600"></span>
-                                                {error}
-                                            </div>
-                                        )}
-
-                                        <div className="flex items-start gap-2 py-2">
-                                            <input
-                                                type="checkbox"
-                                                id="agree-password"
-                                                checked={agreed}
-                                                onChange={(e) => setAgreed(e.target.checked)}
-                                                className="mt-1 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-600 cursor-pointer"
-                                                required
-                                            />
-                                            <label htmlFor="agree-password" className="text-sm text-gray-600 cursor-pointer text-left">
-                                                I agree to the <Link href="/terms" className="text-orange-600 hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-orange-600 hover:underline">Privacy Policy</Link>
-                                            </label>
-                                        </div>
-
-                                        <Button type="submit" className="w-full h-12 text-base bg-orange-600 hover:bg-orange-700 shadow-lg shadow-orange-100" disabled={loading || !agreed}>
-                                            {loading ? (
-                                                <>
-                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                    Creating account...
-                                                </>
-                                            ) : (
-                                                'Create Account'
-                                            )}
-                                        </Button>
-                                    </form>
-                                ) : (
-                                    <form onSubmit={handleMagicLink} className="space-y-5">
-                                        <div className="space-y-2">
-                                            <label htmlFor="email" className="text-sm font-medium text-gray-700">
-                                                Email Address
-                                            </label>
-                                            <Input
-                                                id="email"
-                                                type="email"
-                                                placeholder="you@business.com"
-                                                value={emailOrPhone}
-                                                onChange={(e) => setEmailOrPhone(e.target.value)}
-                                                className="h-11"
-                                                required
-                                            />
-                                        </div>
-
-                                        {error && (
-                                            <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg flex items-center gap-2">
-                                                <span className="block w-1.5 h-1.5 rounded-full bg-red-600"></span>
-                                                {error}
-                                            </div>
-                                        )}
-
-                                        {message && (
-                                            <div className="text-sm text-green-700 bg-green-50 p-3 rounded-lg flex items-center gap-2">
-                                                <CheckCircle className="w-4 h-4 text-green-600" />
-                                                {message}
-                                            </div>
-                                        )}
-
-                                        <div className="flex items-start gap-2 py-2">
-                                            <input
-                                                type="checkbox"
-                                                id="agree-magic"
-                                                checked={agreed}
-                                                onChange={(e) => setAgreed(e.target.checked)}
-                                                className="mt-1 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-600 cursor-pointer"
-                                                required
-                                            />
-                                            <label htmlFor="agree-magic" className="text-sm text-gray-600 cursor-pointer text-left">
-                                                I agree to the <Link href="/terms" className="text-orange-600 hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-orange-600 hover:underline">Privacy Policy</Link>
-                                            </label>
-                                        </div>
-
-                                        <Button type="submit" className="w-full h-12 text-base bg-orange-600 hover:bg-orange-700 shadow-lg shadow-orange-100" disabled={loading || !agreed}>
-                                            {loading ? (
-                                                <>
-                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                    Sending magic link...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Mail className="w-4 h-4 mr-2" />
-                                                    Send Magic Link
-                                                </>
-                                            )}
-                                        </Button>
-                                    </form>
+                                {error && (
+                                    <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg flex items-center gap-2">
+                                        <span className="block w-1.5 h-1.5 rounded-full bg-red-600"></span>
+                                        {error}
+                                    </div>
                                 )}
-                            </>
+
+                                <div className="flex items-start gap-2 py-2">
+                                    <input
+                                        type="checkbox"
+                                        id="agree-password"
+                                        checked={agreed}
+                                        onChange={(e) => setAgreed(e.target.checked)}
+                                        className="mt-1 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-600 cursor-pointer"
+                                        required
+                                    />
+                                    <label htmlFor="agree-password" className="text-sm text-gray-600 cursor-pointer text-left">
+                                        I agree to the <Link href="/terms" className="text-orange-600 hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-orange-600 hover:underline">Privacy Policy</Link>
+                                    </label>
+                                </div>
+
+                                <Button type="submit" className="w-full h-12 text-base bg-orange-600 hover:bg-orange-700 shadow-lg shadow-orange-100" disabled={loading || !agreed}>
+                                    {loading ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            Creating account...
+                                        </>
+                                    ) : (
+                                        'Create Account'
+                                    )}
+                                </Button>
+                            </form>
                         )}
 
                         {step === 'business' && (

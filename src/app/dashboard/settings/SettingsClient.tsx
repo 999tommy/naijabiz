@@ -22,6 +22,7 @@ import {
     Upload
 } from 'lucide-react'
 import { CategorySelect } from '@/components/CategorySelect'
+import { compressImage } from '@/lib/image-compression'
 
 interface SettingsClientProps {
     user: User
@@ -37,6 +38,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
     const [logoPreview, setLogoPreview] = useState<string | null>(user.logo_url)
     const [verificationFile, setVerificationFile] = useState<File | null>(null)
     const [verificationUploading, setVerificationUploading] = useState(false)
+    const [logoCompressing, setLogoCompressing] = useState(false)
     const [upgradeBillingCycle, setUpgradeBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
 
     // Form fields
@@ -110,17 +112,23 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
         }
     }, [fetchUser, router, searchParams, supabase, user.id])
 
-    const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file) return
 
-        if (file.size > 200 * 1024) {
-            setMessage({ type: 'error', text: 'Logo must be under 200KB. Use TinyPNG to compress.' })
-            return
-        }
+        setMessage({ type: '', text: '' })
+        setLogoCompressing(true)
 
-        setLogoFile(file)
-        setLogoPreview(URL.createObjectURL(file))
+        try {
+            const compressedFile = await compressImage(file)
+            setLogoFile(compressedFile)
+            setLogoPreview(URL.createObjectURL(compressedFile))
+        } catch (err) {
+            console.error('Logo compression error:', err)
+            setMessage({ type: 'error', text: 'Failed to process logo. Please try another one.' })
+        } finally {
+            setLogoCompressing(false)
+        }
     }
 
     const uploadImage = async (file: File, path: string): Promise<string | null> => {
@@ -305,7 +313,11 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                         {/* Logo */}
                         <div className="flex items-start gap-4">
                             <div className="relative">
-                                {logoPreview ? (
+                                {logoCompressing ? (
+                                    <div className="w-20 h-20 rounded-lg border-2 border-gray-200 flex items-center justify-center">
+                                        <Loader2 className="w-6 h-6 text-orange-500 animate-spin" />
+                                    </div>
+                                ) : logoPreview ? (
                                     <div className="relative">
                                         <Image
                                             src={logoPreview}
@@ -340,7 +352,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                             </div>
                             <div className="text-sm text-gray-500">
                                 <p className="font-medium text-gray-700">Business Logo</p>
-                                <p>Max 200KB. Square image recommended.</p>
+                                <p>Automatically compressed to under 200KB.</p>
                             </div>
                         </div>
 

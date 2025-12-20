@@ -19,6 +19,7 @@ import {
     AlertCircle,
     Package
 } from 'lucide-react'
+import { compressImage } from '@/lib/image-compression'
 
 interface ProductsClientProps {
     user: User
@@ -71,19 +72,30 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
         setError('')
     }
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [compressing, setCompressing] = useState(false)
+
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file) return
 
-        // Check file size (200KB limit)
-        if (file.size > 200 * 1024) {
-            setError('Image must be under 200KB. Use TinyPNG or Squoosh to compress.')
-            return
-        }
-
-        setImageFile(file)
-        setImagePreview(URL.createObjectURL(file))
         setError('')
+        setCompressing(true)
+
+        try {
+            const compressedFile = await compressImage(file)
+            setImageFile(compressedFile)
+            setImagePreview(URL.createObjectURL(compressedFile))
+
+            // If it's still over 200KB (rare with the library but possible if source is massive/non-compressible)
+            if (compressedFile.size > 200 * 1024) {
+                console.warn('Image still over 200KB after compression:', compressedFile.size)
+            }
+        } catch (err) {
+            console.error('Compression error:', err)
+            setError('Failed to process image. Please try another one.')
+        } finally {
+            setCompressing(false)
+        }
     }
 
     const uploadImage = async (file: File): Promise<string | null> => {
@@ -305,27 +317,27 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                                         </div>
                                     ) : (
                                         <label className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-orange-500 transition-colors">
-                                            <ImagePlus className="w-6 h-6 text-gray-400" />
-                                            <span className="text-xs text-gray-400 mt-1">Upload</span>
+                                            {compressing ? (
+                                                <Loader2 className="w-6 h-6 text-orange-500 animate-spin" />
+                                            ) : (
+                                                <>
+                                                    <ImagePlus className="w-6 h-6 text-gray-400" />
+                                                    <span className="text-xs text-gray-400 mt-1">Upload</span>
+                                                </>
+                                            )}
                                             <input
                                                 type="file"
                                                 accept="image/*"
                                                 onChange={handleImageChange}
                                                 className="hidden"
+                                                disabled={compressing}
                                             />
                                         </label>
                                     )}
                                     <div className="text-xs text-gray-500">
-                                        <p>Max file size: 200KB</p>
+                                        <p>Images are automatically compressed</p>
                                         <p className="mt-1">
-                                            Compress at{' '}
-                                            <a href="https://tinypng.com" target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">
-                                                TinyPNG
-                                            </a>
-                                            {' '}or{' '}
-                                            <a href="https://squoosh.app" target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">
-                                                Squoosh
-                                            </a>
+                                            Max final size: 200KB
                                         </p>
                                     </div>
                                 </div>
