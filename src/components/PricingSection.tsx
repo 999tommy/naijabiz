@@ -105,7 +105,7 @@ export function PricingSection() {
                         </ul>
                         <Link href={`/signup?plan=pro&billing=${billingCycle}`}>
                             <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-lg h-12 font-bold shadow-lg shadow-orange-100">
-                                Start 7-Day Free Trial
+                                Get More Customers
                             </Button>
                         </Link>
                     </div>

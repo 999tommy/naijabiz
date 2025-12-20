@@ -156,7 +156,7 @@ export default function PricingPage() {
 
                         <Link href={`/signup?plan=pro&billing=${billingCycle}`} className="block">
                             <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold h-12 shadow-lg" size="lg">
-                                Start 7-Day Free Trial
+                                Get More Customers
                                 <ArrowRight className="w-5 h-5 ml-2" />
                             </Button>
                         </Link>
