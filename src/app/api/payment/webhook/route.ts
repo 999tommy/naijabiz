@@ -27,8 +27,10 @@ export async function POST(request: NextRequest) {
 
         switch (event.type) {
             case 'subscription.active':
-            case 'payment.succeeded': {
+            case 'payment.succeeded':
+            case 'checkout.succeeded': {
                 const userId = event.data?.metadata?.user_id
+                const cycle = event.data?.metadata?.billing_cycle || 'monthly'
                 const subscriptionId = event.data?.subscription_id || event.data?.id
 
                 if (!userId) {
@@ -36,9 +38,15 @@ export async function POST(request: NextRequest) {
                     break
                 }
 
-                // Calculate subscription end date (1 month from now)
+                // Calculate subscription end date based on cycle
                 const subscriptionEndsAt = new Date()
-                subscriptionEndsAt.setMonth(subscriptionEndsAt.getMonth() + 1)
+                if (cycle === 'yearly') {
+                    subscriptionEndsAt.setFullYear(subscriptionEndsAt.getFullYear() + 1)
+                } else {
+                    subscriptionEndsAt.setMonth(subscriptionEndsAt.getMonth() + 1)
+                }
+
+                console.log(`Upgrading user ${userId} to Pro (${cycle} plan)`)
 
                 // Update user to Pro
                 const { error } = await supabase
@@ -47,6 +55,7 @@ export async function POST(request: NextRequest) {
                         plan: 'pro',
                         subscription_id: subscriptionId,
                         subscription_ends_at: subscriptionEndsAt.toISOString(),
+                        is_verified: true, // Auto-verify on purchase
                     })
                     .eq('id', userId)
 
