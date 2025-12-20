@@ -21,11 +21,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
 
     // 2. Business Pages (Users)
-    // Fetch active/verified businesses
+    // Fetch all businesses that have a slug (publicly accessible)
     const { data: businesses } = await supabase
         .from('users')
         .select('business_slug, updated_at')
-        .eq('is_verified', true)
         .not('business_slug', 'is', null)
 
     const businessRoutes = businesses?.map((business) => ({
@@ -34,10 +33,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: 'weekly' as const,
         priority: 0.7,
     })) || []
-
-    // 3. Category Pages (Optional - if we had dynamic category pages)
-    // For now we don't have dedicated /category/[slug] pages, only the directory with query params.
-    // Query params are usually not included in sitemaps.
 
     return [...staticRoutes, ...businessRoutes]
 }
