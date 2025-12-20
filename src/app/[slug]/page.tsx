@@ -106,11 +106,20 @@ export async function generateMetadata({ params }: BusinessPageProps): Promise<M
             title,
             description,
             type: 'website',
+            images: [
+                {
+                    url: imageUrl,
+                    width: 800,
+                    height: 800,
+                    alt: business.business_name,
+                },
+            ],
         },
         twitter: {
             card: 'summary_large_image',
             title,
             description,
+            images: [imageUrl],
         },
     }
 }
