@@ -248,7 +248,7 @@ export default function SignupPage() {
                                     <form onSubmit={handlePasswordSignup} className="space-y-5">
                                         <div className="space-y-2">
                                             <label htmlFor="emailOrPhone" className="text-sm font-medium text-gray-700">
-                                                Email or Phone Number
+                                                Email
                                             </label>
                                             <Input
                                                 id="emailOrPhone"

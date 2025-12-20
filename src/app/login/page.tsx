@@ -142,7 +142,7 @@ export default function LoginPage() {
                             <form onSubmit={handlePasswordLogin} className="space-y-4">
                                 <div className="space-y-2">
                                     <label htmlFor="emailOrPhone" className="text-sm font-medium text-gray-700">
-                                        Email or Phone Number
+                                        Email
                                     </label>
                                     <Input
                                         id="emailOrPhone"
