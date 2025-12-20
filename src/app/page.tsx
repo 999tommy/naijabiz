@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { VerifiedBadge } from '@/components/VerifiedBadge'
 import {
@@ -24,25 +24,75 @@ export const dynamic = 'force-dynamic'
 export default async function HomePage() {
   const supabase = await createClient()
 
+  // Fetch counts and rank businesses based on the new algorithm
+  const serviceSupabase = await createServiceClient()
+
+  // 1. Get all businesses with basic info
+  const { data: allUsers } = await serviceSupabase
+    .from('users')
+    .select('id, business_name, business_slug, description, logo_url, upvotes, is_verified, plan, category:categories(icon)')
+
+  // 2. Get reviews and views for aggregation
+  const [
+    { data: allReviews },
+    { data: allViews }
+  ] = await Promise.all([
+    serviceSupabase.from('reviews').select('business_id, rating, created_at'),
+    serviceSupabase.from('page_views').select('business_id, created_at')
+  ])
+
+  const now = new Date()
+  const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+
+  // 3. Process rankings
+  const processedStats = (allUsers || []).map(user => {
+    const userReviews = allReviews?.filter(r => r.business_id === user.id) || []
+    const userViews = allViews?.filter(v => v.business_id === user.id) || []
+
+    const recentReviews = userReviews.filter(r => new Date(r.created_at) > last24h)
+    const recentViews = userViews.filter(v => new Date(v.created_at) > last24h)
+
+    const avgRating = userReviews.length > 0
+      ? userReviews.reduce((sum, r) => sum + r.rating, 0) / userReviews.length
+      : 0
+
+    // Business of the Day Algorithm (Focus on Daily Momentum)
+    // High weight for recent activity
+    const dailyScore =
+      (recentReviews.length * 100) +
+      (recentViews.length * 5) +
+      ((user.upvotes || 0) * 0.5) +
+      (user.plan === 'pro' ? 10 : 0) // Small boost for pro
+
+    // Community Favorites Algorithm (Lifetime Impact)
+    const lifetimeScore =
+      ((user.upvotes || 0) * 20) +
+      (userReviews.length * 50) +
+      (avgRating * 100) +
+      (userViews.length * 2) +
+      (user.plan === 'pro' ? 200 : 0) // Larger boost for pro
+
+    return {
+      ...user,
+      dailyScore,
+      lifetimeScore,
+      reviewCount: userReviews.length,
+      viewCount: userViews.length
+    }
+  })
+
+  const businessOfTheDay = [...processedStats]
+    .sort((a, b) => b.dailyScore - a.dailyScore)
+    .slice(0, 3)
+
+  const topBusinesses = [...processedStats]
+    .sort((a, b) => b.lifetimeScore - a.lifetimeScore)
+    .slice(0, 5)
+
   const { count: verifiedCount } = await supabase
     .from('users')
     .select('*', { count: 'exact', head: true })
     .eq('is_verified', true)
-
-  const { data: businessOfTheDay } = await supabase
-    .from('users')
-    .select('id, business_name, business_slug, description, logo_url, upvotes, category:categories(icon)')
-    .eq('is_verified', true)
-    .gt('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
-    .order('upvotes', { ascending: false })
-    .limit(3)
-
-  const { data: topBusinesses } = await supabase
-    .from('users')
-    .select('id, business_name, business_slug, description, logo_url, upvotes, category:categories(icon)')
-    .eq('is_verified', true)
-    .order('upvotes', { ascending: false })
-    .limit(5)
 
   return (
     <div className="min-h-screen bg-[#faf8f3] font-sans text-[#4b587c]">
@@ -144,7 +194,7 @@ export default async function HomePage() {
                           <span className="absolute inset-0" aria-hidden="true" />
                           <h3 className="text-base font-bold text-gray-900 truncate flex items-center gap-1">
                             {biz.business_name}
-                            <VerifiedBadge size="sm" showText={false} />
+                            {biz.is_verified && <VerifiedBadge size="sm" showText={false} />}
                           </h3>
                           <p className="text-sm text-gray-500 truncate">{biz.description || 'No description provided.'}</p>
                         </Link>
@@ -198,7 +248,7 @@ export default async function HomePage() {
                           <span className="absolute inset-0" aria-hidden="true" />
                           <h3 className="text-base font-bold text-gray-900 truncate flex items-center gap-1">
                             {biz.business_name}
-                            <VerifiedBadge size="sm" showText={false} />
+                            {biz.is_verified && <VerifiedBadge size="sm" showText={false} />}
                           </h3>
                           <p className="text-sm text-gray-500 truncate">{biz.description || 'No description provided.'}</p>
                         </Link>
