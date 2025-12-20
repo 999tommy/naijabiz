@@ -533,7 +533,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                             }`}
                                     >
                                         <div className="absolute top-0 right-0 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-lg">
-                                            SAVE 50%
+                                            SAVE 37%
                                         </div>
                                         <div className="text-sm font-medium text-gray-500">Yearly</div>
                                         <div className="text-xl font-bold text-gray-900 mt-1">₦7,500<span className="text-xs font-normal">/yr</span></div>
