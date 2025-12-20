@@ -1,8 +1,9 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { headers } from 'next/headers'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { OrderCart } from '@/components/OrderCart'
 import { VerifiedBadge } from '@/components/VerifiedBadge'
 import { Badge } from '@/components/ui/badge'
@@ -68,22 +69,31 @@ async function getReviews(businessId: string) {
 }
 
 async function recordPageView(businessId: string) {
-    const supabase = await createClient()
+    const supabase = await createServiceClient()
     const headersList = await headers()
+    const viewerIp = headersList.get('x-forwarded-for')?.split(',')[0] || headersList.get('x-real-ip') || 'unknown'
 
-    await supabase.from('page_views').insert({
-        business_id: businessId,
-        viewer_ip: headersList.get('x-forwarded-for') || null,
-        viewer_user_agent: headersList.get('user-agent') || null,
-        referrer: headersList.get('referer') || null,
-    })
+    // Check if we already recorded a view for this IP and business in the last 24 hours
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+
+    const { data: existingView } = await supabase
+        .from('page_views')
+        .select('id')
+        .eq('business_id', businessId)
+        .eq('viewer_ip', viewerIp)
+        .gt('created_at', twentyFourHoursAgo)
+        .limit(1)
+
+    if (!existingView || existingView.length === 0) {
+        await supabase.from('page_views').insert({
+            business_id: businessId,
+            viewer_ip: viewerIp,
+            viewer_user_agent: headersList.get('user-agent') || null,
+            referrer: headersList.get('referer') || null,
+        })
+    }
 }
 
-import type { Metadata } from 'next'
-
-// ... (existing imports)
-
-// (keep interface BusinessPageProps and helper functions)
 
 export async function generateMetadata({ params }: BusinessPageProps): Promise<Metadata> {
     const { slug } = await params
@@ -284,15 +294,16 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
             </div>
 
             {/* Reviews (Pro only) */}
-            {
-                isPro && reviews.length > 0 && (
-                    <div className="max-w-4xl mx-auto px-4 pb-8">
-                        <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                            Customer Reviews ({reviews.length})
-                        </h2>
+            {isPro && (
+                <div className="max-w-4xl mx-auto px-4 pb-8">
+                    <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                        Customer Reviews ({reviews.length})
+                    </h2>
+
+                    {reviews.length > 0 ? (
                         <div className="space-y-4">
                             {reviews.map(review => (
-                                <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-4">
+                                <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
                                     <div className="flex items-center gap-2 mb-2">
                                         <div className="flex">
                                             {[...Array(5)].map((_, i) => (
@@ -313,24 +324,29 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                         </span>
                                     </div>
                                     {review.comment && (
-                                        <p className="text-gray-600 text-sm">{review.comment}</p>
+                                        <p className="text-gray-600 text-sm italic">"{review.comment}"</p>
                                     )}
                                 </div>
                             ))}
                         </div>
-
-                        {/* Leave a review CTA */}
-                        <div className="mt-6 text-center">
-                            <Link href={`/${slug}/review`}>
-                                <Button variant="outline">
-                                    <Star className="w-4 h-4 mr-2" />
-                                    Leave a Review
-                                </Button>
-                            </Link>
+                    ) : (
+                        <div className="text-center py-12 bg-white rounded-xl border border-gray-200 shadow-sm">
+                            <Star className="w-12 h-12 mx-auto text-gray-200 mb-4" />
+                            <p className="text-gray-500">No reviews yet. Be the first to tell others about this business!</p>
                         </div>
+                    )}
+
+                    {/* Leave a review CTA */}
+                    <div className="mt-8 text-center">
+                        <Link href={`/${slug}/review`}>
+                            <Button variant="outline" className="border-orange-200 text-orange-600 hover:bg-orange-50 hover:text-orange-700 font-bold px-8">
+                                <Star className="w-4 h-4 mr-2" />
+                                Leave a Review
+                            </Button>
+                        </Link>
                     </div>
-                )
-            }
+                </div>
+            )}
 
             {/* Footer */}
             <footer className="bg-white border-t border-gray-200 py-6">

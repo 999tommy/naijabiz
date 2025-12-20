@@ -19,9 +19,17 @@ export function UpvoteButton({ userId, initialUpvotes, size = 'default', classNa
     const [loading, setLoading] = useState(false)
     const supabase = createClient()
 
+    // Check if user has already upvoted this business on this device
+    useState(() => {
+        if (typeof window !== 'undefined') {
+            const voted = localStorage.getItem(`upvoted_${userId}`)
+            if (voted) setHasUpvoted(true)
+        }
+    })
+
     const handleUpvote = async (e: React.MouseEvent) => {
         e.preventDefault()
-        e.stopPropagation() // Prevent navigating if inside a link
+        e.stopPropagation()
 
         if (hasUpvoted || loading) return
 
@@ -30,6 +38,11 @@ export function UpvoteButton({ userId, initialUpvotes, size = 'default', classNa
         setUpvotes(prev => prev + 1)
         setHasUpvoted(true)
 
+        // Save to device storage immediately for responsiveness
+        if (typeof window !== 'undefined') {
+            localStorage.setItem(`upvoted_${userId}`, 'true')
+        }
+
         try {
             const { error } = await supabase.rpc('increment_upvotes', { row_id: userId })
             if (error) {
@@ -37,11 +50,17 @@ export function UpvoteButton({ userId, initialUpvotes, size = 'default', classNa
                 // Revert optimistic update
                 setUpvotes(prev => prev - 1)
                 setHasUpvoted(false)
+                if (typeof window !== 'undefined') {
+                    localStorage.removeItem(`upvoted_${userId}`)
+                }
             }
         } catch (err) {
             console.error('Upvote error:', err)
             setUpvotes(prev => prev - 1)
             setHasUpvoted(false)
+            if (typeof window !== 'undefined') {
+                localStorage.removeItem(`upvoted_${userId}`)
+            }
         } finally {
             setLoading(false)
         }

@@ -72,7 +72,7 @@ export function PricingSection() {
                         <p className="text-gray-500 mb-6">Everything you need to sell with trust.</p>
                         <div className="flex items-baseline gap-1 mb-6">
                             <span className="text-4xl font-bold text-orange-600 font-display">
-                                {billingCycle === 'monthly' ? '₦1,500' : '₦7,500'}
+                                {billingCycle === 'monthly' ? '₦1,000' : '₦7,500'}
                             </span>
                             <span className="text-gray-500 font-display">/{billingCycle === 'monthly' ? 'month' : 'year'}</span>
                         </div>

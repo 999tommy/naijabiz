@@ -19,7 +19,6 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [message, setMessage] = useState('')
-    const [agreed, setAgreed] = useState(false)
     const router = useRouter()
     const supabase = createClient()
 
@@ -174,21 +173,7 @@ export default function LoginPage() {
                                     </p>
                                 )}
 
-                                <div className="flex items-start gap-2 py-2">
-                                    <input
-                                        type="checkbox"
-                                        id="agree-password"
-                                        checked={agreed}
-                                        onChange={(e) => setAgreed(e.target.checked)}
-                                        className="mt-1 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-600 cursor-pointer"
-                                        required
-                                    />
-                                    <label htmlFor="agree-password" className="text-sm text-gray-600 cursor-pointer">
-                                        I agree to the <Link href="/terms" className="text-orange-600 hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-orange-600 hover:underline">Privacy Policy</Link>
-                                    </label>
-                                </div>
-
-                                <Button type="submit" className="w-full" disabled={loading || !agreed}>
+                                <Button type="submit" className="w-full" disabled={loading}>
                                     {loading ? (
                                         <>
                                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -228,21 +213,7 @@ export default function LoginPage() {
                                     </div>
                                 )}
 
-                                <div className="flex items-start gap-2 py-2">
-                                    <input
-                                        type="checkbox"
-                                        id="agree-magic"
-                                        checked={agreed}
-                                        onChange={(e) => setAgreed(e.target.checked)}
-                                        className="mt-1 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-600 cursor-pointer"
-                                        required
-                                    />
-                                    <label htmlFor="agree-magic" className="text-sm text-gray-600 cursor-pointer">
-                                        I agree to the <Link href="/terms" className="text-orange-600 hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-orange-600 hover:underline">Privacy Policy</Link>
-                                    </label>
-                                </div>
-
-                                <Button type="submit" className="w-full" disabled={loading || !agreed}>
+                                <Button type="submit" className="w-full" disabled={loading}>
                                     {loading ? (
                                         <>
                                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />

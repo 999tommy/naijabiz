@@ -494,6 +494,14 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                             <CheckCircle2 className="w-4 h-4 text-green-500" />
                                             Customer reviews
                                         </li>
+                                        <li className="flex items-center gap-1">
+                                            <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                            Increased Customer Reach
+                                        </li>
+                                        <li className="flex items-center gap-1">
+                                            <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                            High Leaderboard Ranking
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -514,7 +522,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                             }`}
                                     >
                                         <div className="text-sm font-medium text-gray-500">Monthly</div>
-                                        <div className="text-xl font-bold text-gray-900 mt-1">₦1,500<span className="text-xs font-normal">/mo</span></div>
+                                        <div className="text-xl font-bold text-gray-900 mt-1">₦1,000<span className="text-xs font-normal">/mo</span></div>
                                     </button>
                                     <button
                                         type="button"
@@ -525,7 +533,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                             }`}
                                     >
                                         <div className="absolute top-0 right-0 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-lg">
-                                            SAVE 37%
+                                            SAVE 50%
                                         </div>
                                         <div className="text-sm font-medium text-gray-500">Yearly</div>
                                         <div className="text-xl font-bold text-gray-900 mt-1">₦7,500<span className="text-xs font-normal">/yr</span></div>
@@ -547,7 +555,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                     ) : (
                                         <>
                                             <Crown className="w-4 h-4 mr-2" />
-                                            {upgradeBillingCycle === 'yearly' ? 'Upgrade Yearly - ₦7,500' : 'Upgrade Monthly - ₦1,500'}
+                                            {upgradeBillingCycle === 'yearly' ? 'Upgrade Yearly - ₦7,500' : 'Upgrade Monthly - ₦1,000'}
                                         </>
                                     )}
                                 </Button>
