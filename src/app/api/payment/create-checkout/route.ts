@@ -37,8 +37,15 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 })
         }
 
+        // Determine API URL based on environment or key
+        // Dodo Payments uses separate domains for test and live
+        const isLive = process.env.DODOPAYMENT_MODE === 'live' || process.env.DODOPAYMENT_API_KEY?.startsWith('live_')
+        const baseUrl = isLive ? 'https://live.dodopayments.com' : 'https://test.dodopayments.com'
+
+        console.log(`Using Dodo Payments Environment: ${isLive ? 'LIVE' : 'TEST'} (${baseUrl})`)
+
         // Create DodoPayment checkout session
-        const response = await fetch('https://api.dodopayments.com/v1/checkout/sessions', {
+        const response = await fetch(`${baseUrl}/v1/checkout/sessions`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
