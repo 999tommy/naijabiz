@@ -336,9 +336,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                                     )}
                                     <div className="text-xs text-gray-500">
                                         <p>Images are automatically compressed</p>
-                                        <p className="mt-1">
-                                            Max final size: 200KB
-                                        </p>
+
                                     </div>
                                 </div>
                             </div>

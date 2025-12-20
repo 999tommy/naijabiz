@@ -352,7 +352,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                             </div>
                             <div className="text-sm text-gray-500">
                                 <p className="font-medium text-gray-700">Business Logo</p>
-                                <p>Automatically compressed to under 200KB.</p>
+                            
                             </div>
                         </div>
 
