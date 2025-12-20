@@ -21,6 +21,7 @@ import {
     Shield,
     Upload
 } from 'lucide-react'
+import { CategorySelect } from '@/components/CategorySelect'
 
 interface SettingsClientProps {
     user: User
@@ -312,18 +313,12 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">Category</label>
-                                <select
+                                <CategorySelect
                                     value={categoryId}
-                                    onChange={(e) => setCategoryId(e.target.value)}
-                                    className="flex h-11 w-full rounded-lg border-2 border-gray-200 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                                >
-                                    <option value="">Select category</option>
-                                    {categories.map((cat) => (
-                                        <option key={cat.id} value={cat.id}>
-                                            {cat.icon} {cat.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                    onChange={setCategoryId}
+                                    categories={categories}
+                                    placeholder="Select category"
+                                />
                             </div>
                         </div>
 

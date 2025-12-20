@@ -15,6 +15,7 @@ import {
     Package,
     Instagram
 } from 'lucide-react'
+import { getCategoryIcon } from '@/lib/category-icons'
 import { UpvoteButton } from '@/components/UpvoteButton'
 import { BusinessShareButton } from '@/components/BusinessShareButton'
 
@@ -197,8 +198,8 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
 
                             <div className="flex flex-wrap items-center gap-4 mt-4">
                                 {business.category && (
-                                    <Badge variant="outline">
-                                        {business.category.icon} {business.category.name}
+                                    <Badge variant="outline" className="gap-1.5 pl-1.5">
+                                        {getCategoryIcon(business.category.name)} {business.category.name}
                                     </Badge>
                                 )}
                                 {business.location && (

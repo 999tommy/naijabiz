@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Mail, Key, Loader2, Store, CheckCircle, ShieldCheck, Sparkles } from 'lucide-react'
+import { CategorySelect } from '@/components/CategorySelect'
 import type { Category } from '@/lib/types'
 
 type AuthMethod = 'password' | 'magic-link'
@@ -425,19 +426,12 @@ export default function SignupPage() {
                                         <label htmlFor="category" className="text-sm font-medium text-gray-700">
                                             Category
                                         </label>
-                                        <select
-                                            id="category"
+                                        <CategorySelect
                                             value={categoryId}
-                                            onChange={(e) => setCategoryId(e.target.value)}
-                                            className="flex h-11 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                                        >
-                                            <option value="">Select...</option>
-                                            {categories.map((cat) => (
-                                                <option key={cat.id} value={cat.id}>
-                                                    {cat.icon} {cat.name}
-                                                </option>
-                                            ))}
-                                        </select>
+                                            onChange={setCategoryId}
+                                            categories={categories}
+                                            placeholder="Select..."
+                                        />
                                     </div>
                                 </div>
 

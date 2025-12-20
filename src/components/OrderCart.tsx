@@ -12,7 +12,9 @@ import {
     Trash2,
     X,
     MessageCircle,
-    Send
+    Send,
+    Package,
+    Instagram
 } from 'lucide-react'
 
 interface OrderCartProps {
@@ -126,8 +128,8 @@ Please confirm my order. Thank you!`
                                     className="object-cover"
                                 />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-4xl">
-                                    📦
+                                <div className="w-full h-full flex items-center justify-center text-gray-300">
+                                    <Package className="w-12 h-12" />
                                 </div>
                             )}
                         </div>
@@ -198,8 +200,8 @@ Please confirm my order. Thank you!`
                                                     className="rounded-lg object-cover"
                                                 />
                                             ) : (
-                                                <div className="w-[60px] h-[60px] bg-gray-200 rounded-lg flex items-center justify-center text-2xl">
-                                                    📦
+                                                <div className="w-[60px] h-[60px] bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
+                                                    <Package className="w-6 h-6" />
                                                 </div>
                                             )}
                                             <div className="flex-1 min-w-0">
@@ -310,7 +312,7 @@ Please confirm my order. Thank you!`
                                                         : 'border-gray-200 hover:border-gray-300'
                                                         }`}
                                                 >
-                                                    📷 Instagram
+                                                    <Instagram className="w-5 h-5" /> Instagram
                                                 </button>
                                             )}
                                         </div>
