@@ -36,6 +36,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
     const [logoPreview, setLogoPreview] = useState<string | null>(user.logo_url)
     const [verificationFile, setVerificationFile] = useState<File | null>(null)
     const [verificationUploading, setVerificationUploading] = useState(false)
+    const [upgradeBillingCycle, setUpgradeBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
 
     // Form fields
     const [businessName, setBusinessName] = useState(user.business_name || '')
@@ -209,7 +210,10 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
             const response = await fetch('/api/payment/create-checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: user.id }),
+                body: JSON.stringify({
+                    userId: user.id,
+                    billing: upgradeBillingCycle
+                }),
             })
 
             const data = await response.json()
@@ -426,7 +430,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                             )}
                         </div>
                     ) : (
-                        <div className="space-y-4">
+                        <div className="space-y-6">
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <h4 className="font-medium">Free Plan includes:</h4>
@@ -452,31 +456,64 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                             <CheckCircle2 className="w-4 h-4 text-green-500" />
                                             Customer reviews
                                         </li>
-                                        <li className="flex items-center gap-1">
-                                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                            Featured in search
-                                        </li>
-                                        <li className="flex items-center gap-1">
-                                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                            Page view analytics
-                                        </li>
                                     </ul>
                                 </div>
                             </div>
 
-                            <Button onClick={handleUpgrade} disabled={loading} className="w-full sm:w-auto">
-                                {loading ? (
-                                    <>
-                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                        Processing...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Crown className="w-4 h-4 mr-2" />
-                                        Upgrade to Pro - ₦1,000/mo
-                                    </>
-                                )}
-                            </Button>
+                            <div className="flex flex-col gap-6 p-6 rounded-2xl bg-orange-50/50 border border-orange-100">
+                                <div>
+                                    <h4 className="font-bold text-gray-900">Select your billing cycle</h4>
+                                    <p className="text-sm text-gray-500">Choose how you want to pay</p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => setUpgradeBillingCycle('monthly')}
+                                        className={`p-4 rounded-xl border-2 text-left transition-all ${upgradeBillingCycle === 'monthly'
+                                            ? 'border-orange-500 bg-white shadow-md'
+                                            : 'border-gray-100 bg-white/50 hover:border-orange-200'
+                                            }`}
+                                    >
+                                        <div className="text-sm font-medium text-gray-500">Monthly</div>
+                                        <div className="text-xl font-bold text-gray-900 mt-1">₦1,000<span className="text-xs font-normal">/mo</span></div>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setUpgradeBillingCycle('yearly')}
+                                        className={`p-4 rounded-xl border-2 text-left transition-all relative overflow-hidden ${upgradeBillingCycle === 'yearly'
+                                            ? 'border-orange-500 bg-white shadow-md'
+                                            : 'border-gray-100 bg-white/50 hover:border-orange-200'
+                                            }`}
+                                    >
+                                        <div className="absolute top-0 right-0 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-lg">
+                                            SAVE 37%
+                                        </div>
+                                        <div className="text-sm font-medium text-gray-500">Yearly</div>
+                                        <div className="text-xl font-bold text-gray-900 mt-1">₦7,500<span className="text-xs font-normal">/yr</span></div>
+                                    </button>
+                                </div>
+
+                                <Button
+                                    type="button"
+                                    onClick={handleUpgrade}
+                                    disabled={loading}
+                                    size="lg"
+                                    className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold h-12 shadow-lg shadow-orange-100"
+                                >
+                                    {loading ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            Redirecting to payment...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Crown className="w-4 h-4 mr-2" />
+                                            {upgradeBillingCycle === 'yearly' ? 'Upgrade Yearly - ₦7,500' : 'Upgrade Monthly - ₦1,000'}
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
                         </div>
                     )}
                 </CardContent>
@@ -572,7 +609,8 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                         )}
                     </CardContent>
                 </Card>
-            )}
-        </div>
+            )
+            }
+        </div >
     )
 }

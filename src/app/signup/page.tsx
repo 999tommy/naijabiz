@@ -27,6 +27,7 @@ export default function SignupPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [message, setMessage] = useState('')
+    const [agreed, setAgreed] = useState(false)
     const router = useRouter()
     const supabase = createClient()
 
@@ -99,7 +100,7 @@ export default function SignupPage() {
             const { error } = await supabase.auth.signInWithOtp({
                 email: emailOrPhone,
                 options: {
-                    emailRedirectTo: `${window.location.origin}/auth/callback?signup=true`,
+                    emailRedirectTo: `${window.location.origin}/auth/callback?signup=true&next=/dashboard`,
                 },
             })
             if (error) throw error
@@ -281,7 +282,21 @@ export default function SignupPage() {
                                             </div>
                                         )}
 
-                                        <Button type="submit" className="w-full h-12 text-base bg-orange-600 hover:bg-orange-700 shadow-lg shadow-orange-100" disabled={loading}>
+                                        <div className="flex items-start gap-2 py-2">
+                                            <input
+                                                type="checkbox"
+                                                id="agree-password"
+                                                checked={agreed}
+                                                onChange={(e) => setAgreed(e.target.checked)}
+                                                className="mt-1 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-600 cursor-pointer"
+                                                required
+                                            />
+                                            <label htmlFor="agree-password" className="text-sm text-gray-600 cursor-pointer text-left">
+                                                I agree to the <Link href="/terms" className="text-orange-600 hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-orange-600 hover:underline">Privacy Policy</Link>
+                                            </label>
+                                        </div>
+
+                                        <Button type="submit" className="w-full h-12 text-base bg-orange-600 hover:bg-orange-700 shadow-lg shadow-orange-100" disabled={loading || !agreed}>
                                             {loading ? (
                                                 <>
                                                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -323,7 +338,21 @@ export default function SignupPage() {
                                             </div>
                                         )}
 
-                                        <Button type="submit" className="w-full h-12 text-base bg-orange-600 hover:bg-orange-700 shadow-lg shadow-orange-100" disabled={loading}>
+                                        <div className="flex items-start gap-2 py-2">
+                                            <input
+                                                type="checkbox"
+                                                id="agree-magic"
+                                                checked={agreed}
+                                                onChange={(e) => setAgreed(e.target.checked)}
+                                                className="mt-1 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-600 cursor-pointer"
+                                                required
+                                            />
+                                            <label htmlFor="agree-magic" className="text-sm text-gray-600 cursor-pointer text-left">
+                                                I agree to the <Link href="/terms" className="text-orange-600 hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-orange-600 hover:underline">Privacy Policy</Link>
+                                            </label>
+                                        </div>
+
+                                        <Button type="submit" className="w-full h-12 text-base bg-orange-600 hover:bg-orange-700 shadow-lg shadow-orange-100" disabled={loading || !agreed}>
                                             {loading ? (
                                                 <>
                                                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />

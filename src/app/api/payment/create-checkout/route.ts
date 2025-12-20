@@ -3,11 +3,16 @@ import { createServiceClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
     try {
-        const { userId } = await request.json()
+        const { userId, billing } = await request.json()
 
         if (!userId) {
             return NextResponse.json({ error: 'User ID required' }, { status: 400 })
         }
+
+        const isYearly = billing === 'yearly'
+        const productId = isYearly
+            ? process.env.DODOPAYMENT_PRODUCT_ID_YEARLY
+            : process.env.DODOPAYMENT_PRODUCT_ID
 
         // Get user
         const supabase = await createServiceClient()
@@ -41,10 +46,11 @@ export async function POST(request: NextRequest) {
                     street: 'N/A',
                     zipcode: '100001',
                 },
-                product_id: process.env.DODOPAYMENT_PRODUCT_ID, // Your Pro plan product ID
+                product_id: productId,
                 quantity: 1,
                 metadata: {
                     user_id: userId,
+                    billing_cycle: isYearly ? 'yearly' : 'monthly',
                 },
                 payment_link: false,
                 return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/settings?upgraded=true`,

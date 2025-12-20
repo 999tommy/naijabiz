@@ -19,6 +19,7 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [message, setMessage] = useState('')
+    const [agreed, setAgreed] = useState(false)
     const router = useRouter()
     const supabase = createClient()
 
@@ -81,7 +82,7 @@ export default function LoginPage() {
             const { error } = await supabase.auth.signInWithOtp({
                 email: emailOrPhone,
                 options: {
-                    emailRedirectTo: `${window.location.origin}/auth/callback`,
+                    emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
                 },
             })
             if (error) throw error
@@ -173,7 +174,21 @@ export default function LoginPage() {
                                     </p>
                                 )}
 
-                                <Button type="submit" className="w-full" disabled={loading}>
+                                <div className="flex items-start gap-2 py-2">
+                                    <input
+                                        type="checkbox"
+                                        id="agree-password"
+                                        checked={agreed}
+                                        onChange={(e) => setAgreed(e.target.checked)}
+                                        className="mt-1 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-600 cursor-pointer"
+                                        required
+                                    />
+                                    <label htmlFor="agree-password" className="text-sm text-gray-600 cursor-pointer">
+                                        I agree to the <Link href="/terms" className="text-orange-600 hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-orange-600 hover:underline">Privacy Policy</Link>
+                                    </label>
+                                </div>
+
+                                <Button type="submit" className="w-full" disabled={loading || !agreed}>
                                     {loading ? (
                                         <>
                                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -213,7 +228,21 @@ export default function LoginPage() {
                                     </div>
                                 )}
 
-                                <Button type="submit" className="w-full" disabled={loading}>
+                                <div className="flex items-start gap-2 py-2">
+                                    <input
+                                        type="checkbox"
+                                        id="agree-magic"
+                                        checked={agreed}
+                                        onChange={(e) => setAgreed(e.target.checked)}
+                                        className="mt-1 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-600 cursor-pointer"
+                                        required
+                                    />
+                                    <label htmlFor="agree-magic" className="text-sm text-gray-600 cursor-pointer">
+                                        I agree to the <Link href="/terms" className="text-orange-600 hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-orange-600 hover:underline">Privacy Policy</Link>
+                                    </label>
+                                </div>
+
+                                <Button type="submit" className="w-full" disabled={loading || !agreed}>
                                     {loading ? (
                                         <>
                                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -239,6 +268,11 @@ export default function LoginPage() {
                         </div>
                     </CardContent>
                 </Card>
+
+                <p className="text-center text-xs text-gray-400 mt-6 max-w-sm mx-auto leading-relaxed">
+                    By signing in, you agree to our <Link href="/terms" className="underline hover:text-gray-600">Terms</Link> and <Link href="/privacy" className="underline hover:text-gray-600">Privacy Policy</Link>.
+                    Your data is secure and encrypted.
+                </p>
             </div>
         </div>
     )

@@ -17,6 +17,7 @@ import {
   Flame
 } from 'lucide-react'
 import { UpvoteButton } from '@/components/UpvoteButton'
+import { PricingSection } from '@/components/PricingSection'
 
 export const dynamic = 'force-dynamic'
 
@@ -372,91 +373,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section className="py-24 bg-[#faf8f3]" id="pricing">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Simple Pricing</h2>
+      <PricingSection />
 
-          <div className="grid md:grid-cols-2 gap-8 items-start">
-            {/* Free Plan */}
-            <div className="p-8 rounded-3xl border border-gray-200 bg-white shadow-sm">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Free Plan</h3>
-              <p className="text-gray-500 mb-6">Forever.</p>
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-center gap-3 text-gray-600">
-                  <CheckCircle2 className="w-5 h-5 text-gray-300" />
-                  Your own business page
-                </li>
-                <li className="flex items-center gap-3 text-gray-600">
-                  <CheckCircle2 className="w-5 h-5 text-gray-300" />
-                  <strong>Up to 3 products</strong>
-                </li>
-                <li className="flex items-center gap-3 text-gray-600">
-                  <CheckCircle2 className="w-5 h-5 text-gray-300" />
-                  WhatsApp contact button
-                </li>
-                <li className="flex items-center gap-3 text-gray-600">
-                  <CheckCircle2 className="w-5 h-5 text-gray-300" />
-                  Shareable link
-                </li>
-                <li className="flex items-center gap-3 text-gray-600">
-                  <CheckCircle2 className="w-5 h-5 text-gray-300" />
-                  Appear in search
-                </li>
-              </ul>
-              <Link href="/signup">
-                <Button className="w-full bg-white text-gray-900 border border-gray-200 hover:bg-gray-50 rounded-lg h-12 font-medium">
-                  Create free page
-                </Button>
-              </Link>
-            </div>
-
-            {/* Pro Plan */}
-            <div className="p-8 rounded-3xl border border-orange-200 bg-white relative shadow-xl overflow-hidden">
-              <div className="absolute top-5 right-5 bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
-                Recommended
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Pro Plan</h3>
-              <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-4xl font-bold text-orange-600">₦1,000</span>
-                <span className="text-gray-500">/month</span>
-              </div>
-
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-center gap-3 font-medium text-gray-900">
-                  <CheckCircle2 className="w-5 h-5 text-orange-500" />
-                  Everything in Free
-                </li>
-                <li className="flex items-center gap-3 font-medium text-gray-900">
-                  <CheckCircle2 className="w-5 h-5 text-orange-500" />
-                  <strong>Unlimited products</strong>
-                </li>
-                <li className="flex items-center gap-3 font-medium text-gray-900">
-                  <CheckCircle2 className="w-5 h-5 text-orange-500" />
-                  Green Verified Badge
-                </li>
-                <li className="flex items-center gap-3 font-medium text-gray-900">
-                  <CheckCircle2 className="w-5 h-5 text-orange-500" />
-                  Appear higher in search
-                </li>
-                <li className="flex items-center gap-3 font-medium text-gray-900">
-                  <CheckCircle2 className="w-5 h-5 text-orange-500" />
-                  Customer reviews
-                </li>
-                <li className="flex items-center gap-3 font-medium text-gray-900">
-                  <CheckCircle2 className="w-5 h-5 text-orange-500" />
-                  Page visit statistics
-                </li>
-              </ul>
-              <Link href="/signup">
-                <Button className="w-full bg-orange-600 text-white hover:bg-orange-700 rounded-lg h-12 shadow-lg shadow-orange-100 font-bold">
-                  Upgrade anytime
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Trust Section */}
       <section className="py-20 bg-white text-center border-t border-gray-100">

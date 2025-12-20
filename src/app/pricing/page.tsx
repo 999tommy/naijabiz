@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -5,6 +8,8 @@ import { VerifiedBadge } from '@/components/VerifiedBadge'
 import { CheckCircle2, ArrowRight, Star } from 'lucide-react'
 
 export default function PricingPage() {
+    const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-cream-50 to-white">
             {/* Header */}
@@ -33,14 +38,28 @@ export default function PricingPage() {
                     <p className="text-xl text-gray-500">
                         Start free, upgrade when you need more
                     </p>
+
+                    {/* Billing Toggle */}
+                    <div className="mt-8 flex items-center justify-center gap-4">
+                        <span className={`text-sm font-medium ${billingCycle === 'monthly' ? 'text-gray-900' : 'text-gray-500'}`}>Monthly</span>
+                        <button
+                            onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
+                            className="relative w-12 h-6 rounded-full bg-gray-200 transition-colors focus:outline-none"
+                        >
+                            <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-orange-500 transition-transform ${billingCycle === 'yearly' ? 'translate-x-6' : ''}`} />
+                        </button>
+                        <span className={`text-sm font-medium ${billingCycle === 'yearly' ? 'text-gray-900' : 'text-gray-500'}`}>
+                            Annual <span className="text-orange-600 text-xs font-bold ml-1">Save 37%</span>
+                        </span>
+                    </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                     {/* Free Plan */}
                     <div className="rounded-2xl border-2 border-gray-200 p-8 bg-white">
                         <div className="text-center mb-8">
-                            <h3 className="text-2xl font-semibold text-gray-900 mb-2">Free</h3>
-                            <div className="text-5xl font-bold text-gray-900">₦0</div>
+                            <h3 className="text-2xl font-semibold text-gray-900 mb-2 font-display">Free</h3>
+                            <div className="text-5xl font-bold text-gray-900 font-display">₦0</div>
                             <p className="text-gray-500 mt-2">Forever free</p>
                         </div>
 
@@ -83,20 +102,25 @@ export default function PricingPage() {
                     </div>
 
                     {/* Pro Plan */}
-                    <div className="rounded-2xl border-2 border-orange-500 p-8 bg-gradient-to-b from-orange-50 to-white relative overflow-hidden">
+                    <div className="rounded-2xl border-2 border-orange-500 p-8 bg-gradient-to-b from-orange-50 to-white relative overflow-hidden shadow-xl shadow-orange-100">
                         <div className="absolute top-0 right-0 bg-orange-500 text-white text-sm font-bold px-4 py-2 rounded-bl-lg">
                             MOST POPULAR
                         </div>
 
                         <div className="text-center mb-8">
-                            <h3 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center justify-center gap-2">
+                            <h3 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center justify-center gap-2 font-display">
                                 Pro
                                 <VerifiedBadge size="sm" />
                             </h3>
-                            <div className="text-5xl font-bold text-gray-900">
-                                ₦1,000<span className="text-xl font-normal text-gray-500">/mo</span>
+                            <div className="text-5xl font-bold text-gray-900 font-display">
+                                {billingCycle === 'monthly' ? '₦1,000' : '₦7,500'}
+                                <span className="text-xl font-normal text-gray-500">
+                                    /{billingCycle === 'monthly' ? 'mo' : 'yr'}
+                                </span>
                             </div>
-                            <p className="text-gray-500 mt-2">Everything you need</p>
+                            <p className="text-gray-500 mt-2">
+                                {billingCycle === 'monthly' ? 'Cancel anytime' : 'Best value'}
+                            </p>
                         </div>
 
                         <ul className="space-y-4 mb-8">
@@ -130,8 +154,8 @@ export default function PricingPage() {
                             </li>
                         </ul>
 
-                        <Link href="/signup" className="block">
-                            <Button className="w-full" size="lg">
+                        <Link href={`/signup?plan=pro&billing=${billingCycle}`} className="block">
+                            <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold h-12 shadow-lg" size="lg">
                                 Start 7-Day Free Trial
                                 <ArrowRight className="w-5 h-5 ml-2" />
                             </Button>

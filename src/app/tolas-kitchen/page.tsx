@@ -28,14 +28,14 @@ const MOCK_BUSINESS = {
         slug: 'food-drink',
         icon: '🍳'
     },
-    whatsapp_number: "2348000000000",
+    whatsapp_number: "2349116891270",
     instagram_handle: "tolas_kitchen_",
     tiktok_handle: "tolasText_kitchen_tiktok",
     is_verified: true,
     plan: 'pro',
     upvotes: 124,
     // Using a placeholder color background if no logo, or maybe a generic food icon
-    logo_url: null
+    logo_url: '/tolas-kitchen.png'
 }
 
 const MOCK_PRODUCTS = [

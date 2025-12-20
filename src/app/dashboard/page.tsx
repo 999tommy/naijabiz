@@ -13,7 +13,11 @@ import {
     TrendingUp,
     Plus,
     AlertCircle,
-    ArrowRight
+    ArrowRight,
+    Hand,
+    Rocket,
+    Lightbulb,
+    Check
 } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -66,8 +70,8 @@ export default async function DashboardPage() {
             <div className="max-w-6xl mx-auto">
                 {/* Welcome section */}
                 <div className="mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900">
-                        Welcome back, {user.business_name || 'there'}! 👋
+                    <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                        Welcome back, {user.business_name || 'there'}! <Hand className="w-6 h-6 text-yellow-500" />
                     </h1>
                     <p className="text-gray-500 mt-1">
                         Here&apos;s what&apos;s happening with your business today.
@@ -206,35 +210,35 @@ export default async function DashboardPage() {
                         <Card className="bg-gradient-to-br from-orange-50 to-white border-orange-200">
                             <CardHeader>
                                 <CardTitle className="text-lg flex items-center gap-2">
-                                    🚀 Upgrade to Pro
+                                    <Rocket className="w-5 h-5 text-orange-600" /> Upgrade to Pro
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <ul className="space-y-2 text-sm text-gray-600 mb-4">
                                     <li className="flex items-center gap-2">
-                                        <span className="text-green-500">✓</span>
+                                        <Check className="w-4 h-4 text-green-500" />
                                         Green verified badge for trust
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <span className="text-green-500">✓</span>
+                                        <Check className="w-4 h-4 text-green-500" />
                                         Unlimited product listings
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <span className="text-green-500">✓</span>
+                                        <Check className="w-4 h-4 text-green-500" />
                                         Customer reviews & ratings
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <span className="text-green-500">✓</span>
+                                        <Check className="w-4 h-4 text-green-500" />
                                         Featured in search results
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <span className="text-green-500">✓</span>
+                                        <Check className="w-4 h-4 text-green-500" />
                                         View who visited your page
                                     </li>
                                 </ul>
                                 <Link href="/dashboard/settings#upgrade">
                                     <Button className="w-full">
-                                        Upgrade Now - ₦1,400/mo
+                                        Upgrade Now
                                     </Button>
                                 </Link>
                             </CardContent>
@@ -242,7 +246,9 @@ export default async function DashboardPage() {
                     ) : (
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-lg">💡 Pro Tips</CardTitle>
+                                <CardTitle className="text-lg flex items-center gap-2">
+                                    <Lightbulb className="w-5 h-5 text-orange-500" /> Pro Tips
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <ul className="space-y-3 text-sm text-gray-600">

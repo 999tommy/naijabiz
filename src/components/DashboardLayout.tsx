@@ -18,6 +18,7 @@ import {
     Crown
 } from 'lucide-react'
 import type { User } from '@/lib/types'
+import { FeedbackModal } from './FeedbackModal'
 
 interface DashboardLayoutProps {
     children: React.ReactNode
@@ -165,11 +166,16 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                                     href="/dashboard/settings#upgrade"
                                     className="block text-center bg-white text-orange-600 rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-50 transition-colors"
                                 >
-                                    Upgrade Now - ₦1,400/mo
+                                    Upgrade Now - ₦1000/mo
                                 </Link>
                             </div>
                         </div>
                     )}
+
+                    {/* Feedback Button */}
+                    <div className="p-4 border-t border-gray-200">
+                        <FeedbackModal />
+                    </div>
 
                     {/* Logout */}
                     <div className="p-4 border-t border-gray-200">
