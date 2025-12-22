@@ -19,7 +19,12 @@ import {
     BookOpen,
     Plane,
     Hammer,
-    Gift
+    Gift,
+    SprayCan,
+    Truck,
+    Sprout,
+    ShoppingBasket,
+    WashingMachine
 } from 'lucide-react'
 
 export const getCategoryIcon = (categoryName: string) => {
@@ -43,6 +48,13 @@ export const getCategoryIcon = (categoryName: string) => {
     if (normalized.includes('baby') || normalized.includes('kid')) return <Baby className="w-4 h-4" />
     if (normalized.includes('sport') || normalized.includes('gym')) return <Dumbbell className="w-4 h-4" />
     if (normalized.includes('computer') || normalized.includes('digital')) return <Laptop className="w-4 h-4" />
+
+    // New Categories
+    if (normalized.includes('perfume') || normalized.includes('fragrance') || normalized.includes('scent') || normalized.includes('body spray')) return <SprayCan className="w-4 h-4" />
+    if (normalized.includes('logistics') || normalized.includes('delivery') || normalized.includes('dispatch') || normalized.includes('courier')) return <Truck className="w-4 h-4" />
+    if (normalized.includes('grocery') || normalized.includes('provision') || normalized.includes('supermarket') || normalized.includes('market')) return <ShoppingBasket className="w-4 h-4" />
+    if (normalized.includes('agriculture') || normalized.includes('farm') || normalized.includes('poultry') || normalized.includes('livestock')) return <Sprout className="w-4 h-4" />
+    if (normalized.includes('laundry') || normalized.includes('cleaning') || normalized.includes('dry clean')) return <WashingMachine className="w-4 h-4" />
 
     // Default fallback
     return <ShoppingBag className="w-4 h-4" />
