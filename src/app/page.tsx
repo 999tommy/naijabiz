@@ -198,9 +198,9 @@ export default async function HomePage() {
                       <div className="flex-1 min-w-0">
                         <Link href={`/${biz.business_slug}`} className="focus:outline-none">
                           <span className="absolute inset-0" aria-hidden="true" />
-                          <h3 className="text-base font-bold text-gray-900 flex items-center gap-1 min-w-0">
-                            <span className="truncate">{biz.business_name}</span>
-                            {biz.is_verified && <VerifiedBadge size="sm" showText={false} className="flex-shrink-0" />}
+                          <h3 className="text-base font-bold text-gray-900 leading-tight">
+                            {biz.business_name}
+                            {biz.is_verified && <VerifiedBadge size="sm" showText={false} className="ml-1.5 inline-flex align-middle" />}
                           </h3>
                           <p
                             className="text-sm text-gray-500 leading-snug break-words"
@@ -263,9 +263,9 @@ export default async function HomePage() {
                       <div className="flex-1 min-w-0">
                         <Link href={`/${biz.business_slug}`} className="focus:outline-none">
                           <span className="absolute inset-0" aria-hidden="true" />
-                          <h3 className="text-base font-bold text-gray-900 flex items-center gap-1 min-w-0">
-                            <span className="truncate">{biz.business_name}</span>
-                            {biz.is_verified && <VerifiedBadge size="sm" showText={false} className="flex-shrink-0" />}
+                          <h3 className="text-base font-bold text-gray-900 leading-tight">
+                            {biz.business_name}
+                            {biz.is_verified && <VerifiedBadge size="sm" showText={false} className="ml-1.5 inline-flex align-middle" />}
                           </h3>
                           <p
                             className="text-sm text-gray-500 leading-snug break-words"
