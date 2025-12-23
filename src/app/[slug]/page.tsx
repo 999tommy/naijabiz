@@ -14,7 +14,8 @@ import {
     Star,
     ArrowLeft,
     Package,
-    Instagram
+    Instagram,
+    LayoutDashboard
 } from 'lucide-react'
 import { getCategoryIcon } from '@/lib/category-icons'
 import { UpvoteButton } from '@/components/UpvoteButton'
@@ -141,6 +142,11 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
     if (!business || !business.business_name) {
         notFound()
     }
+
+    // Check if current user is the owner
+    const supabase = await createClient()
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+    const isOwner = currentUser?.id === business.id
     // ... rest of component
 
     const isPro = business.plan === 'pro'
@@ -167,7 +173,18 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                         <ArrowLeft className="w-5 h-5" />
                         <span className="hidden sm:inline">Back to Directory</span>
                     </Link>
-                    <BusinessShareButton businessName={business.business_name} />
+                    <div className="flex items-center gap-3">
+                        {isOwner && (
+                            <Link href="/dashboard">
+                                <Button variant="outline" className="text-orange-600 border-orange-200 hover:bg-orange-50 flex items-center gap-2">
+                                    <LayoutDashboard className="w-4 h-4" />
+                                    <span className="hidden sm:inline">Go to </span>
+                                    Dashboard
+                                </Button>
+                            </Link>
+                        )}
+                        <BusinessShareButton businessName={business.business_name} />
+                    </div>
                 </div>
             </header>
 

@@ -196,9 +196,10 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                 <header className="sticky top-0 z-30 h-16 bg-white/80 backdrop-blur border-b border-gray-200 flex items-center px-4">
                     <button
                         onClick={() => setSidebarOpen(true)}
-                        className="lg:hidden p-2 text-gray-500 hover:text-gray-700"
+                        className="lg:hidden p-2 text-gray-600 hover:text-gray-900 flex items-center gap-2"
                     >
                         <Menu className="w-6 h-6" />
+                        <span className="font-semibold text-sm">Menu</span>
                     </button>
                 </header>
 
