@@ -174,44 +174,51 @@ export default async function HomePage() {
               {businessOfTheDay && businessOfTheDay.length > 0 ? (
                 <div className="space-y-4">
                   {businessOfTheDay.map((biz: any, i: number) => (
-                    <div key={biz.id} className="group relative flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-white hover:border-orange-200 hover:shadow-md transition-all">
-                      <div className="flex-shrink-0 relative">
-                        <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden relative">
-                          {biz.logo_url ? (
-                            <Image
-                              src={biz.logo_url}
-                              alt={biz.business_name || ''}
-                              fill
-                              className="object-cover"
-                              sizes="64px"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-2xl bg-orange-100 text-orange-600 font-bold">
-                              {(biz.business_name || 'B').charAt(0)}
-                            </div>
-                          )}
+                    <div key={biz.id} className="group relative rounded-xl border border-gray-100 bg-white hover:border-orange-200 hover:shadow-md transition-all overflow-hidden">
+                      <div className="flex items-start gap-3 p-3 sm:p-4">
+                        {/* Rank Badge + Logo */}
+                        <div className="flex-shrink-0 relative">
+                          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-gray-100 overflow-hidden relative">
+                            {biz.logo_url ? (
+                              <Image
+                                src={biz.logo_url}
+                                alt={biz.business_name || ''}
+                                fill
+                                className="object-cover"
+                                sizes="56px"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-xl sm:text-2xl bg-orange-100 text-orange-600 font-bold">
+                                {(biz.business_name || 'B').charAt(0)}
+                              </div>
+                            )}
+                          </div>
+                          <div className="absolute -top-1.5 -left-1.5 w-5 h-5 sm:w-6 sm:h-6 bg-gray-900 text-white text-[10px] sm:text-xs font-bold rounded-full flex items-center justify-center border-2 border-white">
+                            {i + 1}
+                          </div>
                         </div>
-                        <div className="absolute -top-2 -left-2 w-6 h-6 bg-gray-900 text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-white">
-                          {i + 1}
+
+                        {/* Business Info */}
+                        <div className="flex-1 min-w-0 pr-12 sm:pr-16">
+                          <Link href={`/${biz.business_slug}`} className="focus:outline-none">
+                            <span className="absolute inset-0" aria-hidden="true" />
+                            <h3 className="text-sm sm:text-base font-bold text-gray-900 leading-tight truncate">
+                              {biz.business_name}
+                              {biz.is_verified && <VerifiedBadge size="sm" showText={false} className="ml-1 inline-flex align-middle" />}
+                            </h3>
+                            <p
+                              className="text-xs sm:text-sm text-gray-500 leading-snug mt-0.5"
+                              style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                            >
+                              {biz.description || 'No description provided.'}
+                            </p>
+                          </Link>
                         </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <Link href={`/${biz.business_slug}`} className="focus:outline-none">
-                          <span className="absolute inset-0" aria-hidden="true" />
-                          <h3 className="text-base font-bold text-gray-900 leading-tight">
-                            {biz.business_name}
-                            {biz.is_verified && <VerifiedBadge size="sm" showText={false} className="ml-1.5 inline-flex align-middle" />}
-                          </h3>
-                          <p
-                            className="text-sm text-gray-500 leading-snug break-words"
-                            style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
-                          >
-                            {biz.description || 'No description provided.'}
-                          </p>
-                        </Link>
-                      </div>
-                      <div className="relative z-10">
-                        <UpvoteButton userId={biz.id} initialUpvotes={biz.upvotes || 0} size="sm" />
+
+                        {/* Upvote Button - Positioned absolutely */}
+                        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10">
+                          <UpvoteButton userId={biz.id} initialUpvotes={biz.upvotes || 0} size="sm" className="h-8 px-2" />
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -235,48 +242,55 @@ export default async function HomePage() {
               {topBusinesses && topBusinesses.length > 0 ? (
                 <div className="space-y-4">
                   {topBusinesses.map((biz: any, i: number) => (
-                    <div key={biz.id} className="group relative flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-white hover:border-orange-200 hover:shadow-md transition-all">
-                      <div className="flex-shrink-0 relative">
-                        <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden relative">
-                          {biz.logo_url ? (
-                            <Image
-                              src={biz.logo_url}
-                              alt={biz.business_name || ''}
-                              fill
-                              className="object-cover"
-                              sizes="64px"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-2xl bg-orange-100 text-orange-600 font-bold">
-                              {(biz.business_name || 'B').charAt(0)}
-                            </div>
-                          )}
+                    <div key={biz.id} className="group relative rounded-xl border border-gray-100 bg-white hover:border-orange-200 hover:shadow-md transition-all overflow-hidden">
+                      <div className="flex items-start gap-3 p-3 sm:p-4">
+                        {/* Rank Badge + Logo */}
+                        <div className="flex-shrink-0 relative">
+                          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-gray-100 overflow-hidden relative">
+                            {biz.logo_url ? (
+                              <Image
+                                src={biz.logo_url}
+                                alt={biz.business_name || ''}
+                                fill
+                                className="object-cover"
+                                sizes="56px"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-xl sm:text-2xl bg-orange-100 text-orange-600 font-bold">
+                                {(biz.business_name || 'B').charAt(0)}
+                              </div>
+                            )}
+                          </div>
+                          <div className={`absolute -top-1.5 -left-1.5 w-5 h-5 sm:w-6 sm:h-6 text-[10px] sm:text-xs font-bold rounded-full flex items-center justify-center border-2 border-white ${i === 0 ? 'bg-yellow-400 text-yellow-900' :
+                            i === 1 ? 'bg-gray-300 text-gray-800' :
+                              i === 2 ? 'bg-orange-300 text-orange-900' :
+                                'bg-gray-100 text-gray-500'
+                            }`}>
+                            {i + 1}
+                          </div>
                         </div>
-                        <div className={`absolute -top-2 -left-2 w-6 h-6 text-xs font-bold rounded-full flex items-center justify-center border-2 border-white ${i === 0 ? 'bg-yellow-400 text-yellow-900' :
-                          i === 1 ? 'bg-gray-300 text-gray-800' :
-                            i === 2 ? 'bg-orange-300 text-orange-900' :
-                              'bg-gray-100 text-gray-500'
-                          }`}>
-                          {i + 1}
+
+                        {/* Business Info */}
+                        <div className="flex-1 min-w-0 pr-12 sm:pr-16">
+                          <Link href={`/${biz.business_slug}`} className="focus:outline-none">
+                            <span className="absolute inset-0" aria-hidden="true" />
+                            <h3 className="text-sm sm:text-base font-bold text-gray-900 leading-tight truncate">
+                              {biz.business_name}
+                              {biz.is_verified && <VerifiedBadge size="sm" showText={false} className="ml-1 inline-flex align-middle" />}
+                            </h3>
+                            <p
+                              className="text-xs sm:text-sm text-gray-500 leading-snug mt-0.5"
+                              style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                            >
+                              {biz.description || 'No description provided.'}
+                            </p>
+                          </Link>
                         </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <Link href={`/${biz.business_slug}`} className="focus:outline-none">
-                          <span className="absolute inset-0" aria-hidden="true" />
-                          <h3 className="text-base font-bold text-gray-900 leading-tight">
-                            {biz.business_name}
-                            {biz.is_verified && <VerifiedBadge size="sm" showText={false} className="ml-1.5 inline-flex align-middle" />}
-                          </h3>
-                          <p
-                            className="text-sm text-gray-500 leading-snug break-words"
-                            style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
-                          >
-                            {biz.description || 'No description provided.'}
-                          </p>
-                        </Link>
-                      </div>
-                      <div className="relative z-10">
-                        <UpvoteButton userId={biz.id} initialUpvotes={biz.upvotes || 0} size="sm" />
+
+                        {/* Upvote Button - Positioned absolutely */}
+                        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10">
+                          <UpvoteButton userId={biz.id} initialUpvotes={biz.upvotes || 0} size="sm" className="h-8 px-2" />
+                        </div>
                       </div>
                     </div>
                   ))}
