@@ -8,9 +8,10 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Mail, Key, Loader2, Store, CheckCircle, ShieldCheck, Sparkles } from 'lucide-react'
+import { Mail, Key, Loader2, Store, CheckCircle, ShieldCheck, Sparkles, ImagePlus, X } from 'lucide-react'
 import { CategorySelect } from '@/components/CategorySelect'
 import type { Category } from '@/lib/types'
+import { compressImage } from '@/lib/image-compression'
 
 type SignupStep = 'auth' | 'business'
 
@@ -23,6 +24,12 @@ export default function SignupPage() {
     const [location, setLocation] = useState('')
     const [categoryId, setCategoryId] = useState('')
     const [categories, setCategories] = useState<Category[]>([])
+    const [description, setDescription] = useState('')
+    const [instagramHandle, setInstagramHandle] = useState('')
+    const [tiktokHandle, setTiktokHandle] = useState('')
+    const [logoFile, setLogoFile] = useState<File | null>(null)
+    const [logoPreview, setLogoPreview] = useState<string | null>(null)
+    const [logoCompressing, setLogoCompressing] = useState(false)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [message, setMessage] = useState('')
@@ -90,6 +97,40 @@ export default function SignupPage() {
     }
 
 
+
+    const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        setLogoCompressing(true)
+        try {
+            const compressedFile = await compressImage(file)
+            setLogoFile(compressedFile)
+            setLogoPreview(URL.createObjectURL(compressedFile))
+        } catch (err) {
+            console.error('Logo compression error:', err)
+        } finally {
+            setLogoCompressing(false)
+        }
+    }
+
+    const uploadImage = async (file: File, path: string): Promise<string | null> => {
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${path}/${Date.now()}.${fileExt}`
+
+        const { error: uploadError } = await supabase.storage
+            .from('business-images')
+            .upload(fileName, file)
+
+        if (uploadError) return null
+
+        const { data: { publicUrl } } = supabase.storage
+            .from('business-images')
+            .getPublicUrl(fileName)
+
+        return publicUrl
+    }
+
     const handleCreateBusiness = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
@@ -122,6 +163,11 @@ export default function SignupPage() {
                 formattedWhatsApp = '234' + formattedWhatsApp.slice(1)
             }
 
+            let logoUrl = null
+            if (logoFile) {
+                logoUrl = await uploadImage(logoFile, `${user.id}/logo`)
+            }
+
             const { error: insertError } = await supabase.from('users').insert({
                 id: user.id,
                 email: user.email || null,
@@ -129,6 +175,10 @@ export default function SignupPage() {
                 business_name: businessName,
                 business_slug: finalSlug,
                 whatsapp_number: formattedWhatsApp,
+                description,
+                instagram_handle: instagramHandle.replace('@', ''),
+                tiktok_handle: tiktokHandle.replace('@', ''),
+                logo_url: logoUrl,
                 location,
                 category_id: categoryId || null,
                 plan: 'free',
@@ -267,6 +317,49 @@ export default function SignupPage() {
 
                         {step === 'business' && (
                             <form onSubmit={handleCreateBusiness} className="space-y-5">
+                                {/* Logo Upload */}
+                                <div className="flex justify-center mb-6">
+                                    <div className="relative">
+                                        {logoCompressing ? (
+                                            <div className="w-24 h-24 rounded-full border-2 border-gray-200 flex items-center justify-center bg-gray-50">
+                                                <Loader2 className="w-6 h-6 text-orange-500 animate-spin" />
+                                            </div>
+                                        ) : logoPreview ? (
+                                            <div className="relative group">
+                                                <Image
+                                                    src={logoPreview}
+                                                    alt="Logo"
+                                                    width={96}
+                                                    height={96}
+                                                    className="w-24 h-24 rounded-full object-cover border-2 border-orange-100 shadow-sm"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setLogoFile(null)
+                                                        setLogoPreview(null)
+                                                    }}
+                                                    className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
+                                                >
+                                                    <X className="w-3 h-3" />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <label className="w-24 h-24 rounded-full border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-orange-500 hover:bg-orange-50/50 transition-all text-gray-400 hover:text-orange-500">
+                                                <ImagePlus className="w-6 h-6 mb-1" />
+                                                <span className="text-[10px] uppercase font-bold tracking-wider">Logo</span>
+                                                <span className="text-[9px] text-gray-400 mt-0.5 font-normal">(Optional)</span>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleLogoChange}
+                                                    className="hidden"
+                                                />
+                                            </label>
+                                        )}
+                                    </div>
+                                </div>
+
                                 <div className="space-y-2">
                                     <label htmlFor="businessName" className="text-sm font-medium text-gray-700">
                                         Business Name
@@ -279,6 +372,20 @@ export default function SignupPage() {
                                         onChange={(e) => setBusinessName(e.target.value)}
                                         className="h-11"
                                         required
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label htmlFor="description" className="text-sm font-medium text-gray-700 flex justify-between">
+                                        <span>Short Description</span>
+                                        <span className="text-gray-400 font-normal text-xs">(Optional)</span>
+                                    </label>
+                                    <textarea
+                                        id="description"
+                                        placeholder="Briefly describe what you sell..."
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                        className="flex w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-h-[80px]"
                                     />
                                 </div>
 
@@ -325,6 +432,37 @@ export default function SignupPage() {
                                             onChange={setCategoryId}
                                             categories={categories}
                                             placeholder="Select..."
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label htmlFor="instagram" className="text-sm font-medium text-gray-700 flex justify-between">
+                                            <span>Instagram</span>
+                                            <span className="text-gray-400 font-normal text-xs">(Optional)</span>
+                                        </label>
+                                        <Input
+                                            id="instagram"
+                                            type="text"
+                                            placeholder="@yourbusiness"
+                                            value={instagramHandle}
+                                            onChange={(e) => setInstagramHandle(e.target.value)}
+                                            className="h-11"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label htmlFor="tiktok" className="text-sm font-medium text-gray-700 flex justify-between">
+                                            <span>TikTok</span>
+                                            <span className="text-gray-400 font-normal text-xs">(Optional)</span>
+                                        </label>
+                                        <Input
+                                            id="tiktok"
+                                            type="text"
+                                            placeholder="@yourbusiness"
+                                            value={tiktokHandle}
+                                            onChange={(e) => setTiktokHandle(e.target.value)}
+                                            className="h-11"
                                         />
                                     </div>
                                 </div>
