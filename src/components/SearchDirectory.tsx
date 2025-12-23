@@ -157,7 +157,7 @@ export function SearchDirectory({ initialBusinesses = [], showFilters = true, li
             )}
 
             {/* Results */}
-            <div className="space-y-3">
+            <div className="flex flex-col gap-4">
                 {loading ? (
                     <div className="py-12 text-center text-gray-500">
                         <div className="animate-spin w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full mx-auto mb-4"></div>
