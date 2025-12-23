@@ -6,7 +6,7 @@ export const runtime = 'nodejs'
 type BillingCycle = 'monthly' | 'yearly'
 
 const AMOUNTS_KOBO: Record<BillingCycle, number> = {
-    monthly: 1500 * 100,
+    monthly: 1000 * 100,
     yearly: 7500 * 100,
 }
 
