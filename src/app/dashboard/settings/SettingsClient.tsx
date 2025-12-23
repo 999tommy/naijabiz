@@ -285,6 +285,34 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
         }
     }
 
+    const handleOneTimePayment = async (cycle: 'monthly' | 'yearly') => {
+        setLoading(true)
+        try {
+            const response = await fetch('/api/paystack/initialize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: user.id,
+                    billing: cycle,
+                    type: 'onetime'
+                }),
+            })
+
+            const data = await response.json()
+
+            if (data.url) {
+                window.location.href = data.url
+            } else {
+                throw new Error(data.error || 'Failed to create checkout')
+            }
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Failed to start payment'
+            setMessage({ type: 'error', text: errorMessage })
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <div className="max-w-4xl mx-auto space-y-6">
             <div>
@@ -573,6 +601,31 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                         </>
                                     )}
                                 </Button>
+
+                                {/* One-Time Payment Option */}
+                                <div className="text-center pt-4 border-t border-orange-100">
+                                    <p className="text-sm text-gray-500 mb-3">Don't have a card? Use Bank Transfer or USSD</p>
+                                    <div className="flex gap-3 justify-center">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => handleOneTimePayment('monthly')}
+                                            disabled={loading}
+                                            className="text-gray-600 border-orange-200 hover:bg-orange-50 hover:text-orange-700"
+                                        >
+                                            Pay ₦1,000 (1 Month)
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => handleOneTimePayment('yearly')}
+                                            disabled={loading}
+                                            className="text-gray-600 border-orange-200 hover:bg-orange-50 hover:text-orange-700"
+                                        >
+                                            Pay ₦7,500 (1 Year)
+                                        </Button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )}

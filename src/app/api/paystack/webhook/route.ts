@@ -55,7 +55,9 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ received: true })
         }
 
-        if (event.event !== 'charge.success') {
+        // We handle charge.success for one-time payments and invoice.payment_failed/success for subscriptions if needed
+        // For simplicity, charge.success covers valid payments for both one-time and initial subscription charges
+        if (event.event !== 'charge.success' && event.event !== 'subscription.create') {
             return NextResponse.json({ received: true })
         }
 
@@ -64,9 +66,11 @@ export async function POST(request: NextRequest) {
         const email: string | undefined = data?.customer?.email
         const customerCode: string | undefined = data?.customer?.customer_code
         const planCode: string | undefined = data?.plan?.plan_code || data?.plan
+        const amount: number | undefined = data?.amount // in kobo
 
         const metadataUserId: string | undefined = data?.metadata?.user_id
         const metadataCycle: BillingCycle | undefined = data?.metadata?.billing_cycle
+        const paymentType: 'subscription' | 'onetime' | undefined = data?.metadata?.payment_type
 
         const billingCycle: BillingCycle = metadataCycle === 'yearly' ? 'yearly' : 'monthly'
 
@@ -103,9 +107,9 @@ export async function POST(request: NextRequest) {
 
         const { data: user } = await (async () => {
             if (userId) {
-                return await supabase.from('users').select('id, email').eq('id', userId).maybeSingle()
+                return await supabase.from('users').select('id, email, plan').eq('id', userId).maybeSingle()
             }
-            return await supabase.from('users').select('id, email').eq('email', userLookupEmail!).maybeSingle()
+            return await supabase.from('users').select('id, email, plan').eq('email', userLookupEmail!).maybeSingle()
         })()
 
         if (!user?.id) {
@@ -120,6 +124,10 @@ export async function POST(request: NextRequest) {
             })
             return NextResponse.json({ received: true })
         }
+
+        // Verify amount for one-time payments if possible
+        // const expectedAmount = AMOUNTS_KOBO[billingCycle];
+        // if (paymentType === 'onetime' && amount !== expectedAmount) { ... }
 
         const subscriptionEndsAt = computeSubscriptionEndsAt(billingCycle)
 
@@ -147,7 +155,7 @@ export async function POST(request: NextRequest) {
             .from('users')
             .update({
                 plan: 'pro',
-                subscription_id: reference,
+                subscription_id: reference, // store reference as sub id for one-time
                 subscription_ends_at: subscriptionEndsAt.toISOString(),
                 is_verified: true,
                 paystack_customer_code: customerCode || null,

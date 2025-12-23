@@ -12,9 +12,10 @@ const AMOUNTS_KOBO: Record<BillingCycle, number> = {
 
 export async function POST(request: NextRequest) {
     try {
-        const { userId, billing } = (await request.json()) as {
+        const { userId, billing, type = 'subscription' } = (await request.json()) as {
             userId?: string
             billing?: BillingCycle
+            type?: 'subscription' | 'onetime'
         }
 
         if (!userId) {
@@ -29,14 +30,19 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
         }
 
-        const planCode =
-            billingCycle === 'yearly'
-                ? process.env.PAYSTACK_PLAN_CODE_YEARLY
-                : process.env.PAYSTACK_PLAN_CODE_MONTHLY
+        let planCode: string | undefined
 
-        if (!planCode) {
-            console.error('Missing Paystack plan code for billing:', billingCycle)
-            return NextResponse.json({ error: 'Plan not available' }, { status: 400 })
+        // Only require plan code if it's a subscription
+        if (type === 'subscription') {
+            planCode =
+                billingCycle === 'yearly'
+                    ? process.env.PAYSTACK_PLAN_CODE_YEARLY
+                    : process.env.PAYSTACK_PLAN_CODE_MONTHLY
+
+            if (!planCode) {
+                console.error('Missing Paystack plan code for billing:', billingCycle)
+                return NextResponse.json({ error: 'Plan not available' }, { status: 400 })
+            }
         }
 
         const supabase = await createServiceClient()
@@ -56,23 +62,30 @@ export async function POST(request: NextRequest) {
 
         const callbackUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/settings?upgraded=true`
 
+        const payload: any = {
+            email: user.email,
+            amount: AMOUNTS_KOBO[billingCycle],
+            callback_url: callbackUrl,
+            channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer'],
+            metadata: {
+                user_id: userId,
+                billing_cycle: billingCycle,
+                payment_type: type, // distinct metadata to identify standard vs sub
+            },
+        }
+
+        // Only add plan if it's a subscription
+        if (type === 'subscription' && planCode) {
+            payload.plan = planCode
+        }
+
         const response = await fetch('https://api.paystack.co/transaction/initialize', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${secretKey}`,
             },
-            body: JSON.stringify({
-                email: user.email,
-                amount: AMOUNTS_KOBO[billingCycle],
-                plan: planCode,
-                callback_url: callbackUrl,
-                channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer'],
-                metadata: {
-                    user_id: userId,
-                    billing_cycle: billingCycle,
-                },
-            }),
+            body: JSON.stringify(payload),
         })
 
         const raw = await response.text()
