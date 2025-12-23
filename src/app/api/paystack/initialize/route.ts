@@ -67,6 +67,7 @@ export async function POST(request: NextRequest) {
                 amount: AMOUNTS_KOBO[billingCycle],
                 plan: planCode,
                 callback_url: callbackUrl,
+                channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer'],
                 metadata: {
                     user_id: userId,
                     billing_cycle: billingCycle,

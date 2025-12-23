@@ -14,72 +14,71 @@ interface BusinessCardProps {
 export function BusinessCard({ business, rank, isNew }: BusinessCardProps) {
     return (
         <Link href={`/${business.business_slug}`}>
-            <div className="bg-white rounded-xl border border-gray-200 p-4 card-hover group">
-                <div className="flex items-start gap-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-4 card-hover group">
+                <div className="flex items-start gap-3 sm:gap-4">
                     {/* Rank number */}
                     {rank && (
-                        <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-gray-400 font-semibold">
+                        <div className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-gray-400 font-semibold text-sm sm:text-base mt-2 sm:mt-0">
                             {rank}
                         </div>
                     )}
 
                     {/* Logo */}
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 relative">
                         {business.logo_url ? (
                             <Image
                                 src={business.logo_url}
                                 alt={business.business_name || ''}
                                 width={64}
                                 height={64}
-                                className="rounded-lg object-cover"
+                                className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover"
                             />
                         ) : (
-                            <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xl font-bold">
+                            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-lg sm:text-xl font-bold">
                                 {business.business_name?.[0]?.toUpperCase() || 'B'}
                             </div>
                         )}
+                        {/* Mobile Status Badge for PRO/Verified could go here if crowded */}
                     </div>
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="font-semibold text-gray-900 group-hover:text-orange-600 transition-colors truncate">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                            <h3 className="font-semibold text-gray-900 text-sm sm:text-base group-hover:text-orange-600 transition-colors truncate max-w-full">
                                 {business.business_name}
                             </h3>
                             {business.is_verified && business.plan === 'pro' && (
                                 <VerifiedBadge size="sm" showText={false} />
                             )}
                             {isNew && (
-                                <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-medium rounded-full">
+                                <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-[10px] sm:text-xs font-medium rounded-full">
                                     NEW
                                 </span>
                             )}
                         </div>
 
-                        {business.description && (
-                            <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                                {business.description}
-                            </p>
-                        )}
+                        <p className="text-xs sm:text-sm text-gray-500 mb-2 line-clamp-2 leading-relaxed">
+                            {business.description || 'No description provided.'}
+                        </p>
 
-                        <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+                        <div className="flex items-center gap-3 text-xs text-gray-400 flex-wrap">
                             {business.category && (
-                                <span className="flex items-center gap-1">
+                                <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-md">
                                     <span>{business.category.icon}</span>
-                                    <span>{business.category.name}</span>
+                                    <span className="truncate max-w-[100px]">{business.category.name}</span>
                                 </span>
                             )}
                             {business.location && (
-                                <span className="flex items-center gap-1">
+                                <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-md">
                                     <MapPin className="w-3 h-3" />
-                                    <span>{business.location}</span>
+                                    <span className="truncate max-w-[100px]">{business.location}</span>
                                 </span>
                             )}
                         </div>
                     </div>
 
-                    {/* Visit arrow */}
-                    <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {/* Visit arrow - Desktop only to save space on mobile */}
+                    <div className="hidden sm:block flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity self-center">
                         <div className="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center text-gray-400 group-hover:border-orange-500 group-hover:text-orange-500 transition-colors">
                             <ExternalLink className="w-4 h-4" />
                         </div>
