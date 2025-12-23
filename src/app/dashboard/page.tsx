@@ -19,6 +19,7 @@ import {
     Lightbulb,
     Check
 } from 'lucide-react'
+import { OnboardingAssistant } from '@/components/OnboardingAssistant'
 
 export const dynamic = 'force-dynamic'
 
@@ -78,21 +79,9 @@ export default async function DashboardPage() {
                     </p>
                 </div>
 
-                {/* Incomplete profile alert */}
-                {!hasCompletedProfile && (
-                    <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-3">
-                        <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                        <div className="flex-1">
-                            <p className="font-medium text-yellow-800">Complete your profile</p>
-                            <p className="text-sm text-yellow-700 mt-1">
-                                Add your business details to appear in the directory and receive orders.
-                            </p>
-                        </div>
-                        <Link href="/dashboard/settings">
-                            <Button size="sm">Complete Profile</Button>
-                        </Link>
-                    </div>
-                )}
+                <OnboardingAssistant user={user} productCount={stats.products} />
+
+
 
                 {/* Stats cards */}
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
