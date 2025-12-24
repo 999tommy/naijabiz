@@ -202,9 +202,9 @@ export default async function HomePage() {
                         <div className="flex-1 min-w-0 pr-12 sm:pr-16">
                           <Link href={`/${biz.business_slug}`} className="focus:outline-none">
                             <span className="absolute inset-0" aria-hidden="true" />
-                            <h3 className="text-sm sm:text-base font-bold text-gray-900 leading-tight truncate">
-                              {biz.business_name}
-                              {biz.is_verified && <VerifiedBadge size="sm" showText={false} className="ml-1 inline-flex align-middle" />}
+                            <h3 className="text-sm sm:text-base font-bold text-gray-900 leading-tight flex flex-wrap items-center gap-x-1 gap-y-1">
+                              <span className="min-w-0 break-words">{biz.business_name}</span>
+                              {biz.is_verified && <VerifiedBadge size="sm" showText={false} className="inline-flex align-middle" />}
                             </h3>
                             <p
                               className="text-xs sm:text-sm text-gray-500 leading-snug mt-0.5"
@@ -274,9 +274,9 @@ export default async function HomePage() {
                         <div className="flex-1 min-w-0 pr-12 sm:pr-16">
                           <Link href={`/${biz.business_slug}`} className="focus:outline-none">
                             <span className="absolute inset-0" aria-hidden="true" />
-                            <h3 className="text-sm sm:text-base font-bold text-gray-900 leading-tight truncate">
-                              {biz.business_name}
-                              {biz.is_verified && <VerifiedBadge size="sm" showText={false} className="ml-1 inline-flex align-middle" />}
+                            <h3 className="text-sm sm:text-base font-bold text-gray-900 leading-tight flex flex-wrap items-center gap-x-1 gap-y-1">
+                              <span className="min-w-0 break-words">{biz.business_name}</span>
+                              {biz.is_verified && <VerifiedBadge size="sm" showText={false} className="inline-flex align-middle" />}
                             </h3>
                             <p
                               className="text-xs sm:text-sm text-gray-500 leading-snug mt-0.5"

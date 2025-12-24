@@ -23,7 +23,7 @@ export function VerifiedBadge({ size = 'md', showText = true, className }: Verif
     return (
         <div
             className={cn(
-                'inline-flex items-center gap-1.5 bg-green-50 text-green-700 rounded-full px-3 py-1 border border-green-200',
+                'inline-flex items-center gap-1.5 bg-green-50 text-green-700 rounded-full px-2 py-1 border border-green-200',
                 className
             )}
         >
