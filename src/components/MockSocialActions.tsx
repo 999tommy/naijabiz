@@ -5,7 +5,7 @@ import { MessageCircle, Instagram } from 'lucide-react'
 
 export function MockSocialActions() {
     return (
-        <div className="flex gap-3 mt-4">
+        <div className="flex flex-wrap gap-3 mt-4">
             <Button size="sm" className="bg-green-600 hover:bg-green-700 font-semibold shadow-sm" onClick={() => alert("This is a demo. It would open WhatsApp.")}>
                 <MessageCircle className="w-4 h-4 mr-2" />
                 WhatsApp
