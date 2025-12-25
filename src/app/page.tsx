@@ -469,15 +469,8 @@ export default async function HomePage() {
             NaijaBiz is built for Nigerian small businesses — barbers, salons, food vendors, repairers, and more.
           </h2>
           <p className="text-gray-500 text-lg mb-10">
-            Join {verifiedCount || '500'}+ businesses putting their business online the simple way.
+            Join Thousands of businesses putting their business online the simple way.
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 opacity-50 grayscale">
-            {/* Placeholders */}
-            <div className="h-12 bg-gray-100 rounded-lg"></div>
-            <div className="h-12 bg-gray-100 rounded-lg"></div>
-            <div className="h-12 bg-gray-100 rounded-lg"></div>
-            <div className="h-12 bg-gray-100 rounded-lg"></div>
-          </div>
         </div>
       </section>
 
