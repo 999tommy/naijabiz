@@ -80,6 +80,10 @@ export default function PricingPage() {
                                 <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
                                 <span className="text-gray-600">Listed in directory</span>
                             </li>
+                            <li className="flex items-center gap-3">
+                                <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                                <span className="text-gray-600">Basic Automated SEO</span>
+                            </li>
                             <li className="flex items-center gap-3 text-gray-400">
                                 <span className="w-5 h-5 flex-shrink-0 text-center">—</span>
                                 <span>No verified badge</span>
@@ -143,6 +147,10 @@ export default function PricingPage() {
                             <li className="flex items-center gap-3">
                                 <Star className="w-5 h-5 text-orange-500 flex-shrink-0" />
                                 <span className="text-gray-900 font-medium">Featured in search results</span>
+                            </li>
+                            <li className="flex items-center gap-3">
+                                <Star className="w-5 h-5 text-orange-500 flex-shrink-0" />
+                                <span className="text-gray-900 font-medium">Premium AIO & SEO (Rich Results) <span className="text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full ml-1 font-bold">NEW</span></span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Star className="w-5 h-5 text-orange-500 flex-shrink-0" />

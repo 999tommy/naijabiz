@@ -106,7 +106,8 @@ export async function generateMetadata({ params }: BusinessPageProps): Promise<M
         }
     }
 
-    const title = `${business.business_name} | NaijaBiz`
+    const isPro = business.plan === 'pro'
+    const title = `${business.business_name} ${isPro ? '- Verified Business' : ''} | NaijaBiz`
     const description = business.description || `Order from ${business.business_name} on NaijaBiz. View products, prices, and reviews.`
     const imageUrl = business.logo_url || '/logo.png'
 
@@ -164,8 +165,59 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
         ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
         : null
 
+    // Generate JSON-LD Structured Data (AIO)
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'LocalBusiness',
+        name: business.business_name,
+        description: business.description,
+        image: business.logo_url || 'https://naijabiz.org/logo.png',
+        url: `https://naijabiz.org/${business.business_slug}`,
+        telephone: business.whatsapp_number ? `+${business.whatsapp_number}` : undefined,
+        address: {
+            '@type': 'PostalAddress',
+            addressCountry: 'NG',
+            addressLocality: business.location || 'Nigeria',
+        },
+        // Pro-only rich data
+        ...(isPro ? {
+            priceRange: '$$',
+            aggregateRating: reviews.length > 0 ? {
+                '@type': 'AggregateRating',
+                ratingValue: averageRating,
+                reviewCount: reviews.length,
+                bestRating: '5',
+                worstRating: '1'
+            } : undefined,
+            hasOfferCatalog: products.length > 0 ? {
+                '@type': 'OfferCatalog',
+                name: 'Products',
+                itemListElement: products.map((product, index) => ({
+                    '@type': 'Offer',
+                    itemOffered: {
+                        '@type': 'Product',
+                        name: product.name,
+                        description: product.description,
+                        image: product.image_url,
+                        sku: product.id,
+                        offers: {
+                            '@type': 'Offer',
+                            price: product.price,
+                            priceCurrency: 'NGN'
+                        }
+                    },
+                    position: index + 1
+                }))
+            } : undefined
+        } : {})
+    }
+
     return (
         <div className="min-h-screen bg-cream-50">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             {/* Header */}
             <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
                 <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">

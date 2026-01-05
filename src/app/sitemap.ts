@@ -24,15 +24,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Fetch all businesses that have a slug (publicly accessible)
     const { data: businesses } = await supabase
         .from('users')
-        .select('business_slug, updated_at')
+        .select('business_slug, updated_at, plan') // added plan
         .not('business_slug', 'is', null)
 
-    const businessRoutes = businesses?.map((business) => ({
-        url: `${baseUrl}/${business.business_slug}`,
-        lastModified: new Date(business.updated_at || Date.now()),
-        changeFrequency: 'weekly' as const,
-        priority: 0.7,
-    })) || []
+    const businessRoutes = businesses?.map((business) => {
+        const isPro = business.plan === 'pro';
+        return {
+            url: `${baseUrl}/${business.business_slug}`,
+            lastModified: new Date(business.updated_at || Date.now()),
+            changeFrequency: isPro ? 'daily' as const : 'weekly' as const,
+            priority: isPro ? 1.0 : 0.7,
+        }
+    }) || []
 
     return [...staticRoutes, ...businessRoutes]
 }
