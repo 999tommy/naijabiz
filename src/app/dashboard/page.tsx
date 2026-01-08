@@ -20,6 +20,7 @@ import {
     Check
 } from 'lucide-react'
 import { OnboardingAssistant } from '@/components/OnboardingAssistant'
+import { ReferralCard } from '@/components/ReferralCard'
 
 export const dynamic = 'force-dynamic'
 
@@ -153,6 +154,7 @@ export default async function DashboardPage() {
                     </Card>
                 </div>
 
+
                 {/* Quick actions */}
                 <div className="grid md:grid-cols-2 gap-6">
                     <Card>
@@ -196,42 +198,46 @@ export default async function DashboardPage() {
 
                     {/* Pro upsell or tips */}
                     {!isPro ? (
-                        <Card className="bg-gradient-to-br from-orange-50 to-white border-orange-200">
-                            <CardHeader>
-                                <CardTitle className="text-lg flex items-center gap-2">
-                                    <Rocket className="w-5 h-5 text-orange-600" /> Upgrade to Pro
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <ul className="space-y-2 text-sm text-gray-600 mb-4">
-                                    <li className="flex items-center gap-2">
-                                        <Check className="w-4 h-4 text-green-500" />
-                                        Green verified badge for trust
-                                    </li>
-                                    <li className="flex items-center gap-2">
-                                        <Check className="w-4 h-4 text-green-500" />
-                                        Unlimited product listings
-                                    </li>
-                                    <li className="flex items-center gap-2">
-                                        <Check className="w-4 h-4 text-green-500" />
-                                        Customer reviews & ratings
-                                    </li>
-                                    <li className="flex items-center gap-2">
-                                        <Check className="w-4 h-4 text-green-500" />
-                                        Featured in search results
-                                    </li>
-                                    <li className="flex items-center gap-2">
-                                        <Check className="w-4 h-4 text-green-500" />
-                                        View who visited your page
-                                    </li>
-                                </ul>
-                                <Link href="/dashboard/settings#upgrade">
-                                    <Button className="w-full">
-                                        Upgrade Now
-                                    </Button>
-                                </Link>
-                            </CardContent>
-                        </Card>
+                        <div className="space-y-6">
+                            <ReferralCard user={user} />
+
+                            <Card className="bg-gradient-to-br from-orange-50 to-white border-orange-200">
+                                <CardHeader>
+                                    <CardTitle className="text-lg flex items-center gap-2">
+                                        <Rocket className="w-5 h-5 text-orange-600" /> Upgrade to Pro
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <ul className="space-y-2 text-sm text-gray-600 mb-4">
+                                        <li className="flex items-center gap-2">
+                                            <Check className="w-4 h-4 text-green-500" />
+                                            Green verified badge for trust
+                                        </li>
+                                        <li className="flex items-center gap-2">
+                                            <Check className="w-4 h-4 text-green-500" />
+                                            Unlimited product listings
+                                        </li>
+                                        <li className="flex items-center gap-2">
+                                            <Check className="w-4 h-4 text-green-500" />
+                                            Customer reviews & ratings
+                                        </li>
+                                        <li className="flex items-center gap-2">
+                                            <Check className="w-4 h-4 text-green-500" />
+                                            Featured in search results
+                                        </li>
+                                        <li className="flex items-center gap-2">
+                                            <Check className="w-4 h-4 text-green-500" />
+                                            View who visited your page
+                                        </li>
+                                    </ul>
+                                    <Link href="/dashboard/settings#upgrade">
+                                        <Button className="w-full">
+                                            Upgrade Now
+                                        </Button>
+                                    </Link>
+                                </CardContent>
+                            </Card>
+                        </div>
                     ) : (
                         <Card>
                             <CardHeader>

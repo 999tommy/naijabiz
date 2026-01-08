@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -35,6 +35,7 @@ export default function SignupPage() {
     const [message, setMessage] = useState('')
     const [agreed, setAgreed] = useState(false)
     const router = useRouter()
+    const searchParams = useSearchParams()
     const supabase = createClient()
 
     useEffect(() => {
@@ -163,9 +164,26 @@ export default function SignupPage() {
                 formattedWhatsApp = '234' + formattedWhatsApp.slice(1)
             }
 
+
             let logoUrl = null
             if (logoFile) {
                 logoUrl = await uploadImage(logoFile, `${user.id}/logo`)
+            }
+
+            // Check for referral
+            const referralSlug = searchParams.get('ref')
+            let referrerId = null
+
+            if (referralSlug) {
+                const { data: referrer } = await supabase
+                    .from('users')
+                    .select('id')
+                    .eq('business_slug', referralSlug)
+                    .single()
+
+                if (referrer) {
+                    referrerId = referrer.id
+                }
             }
 
             const { error: insertError } = await supabase.from('users').insert({
@@ -184,6 +202,7 @@ export default function SignupPage() {
                 plan: 'free',
                 is_verified: false,
                 verification_status: 'none',
+                referred_by: referrerId
             })
 
             if (insertError) throw insertError

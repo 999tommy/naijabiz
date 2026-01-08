@@ -24,6 +24,8 @@ export interface User {
     plan: 'free' | 'pro'
     subscription_id: string | null
     subscription_ends_at: string | null
+    referral_count: number
+    referred_by: string | null
     upvotes: number
     created_at: string
     updated_at: string

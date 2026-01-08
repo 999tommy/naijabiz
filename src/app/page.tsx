@@ -14,7 +14,11 @@ import {
   TrendingUp,
   Shield,
   Trophy,
-  Flame
+  Flame,
+  Clock,
+  Plus,
+  Star,
+  ImagePlus
 } from 'lucide-react'
 import { UpvoteButton } from '@/components/UpvoteButton'
 import { PricingSection } from '@/components/PricingSection'
@@ -336,82 +340,143 @@ export default async function HomePage() {
       </section>
 
       {/* Real Life Example */}
-      <section className="py-24 bg-[#faf8f3] overflow-hidden">
+      {/* Real Life Example */}
+      <section className="py-24 bg-gradient-to-b from-[#faf8f3] to-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-[2.5rem] p-8 md:p-16 overflow-hidden relative border border-gray-200 shadow-xl">
+          <div className="bg-orange-600 rounded-[2.5rem] p-8 md:p-16 overflow-hidden relative shadow-2xl">
+            {/* Background Pattern */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/20 rounded-full blur-3xl -mr-32 -mt-32"></div>
+            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-orange-700/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
+
             <div className="grid md:grid-cols-2 gap-12 items-center relative z-10">
-              <div>
-                <div className="inline-block bg-green-50 rounded-full px-4 py-1 text-sm font-bold text-green-700 mb-6 border border-green-100">
-                  REAL LIFE EXAMPLE
+              <div className="text-white">
+                <div className="inline-block bg-white/10 backdrop-blur rounded-full px-4 py-1 text-sm font-bold text-orange-50 mb-6 border border-white/20">
+                  REAL LIFE SUCCESS STORY
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                  Madam Tola sells food in Surulere.
+                <h2 className="text-3xl md:text-5xl font-bold mb-6 leading-tight">
+                  "I stopped sending pictures manually on WhatsApp."
                 </h2>
-                <p className="text-gray-500 text-lg mb-8 leading-relaxed">
-                  Before, she had to send food pictures one by one. Now, she just shares her <span className="text-orange-600 font-bold">NaijaBiz link</span> on WhatsApp status.
+                <p className="text-orange-50 text-xl mb-10 leading-relaxed max-w-lg">
+                  Madam Tola used to spend hours sending food photos to every customer. Now, she just sends her <span className="font-bold text-white border-b-2 border-white/40">naijabiz.org/tolaskitchen</span> link.
                 </p>
 
-                <div className="space-y-6">
+                <div className="space-y-8">
                   <div className="flex items-start gap-4">
-                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-1">
-                      <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 border border-white/20 shadow-inner">
+                      <CheckCircle2 className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900">Customers see her menu</h4>
-                      <p className="text-sm text-gray-500">They browse her page without asking "what do you have?"</p>
+                      <h4 className="text-lg font-bold text-white">She looks more professional</h4>
+                      <p className="text-orange-100/80">Customers trust her more simply because she has a proper business page.</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
-                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-1">
-                      <MessageCircle className="w-5 h-5 text-green-600" />
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 border border-white/20 shadow-inner">
+                      <Clock className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900">They message her on WhatsApp</h4>
-                      <p className="text-sm text-gray-500">"Madam Tola, I want 2 plates of Jollof." - Sent from NaijaBiz.</p>
+                      <h4 className="text-lg font-bold text-white">She saves 3 hours daily</h4>
+                      <p className="text-orange-100/80">No more searching for photos in gallery. Everything is on her page.</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
-                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-1">
-                      <ArrowRight className="w-5 h-5 text-green-600" />
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 border border-white/20 shadow-inner">
+                      <TrendingUp className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900">Result: More orders, less stress.</h4>
+                      <h4 className="text-lg font-bold text-white">Sales increased by 40%</h4>
+                      <p className="text-orange-100/80">Customers buy more when they can clearly see the Menu and prices.</p>
                     </div>
                   </div>
+                </div>
+
+                <div className="mt-10">
+                  <Link href="/signup">
+                    <Button size="lg" className="h-14 px-8 text-lg font-bold bg-white text-orange-600 hover:bg-orange-50 rounded-full shadow-xl">
+                      Create your page like Tola
+                    </Button>
+                  </Link>
                 </div>
               </div>
 
-              <div className="relative">
-                {/* Simulated Phone UI or Card */}
-                <div className="bg-[#faf8f3] rounded-3xl p-6 rotate-3 shadow-lg max-w-sm mx-auto border border-gray-200">
-                  <div className="flex items-center gap-4 mb-6 border-b border-gray-200 pb-4">
-                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold text-lg">T</div>
-                    <div>
-                      <h3 className="font-bold text-gray-900">Tola's Kitchen</h3>
-                      <p className="text-xs text-gray-500">Surulere, Lagos</p>
+              <div className="relative flex justify-center md:justify-end">
+                {/* Visual Representation of Transformation */}
+                <div className="relative">
+
+                  {/* Phone Mockup */}
+                  <div className="relative z-20 bg-white rounded-[2.5rem] border-[8px] border-gray-900 shadow-2xl w-[300px] h-[600px] overflow-hidden">
+                    <div className="absolute top-0 w-full h-8 bg-gray-900 flex justify-center rounded-b-xl z-20">
+                      <div className="w-16 h-4 bg-gray-800 rounded-b-lg"></div>
                     </div>
-                    <VerifiedBadge size="sm" showText={false} />
-                  </div>
-                  <div className="space-y-4 mb-6">
-                    <div className="flex gap-3">
-                      <div className="w-16 h-16 bg-white border border-gray-200 rounded-lg flex-shrink-0"></div>
-                      <div>
-                        <div className="h-3 w-24 bg-gray-200 rounded mb-2"></div>
-                        <div className="h-2 w-16 bg-gray-100 rounded"></div>
+
+                    {/* Screen Content */}
+                    <div className="h-full overflow-y-auto bg-gray-50 scrollbar-hide">
+                      {/* Header */}
+                      <div className="bg-white p-4 pb-2 border-b border-gray-100 sticky top-0 z-10">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold">T</div>
+                          <div className="flex-1">
+                            <h3 className="font-bold text-sm text-gray-900 flex items-center gap-1">Tola's Kitchen <VerifiedBadge size="sm" showText={false} /></h3>
+                            <p className="text-xs text-gray-500">Ikeja, Lagos</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Cover Area */}
+                      <div className="h-32 bg-orange-50 relative mb-4">
+                        <div className="absolute inset-0 flex items-center justify-center text-orange-200">
+                          <ImagePlus className="w-8 h-8 opacity-50" />
+                        </div>
+                      </div>
+
+                      {/* Products */}
+                      <div className="px-4 space-y-4 pb-20">
+                        <div className="space-y-2">
+                          <h4 className="font-bold text-gray-900 text-sm">Best Sellers</h4>
+
+                          {[1, 2, 3].map((i) => (
+                            <div key={i} className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex gap-3">
+                              <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0"></div>
+                              <div className="flex-1">
+                                <div className="h-3 w-3/4 bg-gray-200 rounded mb-2"></div>
+                                <div className="h-3 w-1/2 bg-gray-100 rounded mb-2"></div>
+                                <div className="flex items-center justify-between mt-1">
+                                  <div className="h-3 w-16 bg-orange-100 rounded"></div>
+                                  <div className="w-6 h-6 rounded-full bg-green-50 text-green-600 flex items-center justify-center mb-0.5">
+                                    <Plus className="w-3 h-3" />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Floating WhatsApp Button */}
+                      <div className="absolute bottom-4 left-4 right-4 z-20">
+                        <Button className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white rounded-full shadow-lg font-semibold h-12">
+                          <MessageCircle className="w-5 h-5 mr-2" />
+                          Order on WhatsApp
+                        </Button>
                       </div>
                     </div>
-                    <div className="flex gap-3">
-                      <div className="w-16 h-16 bg-white border border-gray-200 rounded-lg flex-shrink-0"></div>
-                      <div>
-                        <div className="h-3 w-28 bg-gray-200 rounded mb-2"></div>
-                        <div className="h-2 w-20 bg-gray-100 rounded"></div>
-                      </div>
-                    </div>
                   </div>
-                  <Button className="w-full bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg shadow-green-100">
-                    <MessageCircle className="w-4 h-4 mr-2" />
-                    Order on WhatsApp
-                  </Button>
+
+                  {/* Decorative Elements around phone */}
+                  <div className="absolute -right-8 top-20 bg-white p-4 rounded-xl shadow-xl z-30 animate-pulse hidden md:block">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                      <span className="text-xs font-bold text-gray-600">New Order</span>
+                    </div>
+                    <p className="text-sm font-bold text-gray-900">₦4,500 - Jollof Rice</p>
+                  </div>
+                  <div className="absolute -left-8 bottom-40 bg-white p-4 rounded-xl shadow-xl z-30 hidden md:block">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                      <span className="text-xs font-bold text-gray-600">New Review</span>
+                    </div>
+                    <p className="text-sm italic text-gray-600">"Food was delicious!"</p>
+                  </div>
                 </div>
               </div>
             </div>
