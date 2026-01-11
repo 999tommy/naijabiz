@@ -44,7 +44,13 @@ export default function SignupPage() {
             if (data) setCategories(data)
         }
         fetchCategories()
-    }, [supabase])
+
+        // Check for step in URL
+        const urlStep = searchParams.get('step')
+        if (urlStep === 'business') {
+            setStep('business')
+        }
+    }, [supabase, searchParams])
 
     const isPhone = (value: string) => {
         const cleaned = value.replace(/\D/g, '')

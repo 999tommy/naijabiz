@@ -42,6 +42,11 @@ export async function middleware(request: NextRequest) {
 
     // Redirect authenticated users away from auth pages
     if (user && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup')) {
+        // Allow access to signup if it's the business onboarding step
+        if (request.nextUrl.searchParams.get('step') === 'business') {
+            return supabaseResponse
+        }
+
         const url = request.nextUrl.clone()
         url.pathname = '/dashboard'
         return NextResponse.redirect(url)

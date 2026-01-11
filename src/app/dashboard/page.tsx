@@ -156,117 +156,121 @@ export default async function DashboardPage() {
 
 
                 {/* Quick actions */}
-                <div className="grid md:grid-cols-2 gap-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-lg">Quick Actions</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                            <Link href="/dashboard/products" className="block">
-                                <Button variant="outline" className="w-full justify-between">
-                                    <span className="flex items-center gap-2">
-                                        <Plus className="w-4 h-4" />
-                                        Add a Product
-                                    </span>
-                                    <ArrowRight className="w-4 h-4" />
-                                </Button>
-                            </Link>
-
-                            <Link href="/dashboard/settings" className="block">
-                                <Button variant="outline" className="w-full justify-between">
-                                    <span className="flex items-center gap-2">
-                                        <TrendingUp className="w-4 h-4" />
-                                        Update Business Info
-                                    </span>
-                                    <ArrowRight className="w-4 h-4" />
-                                </Button>
-                            </Link>
-
-                            {user.business_slug && (
-                                <Link href={`/${user.business_slug}`} target="_blank" className="block">
+                <div className="grid md:grid-cols-2 gap-6 pb-8">
+                    <div className="min-w-0">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-lg">Quick Actions</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                                <Link href="/dashboard/products" className="block">
                                     <Button variant="outline" className="w-full justify-between">
                                         <span className="flex items-center gap-2">
-                                            <Eye className="w-4 h-4" />
-                                            View Your Public Page
+                                            <Plus className="w-4 h-4" />
+                                            Add a Product
                                         </span>
                                         <ArrowRight className="w-4 h-4" />
                                     </Button>
                                 </Link>
-                            )}
-                        </CardContent>
-                    </Card>
 
-                    {/* Pro upsell or tips */}
-                    {!isPro ? (
-                        <div className="space-y-6">
-                            <ReferralCard user={user} />
+                                <Link href="/dashboard/settings" className="block">
+                                    <Button variant="outline" className="w-full justify-between">
+                                        <span className="flex items-center gap-2">
+                                            <TrendingUp className="w-4 h-4" />
+                                            Update Business Info
+                                        </span>
+                                        <ArrowRight className="w-4 h-4" />
+                                    </Button>
+                                </Link>
 
-                            <Card className="bg-gradient-to-br from-orange-50 to-white border-orange-200">
+                                {user.business_slug && (
+                                    <Link href={`/${user.business_slug}`} target="_blank" className="block">
+                                        <Button variant="outline" className="w-full justify-between">
+                                            <span className="flex items-center gap-2">
+                                                <Eye className="w-4 h-4" />
+                                                View Your Public Page
+                                            </span>
+                                            <ArrowRight className="w-4 h-4" />
+                                        </Button>
+                                    </Link>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    <div className="min-w-0">
+                        {/* Pro upsell or tips */}
+                        {!isPro ? (
+                            <div className="space-y-6">
+                                <ReferralCard user={user} />
+
+                                <Card className="bg-gradient-to-br from-orange-50 to-white border-orange-200">
+                                    <CardHeader>
+                                        <CardTitle className="text-lg flex items-center gap-2">
+                                            <Rocket className="w-5 h-5 text-orange-600" /> Upgrade to Pro
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <ul className="space-y-2 text-sm text-gray-600 mb-4">
+                                            <li className="flex items-center gap-2">
+                                                <Check className="w-4 h-4 text-green-500" />
+                                                Green verified badge for trust
+                                            </li>
+                                            <li className="flex items-center gap-2">
+                                                <Check className="w-4 h-4 text-green-500" />
+                                                Unlimited product listings
+                                            </li>
+                                            <li className="flex items-center gap-2">
+                                                <Check className="w-4 h-4 text-green-500" />
+                                                Customer reviews & ratings
+                                            </li>
+                                            <li className="flex items-center gap-2">
+                                                <Check className="w-4 h-4 text-green-500" />
+                                                Featured in search results
+                                            </li>
+                                            <li className="flex items-center gap-2">
+                                                <Check className="w-4 h-4 text-green-500" />
+                                                View who visited your page
+                                            </li>
+                                        </ul>
+                                        <Link href="/dashboard/settings#upgrade">
+                                            <Button className="w-full">
+                                                Upgrade Now
+                                            </Button>
+                                        </Link>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        ) : (
+                            <Card>
                                 <CardHeader>
                                     <CardTitle className="text-lg flex items-center gap-2">
-                                        <Rocket className="w-5 h-5 text-orange-600" /> Upgrade to Pro
+                                        <Lightbulb className="w-5 h-5 text-orange-500" /> Pro Tips
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <ul className="space-y-2 text-sm text-gray-600 mb-4">
-                                        <li className="flex items-center gap-2">
-                                            <Check className="w-4 h-4 text-green-500" />
-                                            Green verified badge for trust
+                                    <ul className="space-y-3 text-sm text-gray-600">
+                                        <li className="flex items-start gap-2">
+                                            <span className="text-orange-500 mt-0.5">•</span>
+                                            <span>Share your business link on Instagram & WhatsApp status</span>
                                         </li>
-                                        <li className="flex items-center gap-2">
-                                            <Check className="w-4 h-4 text-green-500" />
-                                            Unlimited product listings
+                                        <li className="flex items-start gap-2">
+                                            <span className="text-orange-500 mt-0.5">•</span>
+                                            <span>Use high-quality product images (compress to under 200KB)</span>
                                         </li>
-                                        <li className="flex items-center gap-2">
-                                            <Check className="w-4 h-4 text-green-500" />
-                                            Customer reviews & ratings
+                                        <li className="flex items-start gap-2">
+                                            <span className="text-orange-500 mt-0.5">•</span>
+                                            <span>Add detailed descriptions with prices in Naira</span>
                                         </li>
-                                        <li className="flex items-center gap-2">
-                                            <Check className="w-4 h-4 text-green-500" />
-                                            Featured in search results
-                                        </li>
-                                        <li className="flex items-center gap-2">
-                                            <Check className="w-4 h-4 text-green-500" />
-                                            View who visited your page
+                                        <li className="flex items-start gap-2">
+                                            <span className="text-orange-500 mt-0.5">•</span>
+                                            <span>Respond quickly to WhatsApp orders to build trust</span>
                                         </li>
                                     </ul>
-                                    <Link href="/dashboard/settings#upgrade">
-                                        <Button className="w-full">
-                                            Upgrade Now
-                                        </Button>
-                                    </Link>
                                 </CardContent>
                             </Card>
-                        </div>
-                    ) : (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-lg flex items-center gap-2">
-                                    <Lightbulb className="w-5 h-5 text-orange-500" /> Pro Tips
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <ul className="space-y-3 text-sm text-gray-600">
-                                    <li className="flex items-start gap-2">
-                                        <span className="text-orange-500 mt-0.5">•</span>
-                                        <span>Share your business link on Instagram & WhatsApp status</span>
-                                    </li>
-                                    <li className="flex items-start gap-2">
-                                        <span className="text-orange-500 mt-0.5">•</span>
-                                        <span>Use high-quality product images (compress to under 200KB)</span>
-                                    </li>
-                                    <li className="flex items-start gap-2">
-                                        <span className="text-orange-500 mt-0.5">•</span>
-                                        <span>Add detailed descriptions with prices in Naira</span>
-                                    </li>
-                                    <li className="flex items-start gap-2">
-                                        <span className="text-orange-500 mt-0.5">•</span>
-                                        <span>Respond quickly to WhatsApp orders to build trust</span>
-                                    </li>
-                                </ul>
-                            </CardContent>
-                        </Card>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
         </DashboardLayout>

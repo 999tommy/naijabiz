@@ -53,7 +53,7 @@ export function CategorySelect({ value, onChange, categories, placeholder = 'Sel
             </button>
 
             {isOpen && (
-                <div className="absolute z-[60] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-auto py-2">
+                <div className="absolute z-[60] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
                     {categories.map((category) => (
                         <button
                             key={category.id}

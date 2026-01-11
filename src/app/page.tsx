@@ -470,7 +470,7 @@ export default async function HomePage() {
         </div>
         <p className="text-gray-400 text-sm mb-6">
           © {new Date().getFullYear()} NaijaBiz. Made with ❤️ in Lagos. <br />
-          <span className="mt-2 block">Powered by <a href="https://www.axist.cc" target="_blank" rel="noopener noreferrer" className="hover:text-orange-600 underline">Axist</a></span>
+          <span className="mt-2 block">Powered by <a href="https://www.axist.app" target="_blank" rel="noopener noreferrer" className="hover:text-orange-600 underline">Axist</a></span>
         </p>
         <div className="flex justify-center gap-6 text-sm text-gray-500">
           <Link href="/terms" className="hover:text-orange-600">Terms</Link>

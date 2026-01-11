@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Gift, Copy, Check, Share2, Users } from 'lucide-react' // Assuming shadcn progress exists, if not I'll fallback to div
@@ -12,16 +12,19 @@ interface ReferralCardProps {
 
 export function ReferralCard({ user }: ReferralCardProps) {
     const [copied, setCopied] = useState(false)
+    const [mounted, setMounted] = useState(false)
 
-    // Validating progress bar component availability - if not I will use simple div
-    // But assuming standard shadcn setup, I'll stick to custom div to be safe and cleaner
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
-    const referralLink = typeof window !== 'undefined' ? `${window.location.origin}/signup?ref=${user.business_slug}` : `naijabiz.org/signup?ref=${user.business_slug}`
+    const referralLink = mounted ? `${window.location.origin}/signup?ref=${user.business_slug}` : `...`
     const count = user.referral_count || 0
     const target = 5
     const percentage = Math.min((count / target) * 100, 100)
 
     const handleCopy = () => {
+        if (!mounted) return
         navigator.clipboard.writeText(referralLink)
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
@@ -77,7 +80,7 @@ export function ReferralCard({ user }: ReferralCardProps) {
 
                     {/* Link */}
                     <div className="flex gap-2">
-                        <div className="flex-1 bg-white border border-indigo-200 rounded-lg px-3 py-2 text-sm text-gray-600 truncate font-mono">
+                        <div className="flex-1 min-w-0 bg-white border border-indigo-200 rounded-lg px-3 py-2 text-sm text-gray-600 truncate font-mono">
                             {user.business_slug ? referralLink : '...'}
                         </div>
                         <Button size="icon" variant="outline" onClick={handleCopy} className="shrink-0 border-indigo-200 hover:bg-indigo-50 text-indigo-700">
