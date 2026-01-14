@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import { UpvoteButton } from '@/components/UpvoteButton'
 import { PricingSection } from '@/components/PricingSection'
+import { SearchSection } from '@/components/SearchSection'
 
 export const dynamic = 'force-dynamic'
 
@@ -162,6 +163,8 @@ export default async function HomePage() {
           <span className="hidden sm:inline text-gray-300">•</span>
           <span>Takes 2 minutes</span>
         </p>
+
+        <SearchSection />
       </section>
 
       {/* Leaderboards */}
