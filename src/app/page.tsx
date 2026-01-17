@@ -146,7 +146,7 @@ export default async function HomePage() {
         </h1>
 
         <p className="text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed">
-          Create a free professional store for your Nigerian business. Now with an AI Assistant that replies to customers on WhatsApp while you sleep.
+          Create a free professional store for your brand. Now with an AI Assistant that replies to customers while you sleep.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
