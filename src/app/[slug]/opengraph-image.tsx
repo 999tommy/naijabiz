@@ -172,20 +172,43 @@ export default async function Image({ params }: { params: { slug: string } }) {
                     {business.description || `Order from ${business.business_name} on NaijaBiz.`}
                 </div>
 
-                {/* Footer */}
+                {/* Footer with AI Hook */}
                 <div
                     style={{
                         position: 'absolute',
                         bottom: '50px',
                         display: 'flex',
+                        flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '24px',
-                        color: '#9ca3af',
-                        fontWeight: 'bold',
+                        gap: '12px',
                     }}
                 >
-                    naijabiz.org
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        backgroundColor: '#fff7ed', // Orange-50
+                        border: '1px solid #fed7aa', // Orange-200
+                        borderRadius: '100px',
+                        padding: '8px 20px',
+                    }}>
+                        <div style={{
+                            fontSize: '22px',
+                            fontWeight: 'bold',
+                            color: '#ea580c', // Orange-600
+                            display: 'flex',
+                            alignItems: 'center',
+                            marginRight: '12px',
+                        }}>
+                            ⚡ Powered by NaijaBiz AI
+                        </div>
+                        <div style={{
+                            fontSize: '20px',
+                            color: '#6b7280', // Gray-500
+                        }}>
+                            Create your own free page at <span style={{ fontWeight: 'bold', color: '#1a1a1a' }}>naijabiz.org</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         ),
