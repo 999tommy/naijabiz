@@ -15,7 +15,8 @@ import {
     ExternalLink,
     Menu,
     X,
-    Crown
+    Crown,
+    Bot
 } from 'lucide-react'
 import type { User } from '@/lib/types'
 import { FeedbackModal } from './FeedbackModal'
@@ -33,14 +34,19 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
 
     const handleLogout = async () => {
         await supabase.auth.signOut()
-        router.push('/')
-        router.refresh()
+        window.location.href = '/'
     }
 
     const navigation = [
         { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
         { name: 'Products', href: '/dashboard/products', icon: Package },
         { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+        {
+            name: 'AI Assistant',
+            href: '/dashboard/ai',
+            icon: Bot,
+            proOnly: true
+        },
         {
             name: 'Analytics',
             href: '/dashboard/analytics',
