@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { DashboardLayout } from '@/components/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -21,17 +21,22 @@ import {
 } from 'lucide-react'
 import { OnboardingAssistant } from '@/components/OnboardingAssistant'
 import { ReferralCard } from '@/components/ReferralCard'
+import { WhatsAppShareCenter } from '@/components/WhatsAppShareCenter'
+import { ShareRankCard } from '@/components/ShareRankCard'
 
 export const dynamic = 'force-dynamic'
 
 async function getDashboardData(userId: string) {
     const supabase = await createClient()
 
+    const serviceSupabase = await createServiceClient()
+
+    // Fetch basic stats
     const [
         { data: user },
         { count: productCount },
         { count: viewCount },
-        { count: orderCount }
+        { count: orderCount },
     ] = await Promise.all([
         supabase.from('users').select('*, category:categories(*)').eq('id', userId).single(),
         supabase.from('products').select('*', { count: 'exact', head: true }).eq('user_id', userId),
@@ -39,13 +44,49 @@ async function getDashboardData(userId: string) {
         supabase.from('orders').select('*', { count: 'exact', head: true }).eq('user_id', userId)
     ])
 
+    // Calculate Rank (Simplified for Dashboard performance)
+    // In a real app, this should be a materialized view or cached value.
+    // We will just fetch top 10 scores and see if user matches.
+    const { data: allStats } = await serviceSupabase
+        .from('users')
+        .select('id, upvotes, plan')
+
+    const { data: allReviews } = await serviceSupabase
+        .from('reviews')
+        .select('business_id, created_at')
+
+    const { data: allPageViews } = await serviceSupabase
+        .from('page_views')
+        .select('business_id, created_at')
+
+    const now = new Date()
+    const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+
+    // Compute Daily Scores
+    const rankedUsers = (allStats || []).map((u: any) => {
+        const recentReviews = allReviews?.filter((r: any) => r.business_id === u.id && new Date(r.created_at) > last24h).length || 0
+        const recentViews = allPageViews?.filter((v: any) => v.business_id === u.id && new Date(v.created_at) > last24h).length || 0
+
+        const dailyScore =
+            (recentReviews * 100) +
+            (recentViews * 5) +
+            ((u.upvotes || 0) * 0.5) +
+            (u.plan === 'pro' ? 10 : 0)
+
+        return { id: u.id, score: dailyScore }
+    }).sort((a: any, b: any) => b.score - a.score)
+
+    const myRankIndex = rankedUsers.findIndex(u => u.id === userId)
+    const myRank = myRankIndex !== -1 ? myRankIndex + 1 : 0
+
     return {
         user,
         stats: {
             products: productCount || 0,
             views: viewCount || 0,
             orders: orderCount || 0
-        }
+        },
+        rank: myRank
     }
 }
 
@@ -57,7 +98,7 @@ export default async function DashboardPage() {
         redirect('/login')
     }
 
-    const { user, stats } = await getDashboardData(authUser.id)
+    const { user, stats, rank } = await getDashboardData(authUser.id)
 
     if (!user) {
         redirect('/signup?step=business')
@@ -72,7 +113,9 @@ export default async function DashboardPage() {
             <div className="max-w-6xl mx-auto">
                 {/* Welcome section */}
                 <div className="mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                    <ShareRankCard user={user} rank={rank} />
+
+                    <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2 mt-4">
                         Welcome back, {user.business_name || 'there'}! <Hand className="w-6 h-6 text-yellow-500" />
                     </h1>
                     <p className="text-gray-500 mt-1">
@@ -242,33 +285,10 @@ export default async function DashboardPage() {
                                 </Card>
                             </div>
                         ) : (
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="text-lg flex items-center gap-2">
-                                        <Lightbulb className="w-5 h-5 text-orange-500" /> Pro Tips
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <ul className="space-y-3 text-sm text-gray-600">
-                                        <li className="flex items-start gap-2">
-                                            <span className="text-orange-500 mt-0.5">•</span>
-                                            <span>Share your business link on Instagram & WhatsApp status</span>
-                                        </li>
-                                        <li className="flex items-start gap-2">
-                                            <span className="text-orange-500 mt-0.5">•</span>
-                                            <span>Use high-quality product images (compress to under 200KB)</span>
-                                        </li>
-                                        <li className="flex items-start gap-2">
-                                            <span className="text-orange-500 mt-0.5">•</span>
-                                            <span>Add detailed descriptions with prices in Naira</span>
-                                        </li>
-                                        <li className="flex items-start gap-2">
-                                            <span className="text-orange-500 mt-0.5">•</span>
-                                            <span>Respond quickly to WhatsApp orders to build trust</span>
-                                        </li>
-                                    </ul>
-                                </CardContent>
-                            </Card>
+                            <div className="space-y-6">
+                                <WhatsAppShareCenter user={user} rank={rank} />
+                                <ReferralCard user={user} />
+                            </div>
                         )}
                     </div>
                 </div>

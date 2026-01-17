@@ -20,6 +20,7 @@ import {
 import { getCategoryIcon } from '@/lib/category-icons'
 import { UpvoteButton } from '@/components/UpvoteButton'
 import { BusinessShareButton } from '@/components/BusinessShareButton'
+import { AiChatWidget } from '@/components/AiChatWidget'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,7 +36,20 @@ async function getBusiness(slug: string) {
         .eq('business_slug', slug)
         .single()
 
-    return data
+    // Quick separate queries to get counts for "Community Verified" logic
+    // In production, use a materialized view or `count` in select
+    if (data) {
+        const { count: reviewCount } = await supabase.from('reviews').select('*', { count: 'exact', head: true }).eq('business_id', data.id)
+        const { count: viewCount } = await supabase.from('page_views').select('*', { count: 'exact', head: true }).eq('business_id', data.id)
+
+        return {
+            ...data,
+            reviewCount: reviewCount || 0,
+            viewCount: viewCount || 0
+        }
+    }
+
+    return null
 }
 
 async function getProducts(userId: string, limit?: number) {
@@ -270,7 +284,11 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                 <h1 className="text-2xl font-bold text-gray-900">
                                     {business.business_name}
                                 </h1>
-                                {isVerified && <VerifiedBadge size="md" />}
+                                <VerifiedBadge
+                                    size="md"
+                                    isVerified={isPro && business.is_verified}
+                                    isCommunityVerified={!isPro && (business.reviewCount >= 5 && business.viewCount >= 50)} // Simple MVP logic
+                                />
                                 <UpvoteButton userId={business.id} initialUpvotes={business.upvotes || 0} size="sm" />
                             </div>
 
@@ -432,6 +450,8 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                     </p>
                 </div>
             </footer>
+
+            <AiChatWidget business={business} />
         </div >
     )
 }

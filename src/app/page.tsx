@@ -18,7 +18,9 @@ import {
   Clock,
   Plus,
   Star,
-  ImagePlus
+  ImagePlus,
+  Globe,
+  Bot
 } from 'lucide-react'
 import { UpvoteButton } from '@/components/UpvoteButton'
 import { PricingSection } from '@/components/PricingSection'
@@ -134,19 +136,23 @@ export default async function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-20 pb-16 md:pt-32 md:pb-24 px-4 text-center max-w-5xl mx-auto">
+      <section className="pt-12 pb-16 md:pt-16 md:pb-24 px-4 text-center max-w-5xl mx-auto">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-bold mb-6 border border-orange-200 animate-pulse">
+          <span>New: AI Sales Assistant Included</span>
+        </div>
+
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 mb-6 max-w-4xl mx-auto leading-[1.1]">
-          Your business needs a <span className="text-orange-600">simple online page</span> that brings customers
+          Your brand needs an <span className="text-orange-600">AI-powered online page</span> that sells for you
         </h1>
 
         <p className="text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed">
-          Create a free business page with NaijaBiz you can share on WhatsApp and Instagram — so customers can message you, find you, and place orders easily.
+          Create a free professional store for your Nigerian business. Now with an AI Assistant that replies to customers on WhatsApp while you sleep.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
           <Link href="/signup" className="w-full sm:w-auto">
             <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-lg font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-xl shadow-orange-200 transform hover:-translate-y-1 transition-all">
-              Create my free business page
+              Create My AI Brand Page
             </Button>
           </Link>
           <Link href="/tolas-kitchen" className="w-full sm:w-auto">
@@ -157,9 +163,9 @@ export default async function HomePage() {
         </div>
 
         <p className="text-sm font-medium text-gray-400 flex items-center justify-center gap-4 flex-wrap">
-          <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-green-500" /> No website needed</span>
+          <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-green-500" /> Free forever</span>
           <span className="hidden sm:inline text-gray-300">•</span>
-          <span className="flex items-center gap-1.5"><Smartphone className="w-4 h-4 text-green-500" /> Works on WhatsApp</span>
+          <span className="flex items-center gap-1.5"><Bot className="w-4 h-4 text-green-500" /> Auto-Replies on WhatsApp</span>
           <span className="hidden sm:inline text-gray-300">•</span>
           <span>Takes 2 minutes</span>
         </p>

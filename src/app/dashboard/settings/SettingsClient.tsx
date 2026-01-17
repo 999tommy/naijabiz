@@ -544,6 +544,10 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                             <CheckCircle2 className="w-4 h-4 text-green-500" />
                                             High Leaderboard Ranking
                                         </li>
+                                        <li className="flex items-center gap-1 font-bold text-orange-700">
+                                            <CheckCircle2 className="w-4 h-4 text-orange-600" />
+                                            AI Assistant (100 replies/mo)
+                                        </li>
                                     </ul>
                                 </div>
                             </div>

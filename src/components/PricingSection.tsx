@@ -102,6 +102,10 @@ export function PricingSection() {
                                 <CheckCircle2 className="w-5 h-5 text-orange-500" />
                                 Page visit statistics
                             </li>
+                            <li className="flex items-center gap-3 font-medium text-gray-900 bg-orange-50 p-2 rounded-lg -mx-2">
+                                <CheckCircle2 className="w-5 h-5 text-orange-500" />
+                                <strong>AI Sales Assistant (100 replies/mo)</strong>
+                            </li>
                         </ul>
                         <Link href={`/signup?plan=pro&billing=${billingCycle}`}>
                             <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-lg h-12 font-bold shadow-lg shadow-orange-100">

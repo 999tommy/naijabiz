@@ -30,6 +30,12 @@ export interface User {
     created_at: string
     updated_at: string
     category?: Category
+    // AI Fields
+    ai_enabled: boolean
+    ai_instructions: string | null
+    ai_welcome_msg: string
+    ai_usage_limit: number
+    ai_usage_count: number
 }
 
 export interface Product {

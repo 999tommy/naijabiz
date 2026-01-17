@@ -1,36 +1,70 @@
-import { CheckCircle2 } from 'lucide-react'
+import { BadgeCheck, ShieldCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface VerifiedBadgeProps {
+    className?: string
     size?: 'sm' | 'md' | 'lg'
     showText?: boolean
-    className?: string
+    variant?: 'auto' | 'pro' | 'community' // Force variant if needed, mostly handled by props
+    isVerified?: boolean // True means PRO Verified
+    isCommunityVerified?: boolean // Logic passed from parent
 }
 
-export function VerifiedBadge({ size = 'md', showText = true, className }: VerifiedBadgeProps) {
-    const iconSizes = {
-        sm: 'w-4 h-4',
-        md: 'w-5 h-5',
-        lg: 'w-6 h-6',
+export function VerifiedBadge({
+    className,
+    size = 'md',
+    showText = true,
+    isVerified = true, // Default to true for backward compat if purely used for Pro before
+    isCommunityVerified = false
+}: VerifiedBadgeProps) {
+
+    // Size variants
+    const iconSize = size === 'sm' ? 'w-3 h-3' : size === 'md' ? 'w-4 h-4' : 'w-5 h-5'
+    const textSize = size === 'sm' ? 'text-[10px]' : size === 'md' ? 'text-xs' : 'text-sm'
+
+    // If official verified (Pro)
+    if (isVerified) {
+        return (
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <div className={cn("inline-flex items-center gap-1", className)}>
+                            <BadgeCheck className={cn(iconSize, "text-green-500 fill-green-50")} />
+                            {showText && <span className={cn("font-semibold text-green-700", textSize)}>Verified</span>}
+                        </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Official Verified Business (Pro)</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+        )
     }
 
-    const textSizes = {
-        sm: 'text-xs',
-        md: 'text-sm',
-        lg: 'text-base',
+    // If Community Verified (Free but trusted)
+    if (isCommunityVerified) {
+        return (
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <div className={cn("inline-flex items-center gap-1", className)}>
+                            <ShieldCheck className={cn(iconSize, "text-yellow-500 fill-yellow-50")} />
+                            {showText && <span className={cn("font-semibold text-yellow-600", textSize)}>Trusted</span>}
+                        </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Community Trusted (Active & Reviewed)</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+        )
     }
 
-    return (
-        <div
-            className={cn(
-                'inline-flex items-center gap-1.5 bg-green-50 text-green-700 rounded-full px-2 py-1 border border-green-200',
-                className
-            )}
-        >
-            <CheckCircle2 className={cn(iconSizes[size], 'text-green-600 fill-green-100')} />
-            {showText && (
-                <span className={cn('font-semibold', textSizes[size])}>Verified</span>
-            )}
-        </div>
-    )
+    return null
 }
