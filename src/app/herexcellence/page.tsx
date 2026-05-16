@@ -119,11 +119,6 @@ export default function HerExcellenceLanding() {
   const textOpacity = useTransform(scrollYProgress, [0.1, 0.25], [0, 1]);
   const textY = useTransform(scrollYProgress, [0.1, 0.3], ["100px", "0px"]);
 
-  // Points Section
-  const point1X = useTransform(scrollYProgress, [0.3, 0.4], ["-100%", "0%"]);
-  const point2X = useTransform(scrollYProgress, [0.4, 0.5], ["100%", "0%"]);
-  const point3X = useTransform(scrollYProgress, [0.5, 0.6], ["-100%", "0%"]);
-  const pointsOpacity = useTransform(scrollYProgress, [0.3, 0.4], [0, 1]);
 
   const quoteRotateX = useTransform(scrollYProgress, [0.6, 0.75], [45, 0]);
   const quoteOpacity = useTransform(scrollYProgress, [0.6, 0.75], [0, 1]);
@@ -207,7 +202,13 @@ export default function HerExcellenceLanding() {
       {/* Points Section */}
       <div className="min-h-screen flex flex-col justify-center px-4 py-24 overflow-hidden relative">
         <div className="max-w-6xl mx-auto w-full space-y-24">
-          <motion.div style={{ x: point1X, opacity: pointsOpacity }} className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
+          <motion.div 
+            initial={{ opacity: 0, x: -100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="flex flex-col md:flex-row items-center gap-8 md:gap-16 will-change-transform"
+          >
             <div className="text-7xl md:text-9xl font-playfair font-bold text-[#d4af37]/20">01</div>
             <div className="flex-1">
               <h3 className="text-3xl md:text-5xl font-playfair text-white mb-4">Refined Silhouettes</h3>
@@ -215,7 +216,13 @@ export default function HerExcellenceLanding() {
             </div>
           </motion.div>
           
-          <motion.div style={{ x: point2X, opacity: pointsOpacity }} className="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-16 text-right">
+          <motion.div 
+            initial={{ opacity: 0, x: 100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-16 text-right will-change-transform"
+          >
             <div className="text-7xl md:text-9xl font-playfair font-bold text-[#d4af37]/20">02</div>
             <div className="flex-1">
               <h3 className="text-3xl md:text-5xl font-playfair text-white mb-4">Premium Fabrication</h3>
@@ -223,7 +230,13 @@ export default function HerExcellenceLanding() {
             </div>
           </motion.div>
 
-          <motion.div style={{ x: point3X, opacity: pointsOpacity }} className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
+          <motion.div 
+            initial={{ opacity: 0, x: -100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="flex flex-col md:flex-row items-center gap-8 md:gap-16 will-change-transform"
+          >
             <div className="text-7xl md:text-9xl font-playfair font-bold text-[#d4af37]/20">03</div>
             <div className="flex-1">
               <h3 className="text-3xl md:text-5xl font-playfair text-white mb-4">Rooted in Lagos</h3>
