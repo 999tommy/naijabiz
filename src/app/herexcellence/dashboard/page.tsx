@@ -211,6 +211,7 @@ export default function HerExcellenceDashboard() {
                   <th className="px-6 py-4 text-xs uppercase tracking-[0.2em] text-white/40 font-semibold">Name</th>
                   <th className="px-6 py-4 text-xs uppercase tracking-[0.2em] text-white/40 font-semibold">Contact Info</th>
                   <th className="px-6 py-4 text-xs uppercase tracking-[0.2em] text-white/40 font-semibold">Location</th>
+                  <th className="px-6 py-4 text-xs uppercase tracking-[0.2em] text-white/40 font-semibold">Birthday</th>
                   <th className="px-6 py-4 text-xs uppercase tracking-[0.2em] text-white/40 font-semibold">Style Preference</th>
                   <th className="px-6 py-4 text-xs uppercase tracking-[0.2em] text-white/40 font-semibold text-right">Registered</th>
                 </tr>
@@ -236,10 +237,6 @@ export default function HerExcellenceDashboard() {
                       >
                         <td className="px-6 py-5">
                           <p className="font-semibold text-white group-hover:text-[#d4af37] transition-colors">{person.first_name}</p>
-                          <div className="flex items-center gap-1.5 text-[10px] text-white/40 mt-1 uppercase tracking-wider">
-                            <Calendar size={12} />
-                            <span>BDAY: {person.birthday || 'N/A'}</span>
-                          </div>
                         </td>
                         <td className="px-6 py-5">
                           <div className="flex items-center gap-2 text-sm text-white/70">
@@ -256,6 +253,16 @@ export default function HerExcellenceDashboard() {
                             <MapPin size={12} className="text-blue-400" />
                             {person.location}
                           </div>
+                        </td>
+                        <td className="px-6 py-5">
+                          {person.birthday ? (
+                            <div className="flex items-center gap-2 text-sm text-white/70">
+                              <Calendar size={14} className="text-[#d4af37]/60" />
+                              <span>{new Date(person.birthday).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                            </div>
+                          ) : (
+                            <span className="text-white/20 text-xs italic">Not specified</span>
+                          )}
                         </td>
                         <td className="px-6 py-5">
                            {person.personal_style ? (

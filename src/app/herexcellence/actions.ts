@@ -9,27 +9,31 @@ export async function joinWaitlist(prevState: any, formData: FormData) {
     // If we face issues, we could fallback to the service client, but standard is safer.
     const supabase = await createClient();
 
-    const firstName = formData.get('firstName') as string;
+    const fullName = formData.get('fullName') as string;
     const email = formData.get('email') as string;
     const phone = formData.get('phone') as string;
     const birthday = formData.get('birthday') as string;
     const location = formData.get('location') as string;
     const style = formData.get('style') as string;
 
-    if (!firstName || !email || !phone || !location) {
-      return { success: false, error: 'Please fill out all required fields.' };
+    if (!fullName || !location) {
+      return { success: false, error: 'Please fill out your full name and location.' };
+    }
+
+    if (!email && !phone) {
+      return { success: false, error: 'Please provide either an email address or a phone number.' };
     }
 
     const { data, error } = await supabase
       .from('her_excellence_waitlist')
       .insert([
         {
-          first_name: firstName,
-          email: email,
-          phone_number: phone,
-          birthday: birthday,
+          first_name: fullName,
+          email: email || null,
+          phone_number: phone || null,
+          birthday: birthday || null,
           location: location,
-          personal_style: style,
+          personal_style: style || null,
         },
       ]);
 

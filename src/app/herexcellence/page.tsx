@@ -38,15 +38,18 @@ function WaitlistForm() {
         <form action={formAction} className="space-y-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label htmlFor="firstName" className="text-sm font-medium text-white/80 uppercase tracking-widest text-xs">First Name</label>
-              <input type="text" id="firstName" name="firstName" required
+              <label htmlFor="fullName" className="text-sm font-medium text-white/80 uppercase tracking-widest text-xs">Full Name</label>
+              <input type="text" id="fullName" name="fullName" required
                 className="w-full bg-transparent border-b border-white/20 px-0 py-3 text-white focus:border-[#d4af37] focus:outline-none transition-colors placeholder:text-white/30"
-                placeholder="Jane"
+                placeholder="full name"
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-white/80 uppercase tracking-widest text-xs">Email Address</label>
-              <input type="email" id="email" name="email" required
+              <label htmlFor="email" className="text-sm font-medium text-white/80 uppercase tracking-widest text-xs flex justify-between items-center">
+                <span>Email Address</span>
+                <span className="text-white/40 font-normal lowercase text-[10px] tracking-normal">optional</span>
+              </label>
+              <input type="email" id="email" name="email"
                 className="w-full bg-transparent border-b border-white/20 px-0 py-3 text-white focus:border-[#d4af37] focus:outline-none transition-colors placeholder:text-white/30"
                 placeholder="tony@example.com"
               />
@@ -55,8 +58,11 @@ function WaitlistForm() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label htmlFor="phone" className="text-sm font-medium text-white/80 uppercase tracking-widest text-xs">Phone Number</label>
-              <input type="tel" id="phone" name="phone" required
+              <label htmlFor="phone" className="text-sm font-medium text-white/80 uppercase tracking-widest text-xs flex justify-between items-center">
+                <span>Phone Number</span>
+                <span className="text-white/40 font-normal lowercase text-[10px] tracking-normal">optional</span>
+              </label>
+              <input type="tel" id="phone" name="phone"
                 className="w-full bg-transparent border-b border-white/20 px-0 py-3 text-white focus:border-[#d4af37] focus:outline-none transition-colors placeholder:text-white/30"
                 placeholder="+234..."
               />
@@ -145,21 +151,21 @@ export default function HerExcellenceLanding() {
       </nav>
 
       {/* Hero Section */}
-      <motion.div 
+      <motion.div
         style={{ y: heroY, opacity: heroOpacity }}
         className="h-screen flex flex-col justify-center items-center text-center px-4 relative z-10 pt-20 will-change-transform"
       >
         <div className="absolute inset-0 bg-[#0a0a0a] z-0" /> {/* Simplified background */}
         <div className="relative z-10 max-w-4xl mx-auto">
-          <motion.span 
+          <motion.span
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="uppercase tracking-[0.4em] text-[#d4af37] mb-6 block text-xs font-semibold"
           >
-            Launching 2025
+            Launching 2026
           </motion.span>
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
@@ -169,7 +175,7 @@ export default function HerExcellenceLanding() {
             <span className="italic font-light text-white/90">every room</span> <br />
             you walk into.
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
@@ -177,7 +183,7 @@ export default function HerExcellenceLanding() {
           >
             Her Excellence is a ready-to-wear label for the professional Nigerian woman who commands presence without sacrificing ease. Refined silhouettes. Everyday elegance. Built for women who run things.
           </motion.p>
-          <button 
+          <button
             onClick={() => document.getElementById('waitlist-section')?.scrollIntoView({ behavior: 'smooth' })}
             className="group relative inline-flex items-center justify-center px-8 py-4 bg-white text-black font-semibold uppercase tracking-widest overflow-hidden transition-all hover:bg-[#d4af37] hover:text-white"
           >
@@ -188,12 +194,12 @@ export default function HerExcellenceLanding() {
 
       {/* Philosophy Section (3D effect) */}
       <div className="h-screen flex items-center justify-center px-4 relative perspective-1000">
-        <motion.div 
+        <motion.div
           style={{ scale: textScale, opacity: textOpacity, y: textY }}
           className="text-center max-w-5xl mx-auto will-change-transform"
         >
           <h2 className="text-4xl md:text-6xl font-playfair font-medium text-white mb-8 leading-tight">
-            First-access privileges. <br/> No spam. Ever.
+            First-access privileges. <br /> No spam. Ever.
           </h2>
           <div className="w-px h-24 bg-gradient-to-b from-[#d4af37] to-transparent mx-auto my-12" />
         </motion.div>
@@ -202,7 +208,7 @@ export default function HerExcellenceLanding() {
       {/* Points Section */}
       <div className="min-h-screen flex flex-col justify-center px-4 py-24 overflow-hidden relative">
         <div className="max-w-6xl mx-auto w-full space-y-24">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -100 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -215,8 +221,8 @@ export default function HerExcellenceLanding() {
               <p className="uppercase tracking-widest text-[#d4af37] text-sm font-semibold">For Daily Authority</p>
             </div>
           </motion.div>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0, x: 100 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -230,7 +236,7 @@ export default function HerExcellenceLanding() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -100 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -248,13 +254,13 @@ export default function HerExcellenceLanding() {
 
       {/* 3D Quote Section */}
       <div className="h-[80vh] flex items-center justify-center px-4 relative" style={{ perspective: '1200px' }}>
-        <motion.div 
+        <motion.div
           style={{ rotateX: quoteRotateX, opacity: quoteOpacity, z: quoteZ }}
           className="text-center max-w-4xl mx-auto transform-style-3d will-change-transform"
         >
           <p className="text-3xl md:text-6xl font-playfair font-medium text-white leading-relaxed italic">
-            "Excellence is not a look. <br/>
-            It is a standard you set <br/>
+            "Excellence is not a look. <br />
+            It is a standard you set <br />
             before you enter the room."
           </p>
         </motion.div>
@@ -271,12 +277,12 @@ export default function HerExcellenceLanding() {
       <footer className="border-t border-white/10 py-12 px-6 relative">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-3">
-             <Image src="/herexcellence.jpeg" alt="Her Excellence" width={32} height={32} className="rounded-full grayscale opacity-50" />
-             <span className="text-white/50 text-sm">© 2025 HER EXCELLENCE. ALL RIGHTS RESERVED.</span>
+            <Image src="/herexcellence.jpeg" alt="Her Excellence" width={32} height={32} className="rounded-full grayscale opacity-50" />
+            <span className="text-white/50 text-sm">© 2026 HER EXCELLENCE. ALL RIGHTS RESERVED.</span>
           </div>
           <div className="flex gap-8 text-sm uppercase tracking-widest font-semibold text-white/50">
             <a href="#" className="hover:text-white transition-colors">Instagram</a>
-            <a href="#" className="hover:text-white transition-colors">Contact</a>
+            <a href="mailto:herexcellencefashion@gmail.com" className="hover:text-white transition-colors">herexcellencefashion@gmail.com</a>
             <Link href="/herexcellence/dashboard" className="hover:text-[#d4af37] transition-colors">Dashboard</Link>
           </div>
         </div>
