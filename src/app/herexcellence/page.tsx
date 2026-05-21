@@ -275,14 +275,14 @@ export default function HerExcellenceLanding() {
 
       {/* Footer */}
       <footer className="border-t border-white/10 py-12 px-6 relative">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-3">
-            <Image src="/herexcellence.jpeg" alt="Her Excellence" width={32} height={32} className="rounded-full grayscale opacity-50" />
-            <span className="text-white/50 text-sm">© 2026 HER EXCELLENCE. ALL RIGHTS RESERVED.</span>
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="flex flex-col md:flex-row items-center gap-3 text-center md:text-left">
+            <Image src="/herexcellence.jpeg" alt="Her Excellence" width={32} height={32} className="rounded-full grayscale opacity-50 mb-2 md:mb-0" />
+            <span className="text-white/50 text-xs md:text-sm">© 2026 HER EXCELLENCE. ALL RIGHTS RESERVED.</span>
           </div>
-          <div className="flex gap-8 text-sm uppercase tracking-widest font-semibold text-white/50">
+          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-xs md:text-sm uppercase tracking-widest font-semibold text-white/50">
             <a href="#" className="hover:text-white transition-colors">Instagram</a>
-            <a href="mailto:herexcellencefashion@gmail.com" className="hover:text-white transition-colors">herexcellencefashion@gmail.com</a>
+            <a href="mailto:herexcellencefashion@gmail.com" className="hover:text-white transition-colors text-[10px] md:text-sm">herexcellencefashion@gmail.com</a>
             <Link href="/herexcellence/dashboard" className="hover:text-[#d4af37] transition-colors">Dashboard</Link>
           </div>
         </div>
