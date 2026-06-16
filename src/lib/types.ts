@@ -26,6 +26,8 @@ export interface User {
     subscription_ends_at: string | null
     referral_count: number
     referred_by: string | null
+    has_joined_referral: boolean
+    referral_payment_details: any | null
     upvotes: number
     created_at: string
     updated_at: string

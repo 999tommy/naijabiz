@@ -61,3 +61,13 @@ export function formatNigerianPhone(phone: string): string {
     }
     return cleanPhone
 }
+
+export function getMainDomain(host: string | null): string {
+    if (!host) return 'https://naijabiz.org'
+    const isLocalhost = host.includes('localhost')
+    if (isLocalhost) {
+        const port = host.split(':')[1]
+        return `http://localhost${port ? `:${port}` : ''}`
+    }
+    return 'https://naijabiz.org'
+}

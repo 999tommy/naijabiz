@@ -23,6 +23,7 @@ import { OnboardingAssistant } from '@/components/OnboardingAssistant'
 import { ReferralCard } from '@/components/ReferralCard'
 import { WhatsAppShareCenter } from '@/components/WhatsAppShareCenter'
 import { ShareRankCard } from '@/components/ShareRankCard'
+import { checkAndDowngradeUser } from '@/lib/subscription'
 
 export const dynamic = 'force-dynamic'
 
@@ -79,14 +80,31 @@ async function getDashboardData(userId: string) {
     const myRankIndex = rankedUsers.findIndex(u => u.id === userId)
     const myRank = myRankIndex !== -1 ? myRankIndex + 1 : 0
 
+    const checkedUser = user ? await checkAndDowngradeUser(user) : null
+
+    const { count: payingReferredCount } = await supabase
+        .from('users')
+        .select('*', { count: 'exact', head: true })
+        .eq('referred_by', user?.business_slug)
+        .eq('plan', 'pro')
+
+    const { count: payoutRounds } = await supabase
+        .from('referral_payouts')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+
     return {
-        user,
+        user: checkedUser,
         stats: {
             products: productCount || 0,
             views: viewCount || 0,
             orders: orderCount || 0
         },
-        rank: myRank
+        rank: myRank,
+        referralStats: {
+            payingReferredCount: payingReferredCount || 0,
+            payoutRounds: payoutRounds || 0
+        }
     }
 }
 
@@ -98,7 +116,7 @@ export default async function DashboardPage() {
         redirect('/login')
     }
 
-    const { user, stats, rank } = await getDashboardData(authUser.id)
+    const { user, stats, rank, referralStats } = await getDashboardData(authUser.id)
 
     if (!user) {
         redirect('/signup?step=business')
@@ -244,8 +262,8 @@ export default async function DashboardPage() {
                     <div className="min-w-0">
                         {/* Pro upsell or tips */}
                         {!isPro ? (
-                            <div className="space-y-6">
-                                <ReferralCard user={user} />
+                            <div className="md:col-span-1 space-y-8">
+                                <ReferralCard user={user} referralStats={referralStats} />
 
                                 <Card className="bg-gradient-to-br from-orange-50 to-white border-orange-200">
                                     <CardHeader>
@@ -287,7 +305,7 @@ export default async function DashboardPage() {
                         ) : (
                             <div className="space-y-6">
                                 <WhatsAppShareCenter user={user} rank={rank} />
-                                <ReferralCard user={user} />
+                                <ReferralCard user={user} referralStats={referralStats} />
                             </div>
                         )}
                     </div>

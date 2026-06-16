@@ -21,6 +21,7 @@ import { getCategoryIcon } from '@/lib/category-icons'
 import { UpvoteButton } from '@/components/UpvoteButton'
 import { BusinessShareButton } from '@/components/BusinessShareButton'
 import { AiChatWidget } from '@/components/AiChatWidget'
+import { checkAndDowngradeUser } from '@/lib/subscription'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,11 +40,13 @@ async function getBusiness(slug: string) {
     // Quick separate queries to get counts for "Community Verified" logic
     // In production, use a materialized view or `count` in select
     if (data) {
+        const checkedData = await checkAndDowngradeUser(data)
+
         const { count: reviewCount } = await supabase.from('reviews').select('*', { count: 'exact', head: true }).eq('business_id', data.id)
         const { count: viewCount } = await supabase.from('page_views').select('*', { count: 'exact', head: true }).eq('business_id', data.id)
 
         return {
-            ...data,
+            ...checkedData,
             reviewCount: reviewCount || 0,
             viewCount: viewCount || 0
         }
