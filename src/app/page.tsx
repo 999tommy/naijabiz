@@ -20,7 +20,8 @@ import {
   Star,
   ImagePlus,
   Globe,
-  Bot
+  Bot,
+  Banknote
 } from 'lucide-react'
 import { UpvoteButton } from '@/components/UpvoteButton'
 import { PricingSection } from '@/components/PricingSection'
@@ -137,8 +138,17 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section className="pt-12 pb-16 md:pt-16 md:pb-24 px-4 text-center max-w-5xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-bold mb-6 border border-orange-200 animate-pulse">
-          <span>New: AI Sales Assistant Included</span>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-bold border border-orange-200 animate-pulse">
+            <span>New: AI Sales Assistant Included</span>
+          </div>
+          <Link href="/signup">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-bold border border-green-200 hover:bg-green-200 transition-colors shadow-sm">
+              <Banknote className="w-4 h-4" />
+              <span>Earn up to ₦60k referring businesses</span>
+              <ArrowRight className="w-3 h-3" />
+            </div>
+          </Link>
         </div>
 
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 mb-6 max-w-4xl mx-auto leading-[1.1]">
