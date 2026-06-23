@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Gift, Copy, Check, Share2, Wallet, Banknote } from 'lucide-react'
 import { User } from '@/lib/types'
 import { Input } from '@/components/ui/input'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/ui/use-toast'
 
 interface ReferralCardProps {
     user: User
