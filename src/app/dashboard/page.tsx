@@ -17,7 +17,8 @@ import {
     Hand,
     Rocket,
     Lightbulb,
-    Check
+    Check,
+    Banknote
 } from 'lucide-react'
 import { OnboardingAssistant } from '@/components/OnboardingAssistant'
 import { ReferralCard } from '@/components/ReferralCard'
@@ -139,6 +140,14 @@ export default async function DashboardPage() {
                     <p className="text-gray-500 mt-1">
                         Here&apos;s what&apos;s happening with your business today.
                     </p>
+                    <div className="mt-3">
+                        <a href="#referral-section">
+                            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold flex items-center gap-2">
+                                <Banknote className="w-4 h-4" />
+                                Referral Program
+                            </Button>
+                        </a>
+                    </div>
                 </div>
 
                 <OnboardingAssistant user={user} productCount={stats.products} />
@@ -262,7 +271,7 @@ export default async function DashboardPage() {
                     <div className="min-w-0">
                         {/* Pro upsell or tips */}
                         {!isPro ? (
-                            <div className="md:col-span-1 space-y-8">
+                            <div id="referral-section" className="md:col-span-1 space-y-8">
                                 <ReferralCard user={user} referralStats={referralStats} />
 
                                 <Card className="bg-gradient-to-br from-orange-50 to-white border-orange-200">
@@ -303,7 +312,7 @@ export default async function DashboardPage() {
                                 </Card>
                             </div>
                         ) : (
-                            <div className="space-y-6">
+                            <div id="referral-section" className="space-y-6">
                                 <WhatsAppShareCenter user={user} rank={rank} />
                                 <ReferralCard user={user} referralStats={referralStats} />
                             </div>
