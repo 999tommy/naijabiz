@@ -45,7 +45,7 @@ function TikTokIcon({ className }: { className?: string }) {
     )
 }
 
-// ─── Individual slide (owns its own 360° rotation state) ─────────────────────
+// ─── Individual slide ─────────────────────
 interface SlideProps {
     product: Product
     business: User & { category?: { name: string } }
@@ -63,14 +63,8 @@ function ProductSlide({
     product, business, index, total, whatsappNumber, instagramHandle,
     onAdd, isFirst, setRef, currentIndex,
 }: SlideProps) {
-    const [rotateY, setRotateY] = useState(0)
-    const [rotateX, setRotateX] = useState(0)
-    const [isDragging, setIsDragging] = useState(false)
-    const [showHint, setShowHint] = useState(true)
     const [aspectRatio, setAspectRatio] = useState<number | null>(null)
     const [localJustAdded, setLocalJustAdded] = useState(false)
-    const lastPos = useRef<{ x: number; y: number } | null>(null)
-    const imgContainerRef = useRef<HTMLDivElement>(null)
 
     const tiktokHandle = business.tiktok_handle
     const isPortrait = aspectRatio !== null && aspectRatio < 0.85
@@ -80,23 +74,6 @@ function ProductSlide({
         setLocalJustAdded(true)
         setTimeout(() => setLocalJustAdded(false), 1500)
     }
-
-    const onPointerDown = (e: React.PointerEvent) => {
-        if (!product.image_url) return
-        setIsDragging(true)
-        setShowHint(false)
-        lastPos.current = { x: e.clientX, y: e.clientY }
-        imgContainerRef.current?.setPointerCapture(e.pointerId)
-    }
-    const onPointerMove = (e: React.PointerEvent) => {
-        if (!isDragging || !lastPos.current) return
-        const dx = e.clientX - lastPos.current.x
-        const dy = e.clientY - lastPos.current.y
-        setRotateY(p => p + dx * 0.5)
-        setRotateX(p => Math.max(-32, Math.min(32, p - dy * 0.3)))
-        lastPos.current = { x: e.clientX, y: e.clientY }
-    }
-    const onPointerUp = () => { setIsDragging(false); lastPos.current = null }
 
     return (
         <div
@@ -134,6 +111,7 @@ function ProductSlide({
                                 className="rounded-full flex-shrink-0"
                                 style={{ objectFit: 'cover', width: 28, height: 28 }}
                                 unoptimized={business.logo_url.includes('supabase.co')}
+                                priority={isFirst}
                             />
                         ) : (
                             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
@@ -250,7 +228,7 @@ function ProductSlide({
 
             {/* ── IMAGE AREA (dynamic fit) ── */}
             <div
-                className="absolute left-0 right-0 flex items-center justify-center"
+                className="absolute left-0 right-0 flex items-center justify-center animate-fade-in"
                 style={
                     isPortrait
                         ? { top: '0px', bottom: '0px', zIndex: 1 }
@@ -258,17 +236,10 @@ function ProductSlide({
                 }
             >
                 <div
-                    ref={imgContainerRef}
                     className="w-full h-full flex items-center justify-center select-none"
                     style={{
-                        perspective: '900px',
-                        cursor: product.image_url ? (isDragging ? 'grabbing' : 'grab') : 'default',
-                        touchAction: 'pan-y',
+                        cursor: 'default',
                     }}
-                    onPointerDown={onPointerDown}
-                    onPointerMove={onPointerMove}
-                    onPointerUp={onPointerUp}
-                    onPointerLeave={onPointerUp}
                 >
                     {product.image_url ? (
                         <div
@@ -276,9 +247,6 @@ function ProductSlide({
                             style={{
                                 width: '100%',
                                 height: isPortrait ? '100dvh' : '100%',
-                                transform: `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`,
-                                transition: isDragging ? 'none' : 'transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)',
-                                transformStyle: 'preserve-3d',
                             }}
                         >
                             <Image
@@ -308,40 +276,6 @@ function ProductSlide({
                                 draggable={false}
                                 priority={isFirst}
                             />
-
-                            {/* Specular glass sheen that shifts with rotation */}
-                            <div
-                                className="absolute inset-0 pointer-events-none"
-                                style={{
-                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 55%)',
-                                    borderRadius: isPortrait ? '0px' : '16px',
-                                    transform: `rotateY(${-rotateY * 0.18}deg) rotateX(${-rotateX * 0.18}deg)`,
-                                    transition: isDragging ? 'none' : 'transform 0.5s ease-out',
-                                }}
-                            />
-
-                            {/* Drag-to-rotate hint */}
-                            <AnimatePresence>
-                                {showHint && (
-                                    <motion.div
-                                        className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                                        transition={{ delay: 1.2, duration: 0.4 }}
-                                        style={{ zIndex: 10 }}
-                                    >
-                                        <motion.div
-                                            animate={{ x: [0, 22, -22, 0] }}
-                                            transition={{ duration: 2, repeat: 2, ease: 'easeInOut', delay: 1.6 }}
-                                            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-gray-800 text-xs font-bold"
-                                            style={glass}
-                                        >
-                                            ↔ Drag to rotate
-                                        </motion.div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
                         </div>
                     ) : (
                         <div className="w-40 h-40 flex items-center justify-center rounded-3xl" style={glass}>

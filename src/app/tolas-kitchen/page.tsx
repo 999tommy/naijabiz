@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { OrderCart } from '@/components/OrderCart'
+import { StorefrontClient } from '@/components/StorefrontClient'
 import { VerifiedBadge } from '@/components/VerifiedBadge'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -237,61 +237,17 @@ export default function ExampleBusinessPage() {
                 </div>
             </div>
 
-            {/* Products */}
-            <div className="max-w-4xl mx-auto px-4 py-8">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                    Products ({products.length})
-                </h2>
-
-                <OrderCart
-                    products={products}
-                    businessName={business.business_name}
-                    whatsappNumber={business.whatsapp_number}
-                    instagramHandle={business.instagram_handle}
-                />
-            </div>
-
-            {/* Reviews (Pro only) */}
-            {
-                isPro && reviews.length > 0 && (
-                    <div className="max-w-4xl mx-auto px-4 pb-8">
-                        <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                            Customer Reviews ({reviews.length})
-                        </h2>
-                        <div className="space-y-4">
-                            {reviews.map(review => (
-                                <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-4">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <div className="flex">
-                                            {[...Array(5)].map((_, i) => (
-                                                <Star
-                                                    key={i}
-                                                    className={`w-4 h-4 ${i < review.rating
-                                                        ? 'text-yellow-500 fill-yellow-500'
-                                                        : 'text-gray-300'
-                                                        }`}
-                                                />
-                                            ))}
-                                        </div>
-                                        <span className="text-sm font-medium text-gray-900">
-                                            {review.customer_name}
-                                        </span>
-                                        <span className="text-xs text-gray-400">
-                                            {new Date(review.created_at).toLocaleDateString()}
-                                        </span>
-                                    </div>
-                                    {review.comment && (
-                                        <p className="text-gray-600 text-sm">{review.comment}</p>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Leave a review CTA */}
-                        <MockReviewButton />
-                    </div>
-                )
-            }
+            {/* Products + Reviews — managed by StorefrontClient (handles Grid/Reels toggle) */}
+            <StorefrontClient
+                products={products}
+                business={business as any}
+                isPro={isPro}
+                reviews={reviews as any}
+                slug="tolas-kitchen"
+                averageRating={averageRating}
+                whatsappNumber={business.whatsapp_number}
+                instagramHandle={business.instagram_handle}
+            />
 
             {/* Footer */}
             <footer className="bg-white border-t border-gray-200 py-6">
