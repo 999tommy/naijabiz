@@ -282,6 +282,7 @@ function ProductSlide({
                                 } as React.CSSProperties}
                                 unoptimized={product.image_url.includes('supabase.co')}
                                 draggable={false}
+                                priority={isFirst}
                             />
 
                             {/* Specular glass sheen that shifts with rotation */}
