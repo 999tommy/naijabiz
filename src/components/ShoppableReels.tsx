@@ -19,21 +19,21 @@ import {
     ChevronDown,
 } from 'lucide-react'
 
-// ─── Shared glass style (light / Apple liquid-glass aesthetic) ───────────────
+// ─── Shared glass style (light / Apple liquid-glass aesthetic — thin water glass) ───────────────
 const glass = {
-    backdropFilter: 'blur(24px) saturate(220%)',
-    background: 'rgba(255,255,255,0.22)',
-    border: '1px solid rgba(255,255,255,0.5)',
+    backdropFilter: 'blur(16px) saturate(180%)',
+    background: 'rgba(255, 255, 255, 0.12)',
+    border: '1px solid rgba(255, 255, 255, 0.3)',
     boxShadow:
-        'inset 0 1px 0 rgba(255,255,255,0.75), inset 0 -1px 0 rgba(0,0,0,0.03), 0 4px 16px rgba(0,0,0,0.07)',
+        'inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -1px 0 rgba(0, 0, 0, 0.01), 0 4px 16px rgba(0, 0, 0, 0.03)',
 } as React.CSSProperties
 
 const glassStrong = {
-    backdropFilter: 'blur(32px) saturate(220%)',
-    background: 'rgba(255,255,255,0.75)',
-    border: '1px solid rgba(255,255,255,0.65)',
+    backdropFilter: 'blur(20px) saturate(190%)',
+    background: 'rgba(255, 255, 255, 0.28)',
+    border: '1px solid rgba(255, 255, 255, 0.35)',
     boxShadow:
-        'inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(0,0,0,0.02), 0 -4px 32px rgba(0,0,0,0.05)',
+        'inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -1px 0 rgba(0, 0, 0, 0.02), 0 -4px 32px rgba(0, 0, 0, 0.04)',
 } as React.CSSProperties
 
 // ─── TikTok icon ──────────────────────────────────────────────────────────────
@@ -54,23 +54,32 @@ interface SlideProps {
     whatsappNumber: string
     instagramHandle?: string | null
     onAdd: (product: Product) => void
-    justAdded: boolean
     isFirst: boolean
     setRef: (el: HTMLDivElement | null) => void
+    currentIndex: number
 }
 
 function ProductSlide({
     product, business, index, total, whatsappNumber, instagramHandle,
-    onAdd, justAdded, isFirst, setRef,
+    onAdd, isFirst, setRef, currentIndex,
 }: SlideProps) {
     const [rotateY, setRotateY] = useState(0)
     const [rotateX, setRotateX] = useState(0)
     const [isDragging, setIsDragging] = useState(false)
     const [showHint, setShowHint] = useState(true)
+    const [aspectRatio, setAspectRatio] = useState<number | null>(null)
+    const [localJustAdded, setLocalJustAdded] = useState(false)
     const lastPos = useRef<{ x: number; y: number } | null>(null)
     const imgContainerRef = useRef<HTMLDivElement>(null)
 
     const tiktokHandle = business.tiktok_handle
+    const isPortrait = aspectRatio !== null && aspectRatio < 0.85
+
+    const handleAddToCart = () => {
+        onAdd(product)
+        setLocalJustAdded(true)
+        setTimeout(() => setLocalJustAdded(false), 1500)
+    }
 
     const onPointerDown = (e: React.PointerEvent) => {
         if (!product.image_url) return
@@ -92,11 +101,11 @@ function ProductSlide({
     return (
         <div
             ref={setRef}
-            className="relative w-full flex-shrink-0"
+            className="relative w-full flex-shrink-0 overflow-x-hidden"
             style={{ height: '100dvh', scrollSnapAlign: 'start', scrollSnapStop: 'always', backgroundColor: '#ffffff' } as React.CSSProperties}
         >
-            {/* Blurred ambient background — lighter overlay */}
-            {product.image_url && (
+            {/* Blurred ambient background — only render for visible and adjacent slides to prevent GPU scroll lag */}
+            {Math.abs(currentIndex - index) <= 1 && !isPortrait && product.image_url && (
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <Image
                         src={product.image_url} alt="" fill aria-hidden
@@ -108,12 +117,12 @@ function ProductSlide({
                 </div>
             )}
             {/* Light frosted wash */}
-            <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(255,255,255,0.2)' }} />
+            <div className="absolute inset-0 pointer-events-none" style={{ background: isPortrait ? 'transparent' : 'rgba(255,255,255,0.2)' }} />
 
             {/* ── BRAND STRIP (top-left) ── */}
             <div className="absolute top-20 left-4 z-10">
                 <div
-                    className="flex flex-col gap-1.5 pl-1.5 pr-3.5 pt-2 pb-2 rounded-2xl"
+                    className="flex flex-col gap-2 pl-2.5 pr-5 pt-2.5 pb-2.5 rounded-2xl min-w-[200px]"
                     style={glass}
                 >
                     {/* Logo + name row */}
@@ -131,14 +140,14 @@ function ProductSlide({
                                 {(business.business_name || 'B')[0].toUpperCase()}
                             </div>
                         )}
-                        <span className="text-gray-900 font-bold text-sm max-w-[140px] truncate">
+                        <span className="text-gray-900 font-extrabold text-sm max-w-[160px] truncate" style={{ textShadow: '0 1px 1px rgba(255,255,255,0.8)' }}>
                             {business.business_name}
                         </span>
                     </div>
 
-                    {/* Social icon row (below name, indented to align with name) */}
+                    {/* Social icon row (aligned directly below name) */}
                     {(whatsappNumber || instagramHandle || tiktokHandle) && (
-                        <div className="flex items-center gap-3 pl-9">
+                        <div className="flex items-center gap-3.5 pl-[36px]">
                             {whatsappNumber && (
                                 <a
                                     href={`https://wa.me/${whatsappNumber}`}
@@ -187,67 +196,74 @@ function ProductSlide({
                 </div>
             </div>
 
-            {/* ── IMAGE AREA + ACTION RAIL (overlaid) ── */}
-            <div
-                className="absolute left-0 right-0"
-                style={{ top: '148px', bottom: '196px' }}
-            >
-                {/* Action rail — floating on right, ON TOP of image */}
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 z-10 flex flex-col gap-3.5 items-center">
-                    {/* WhatsApp */}
-                    {whatsappNumber && (
-                        <a
-                            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi! I saw *${product.name}* (${formatPrice(product.price)}) on ${business.business_name}'s NaijaBiz store. Is it available? 🛍️`)}`}
-                            target="_blank" rel="noopener noreferrer"
-                            className="flex flex-col items-center gap-1 group"
-                            aria-label="Chat on WhatsApp"
-                            onClick={e => e.stopPropagation()}
-                        >
-                            <div
-                                className="w-11 h-11 rounded-[16px] flex items-center justify-center transition-transform duration-100 active:scale-90"
-                                style={glass}
-                            >
-                                <MessageCircle className="w-5 h-5 text-gray-800" />
-                            </div>
-                            <span className="text-[10px] font-semibold text-gray-600">Chat</span>
-                        </a>
-                    )}
-
-                    {/* Add to Cart */}
-                    <button
-                        onClick={e => { e.stopPropagation(); onAdd(product) }}
+            {/* ── ACTION RAIL (anchored to slide to avoid collisions) ── */}
+            <div className="absolute right-3 bottom-[230px] z-20 flex flex-col gap-3.5 items-center">
+                {/* WhatsApp */}
+                {whatsappNumber && (
+                    <a
+                        href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi! I saw *${product.name}* (${formatPrice(product.price)}) on ${business.business_name}'s NaijaBiz store. Is it available? 🛍️`)}`}
+                        target="_blank" rel="noopener noreferrer"
                         className="flex flex-col items-center gap-1 group"
-                        aria-label="Add to cart"
+                        aria-label="Chat on WhatsApp"
+                        onClick={e => e.stopPropagation()}
                     >
                         <div
-                            className="w-11 h-11 rounded-[16px] flex items-center justify-center transition-all duration-200 active:scale-90"
-                            style={{
-                                ...glass,
-                                background: justAdded ? 'rgba(249,115,22,0.18)' : 'rgba(255,255,255,0.22)',
-                                border: justAdded ? '1px solid rgba(249,115,22,0.4)' : '1px solid rgba(255,255,255,0.5)',
-                            }}
+                            className="w-11 h-11 rounded-[16px] flex items-center justify-center transition-transform duration-100 active:scale-90"
+                            style={glass}
                         >
-                            <AnimatePresence mode="wait">
-                                {justAdded ? (
-                                    <motion.span key="check" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="text-orange-500 font-bold text-base">✓</motion.span>
-                                ) : (
-                                    <motion.div key="plus" initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
-                                        <Plus className="w-5 h-5 text-gray-800" />
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
+                            <MessageCircle className="w-5 h-5 text-gray-800" />
                         </div>
-                        <span className="text-[10px] font-semibold text-gray-600">Add</span>
-                    </button>
-                </div>
+                        <span className="text-[10px] font-bold text-gray-700" style={{ textShadow: '0 1px 2px rgba(255,255,255,0.7)' }}>Chat</span>
+                    </a>
+                )}
 
-                {/* Product image — full horizontal width, 360° drag-rotate active */}
+                {/* Add to Cart */}
+                <button
+                    onClick={e => { e.stopPropagation(); handleAddToCart() }}
+                    className="flex flex-col items-center gap-1"
+                    aria-label="Add to cart"
+                >
+                    <div
+                        className="w-11 h-11 rounded-[16px] flex items-center justify-center active:scale-90"
+                        style={{
+                            ...glass,
+                            background: localJustAdded ? 'rgba(249,115,22,0.22)' : 'rgba(255,255,255,0.12)',
+                            border: localJustAdded ? '1px solid rgba(249,115,22,0.45)' : '1px solid rgba(255,255,255,0.3)',
+                            transition: 'background 0.2s, border 0.2s',
+                        }}
+                    >
+                        {/* CSS-only swap — no Framer wait delay */}
+                        <span
+                            className="text-orange-600 font-extrabold text-base"
+                            style={{ display: localJustAdded ? 'block' : 'none' }}
+                        >
+                            ✓
+                        </span>
+                        <Plus
+                            className="w-5 h-5 text-gray-800"
+                            style={{ display: localJustAdded ? 'none' : 'block' }}
+                        />
+                    </div>
+                    <span className="text-[10px] font-bold text-gray-700" style={{ textShadow: '0 1px 2px rgba(255,255,255,0.7)' }}>Add</span>
+                </button>
+            </div>
+
+            {/* ── IMAGE AREA (dynamic fit) ── */}
+            <div
+                className="absolute left-0 right-0 flex items-center justify-center"
+                style={
+                    isPortrait
+                        ? { top: '0px', bottom: '0px', zIndex: 1 }
+                        : { top: '148px', bottom: '220px', zIndex: 1 }
+                }
+            >
                 <div
                     ref={imgContainerRef}
                     className="w-full h-full flex items-center justify-center select-none"
                     style={{
                         perspective: '900px',
                         cursor: product.image_url ? (isDragging ? 'grabbing' : 'grab') : 'default',
+                        touchAction: 'pan-y',
                     }}
                     onPointerDown={onPointerDown}
                     onPointerMove={onPointerMove}
@@ -259,6 +275,7 @@ function ProductSlide({
                             className="relative"
                             style={{
                                 width: '100%',
+                                height: isPortrait ? '100dvh' : '100%',
                                 transform: `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`,
                                 transition: isDragging ? 'none' : 'transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)',
                                 transformStyle: 'preserve-3d',
@@ -267,16 +284,23 @@ function ProductSlide({
                             <Image
                                 src={product.image_url}
                                 alt={product.name}
-                                width={900}
-                                height={900}
+                                fill={isPortrait}
+                                width={isPortrait ? undefined : 900}
+                                height={isPortrait ? undefined : 900}
+                                onLoad={(e) => {
+                                    const img = e.target as HTMLImageElement;
+                                    if (img.naturalWidth && img.naturalHeight) {
+                                        setAspectRatio(img.naturalWidth / img.naturalHeight);
+                                    }
+                                }}
                                 style={{
                                     width: '100%',
-                                    height: 'auto',
-                                    maxHeight: 'calc(100dvh - 380px)',
-                                    objectFit: 'contain',
-                                    borderRadius: '16px',
+                                    height: isPortrait ? '100%' : 'auto',
+                                    maxHeight: isPortrait ? '100%' : '100%',
+                                    objectFit: isPortrait ? 'cover' : 'contain',
+                                    borderRadius: isPortrait ? '0px' : '16px',
                                     display: 'block',
-                                    filter: 'drop-shadow(0 8px 28px rgba(0,0,0,0.14))',
+                                    filter: isPortrait ? 'none' : 'drop-shadow(0 8px 28px rgba(0,0,0,0.12))',
                                     userSelect: 'none',
                                     WebkitUserSelect: 'none',
                                 } as React.CSSProperties}
@@ -287,10 +311,10 @@ function ProductSlide({
 
                             {/* Specular glass sheen that shifts with rotation */}
                             <div
-                                className="absolute inset-0 rounded-2xl pointer-events-none"
+                                className="absolute inset-0 pointer-events-none"
                                 style={{
                                     background: 'linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 55%)',
-                                    borderRadius: '16px',
+                                    borderRadius: isPortrait ? '0px' : '16px',
                                     transform: `rotateY(${-rotateY * 0.18}deg) rotateX(${-rotateX * 0.18}deg)`,
                                     transition: isDragging ? 'none' : 'transform 0.5s ease-out',
                                 }}
@@ -300,16 +324,17 @@ function ProductSlide({
                             <AnimatePresence>
                                 {showHint && (
                                     <motion.div
-                                        className="absolute inset-0 flex items-center justify-center rounded-2xl pointer-events-none"
+                                        className="absolute inset-0 flex items-center justify-center pointer-events-none"
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0, transition: { duration: 0.2 } }}
                                         transition={{ delay: 1.2, duration: 0.4 }}
+                                        style={{ zIndex: 10 }}
                                     >
                                         <motion.div
                                             animate={{ x: [0, 22, -22, 0] }}
                                             transition={{ duration: 2, repeat: 2, ease: 'easeInOut', delay: 1.6 }}
-                                            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-gray-700 text-xs font-semibold"
+                                            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-gray-800 text-xs font-bold"
                                             style={glass}
                                         >
                                             ↔ Drag to rotate
@@ -332,9 +357,9 @@ function ProductSlide({
                 <div className="rounded-[28px] p-4" style={glassStrong}>
                     <div className="flex items-start justify-between gap-3 mb-3">
                         <div className="flex-1 min-w-0">
-                            <h3 className="text-gray-900 font-bold text-[17px] leading-snug">{product.name}</h3>
+                            <h3 className="text-black font-extrabold text-[17px] leading-snug" style={{ textShadow: '0 1px 1px rgba(255,255,255,0.8)' }}>{product.name}</h3>
                             {product.description && (
-                                <p className="text-gray-500 text-sm mt-1 line-clamp-2 leading-relaxed">{product.description}</p>
+                                <p className="text-gray-800 text-sm font-medium mt-1 line-clamp-2 leading-relaxed" style={{ textShadow: '0 1px 1px rgba(255,255,255,0.8)' }}>{product.description}</p>
                             )}
                         </div>
                         <div className="flex-shrink-0">
@@ -352,14 +377,18 @@ function ProductSlide({
                     </div>
 
                     <button
-                        onClick={() => onAdd(product)}
+                        onClick={handleAddToCart}
                         className="w-full py-3.5 rounded-2xl font-bold text-white text-[15px] transition-all duration-150 active:scale-[0.97]"
                         style={{
-                            background: 'linear-gradient(135deg, rgba(249,115,22,0.95), rgba(234,88,12,0.95))',
-                            boxShadow: '0 4px 16px rgba(249,115,22,0.22), inset 0 1px 0 rgba(255,255,255,0.2)',
+                            background: localJustAdded 
+                                ? 'linear-gradient(135deg, #22c55e, #16a34a)' 
+                                : 'linear-gradient(135deg, rgba(249,115,22,0.95), rgba(234,88,12,0.95))',
+                            boxShadow: localJustAdded 
+                                ? '0 4px 16px rgba(34,197,94,0.22), inset 0 1px 0 rgba(255,255,255,0.2)' 
+                                : '0 4px 16px rgba(249,115,22,0.22), inset 0 1px 0 rgba(255,255,255,0.2)',
                         }}
                     >
-                        {justAdded ? '✓  Added to Cart!' : '+ Add to Cart'}
+                        {localJustAdded ? '✓  Added to Cart!' : '+ Add to Cart'}
                     </button>
                 </div>
             </div>
@@ -395,7 +424,6 @@ export function ShoppableReels({ products, business, whatsappNumber, instagramHa
     const [customerName, setCustomerName] = useState('')
     const [customerAddress, setCustomerAddress] = useState('')
     const [orderMethod, setOrderMethod] = useState<'whatsapp' | 'instagram'>('whatsapp')
-    const [justAdded, setJustAdded] = useState<string | null>(null)
 
     const slideRefs = useRef<(HTMLDivElement | null)[]>([])
 
@@ -422,8 +450,6 @@ export function ShoppableReels({ products, business, whatsappNumber, instagramHa
 
     const handleAddToCart = (product: Product) => {
         addToCart(product)
-        setJustAdded(product.id)
-        setTimeout(() => setJustAdded(null), 1300)
     }
 
     const handleCheckout = () => {
@@ -443,8 +469,8 @@ export function ShoppableReels({ products, business, whatsappNumber, instagramHa
         <>
             {/* ══ REEL SCROLL CONTAINER — z-20 (header at z-50 overlays naturally) ══ */}
             <div
-                className="fixed inset-0 z-20 overflow-y-scroll"
-                style={{ scrollSnapType: 'y mandatory', overscrollBehaviorY: 'contain' } as React.CSSProperties}
+                className="fixed inset-0 z-20 overflow-y-scroll overflow-x-hidden bg-white"
+                style={{ scrollSnapType: 'y mandatory', overscrollBehaviorY: 'contain', backgroundColor: '#ffffff' } as React.CSSProperties}
             >
                 {products.map((product, index) => (
                     <ProductSlide
@@ -456,9 +482,9 @@ export function ShoppableReels({ products, business, whatsappNumber, instagramHa
                         whatsappNumber={whatsappNumber}
                         instagramHandle={instagramHandle}
                         onAdd={handleAddToCart}
-                        justAdded={justAdded === product.id}
                         isFirst={index === 0}
                         setRef={el => { slideRefs.current[index] = el }}
+                        currentIndex={currentIndex}
                     />
                 ))}
             </div>

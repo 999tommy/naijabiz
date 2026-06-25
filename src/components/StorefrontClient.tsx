@@ -43,15 +43,24 @@ export function StorefrontClient({
         }
     }, [business.id, isPro])
 
-    // Lock body scroll when reels are active so only the reel container scrolls
+    // Lock body and html scroll when reels are active so only the reel container scrolls
     useEffect(() => {
         if (viewMode === 'reels' && isPro) {
+            document.documentElement.style.overflow = 'hidden'
+            document.documentElement.style.height = '100dvh'
             document.body.style.overflow = 'hidden'
+            document.body.style.height = '100dvh'
         } else {
+            document.documentElement.style.overflow = ''
+            document.documentElement.style.height = ''
             document.body.style.overflow = ''
+            document.body.style.height = ''
         }
         return () => {
+            document.documentElement.style.overflow = ''
+            document.documentElement.style.height = ''
             document.body.style.overflow = ''
+            document.body.style.height = ''
         }
     }, [viewMode, isPro])
 
