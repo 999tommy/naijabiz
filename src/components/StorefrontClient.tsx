@@ -7,6 +7,7 @@ import { OrderCart } from '@/components/OrderCart'
 import { ShoppableReels } from '@/components/ShoppableReels'
 import { Button } from '@/components/ui/button'
 import type { Product, User, Review } from '@/lib/types'
+import { useCart } from '@/lib/useCart'
 
 interface StorefrontClientProps {
     products: Product[]
@@ -31,6 +32,7 @@ export function StorefrontClient({
 }: StorefrontClientProps) {
     // Default to Reels for Pro businesses, Grid for free
     const [viewMode, setViewMode] = useState<'grid' | 'reels'>(isPro ? 'reels' : 'grid')
+    const cartHelper = useCart(business.business_name || '')
 
     // Restore saved preference on mount
     useEffect(() => {
@@ -105,6 +107,13 @@ export function StorefrontClient({
                                 businessName={business.business_name || ''}
                                 whatsappNumber={whatsappNumber}
                                 instagramHandle={instagramHandle}
+                                cart={cartHelper.cart}
+                                addToCart={cartHelper.addToCart}
+                                updateQuantity={cartHelper.updateQuantity}
+                                removeFromCart={cartHelper.removeFromCart}
+                                clearCart={cartHelper.clearCart}
+                                totalItems={cartHelper.totalItems}
+                                totalAmount={cartHelper.totalAmount}
                             />
                         )}
                     </div>
@@ -193,6 +202,13 @@ export function StorefrontClient({
                             business={business}
                             whatsappNumber={whatsappNumber}
                             instagramHandle={instagramHandle}
+                            cart={cartHelper.cart}
+                            addToCart={cartHelper.addToCart}
+                            updateQuantity={cartHelper.updateQuantity}
+                            removeFromCart={cartHelper.removeFromCart}
+                            clearCart={cartHelper.clearCart}
+                            totalItems={cartHelper.totalItems}
+                            totalAmount={cartHelper.totalAmount}
                         />
                     )}
 

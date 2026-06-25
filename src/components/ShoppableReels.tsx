@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '@/lib/useCart'
 import { formatPrice, generateWhatsAppLink } from '@/lib/utils'
-import type { Product, User } from '@/lib/types'
+import type { Product, User, CartItem } from '@/lib/types'
 import {
     ShoppingCart,
     Plus,
@@ -415,9 +415,23 @@ interface ShoppableReelsProps {
     business: User & { category?: { name: string }; reviewCount?: number; viewCount?: number }
     whatsappNumber: string
     instagramHandle?: string | null
+    // Shared cart props
+    cart?: CartItem[]
+    addToCart?: (product: Product) => void
+    updateQuantity?: (productId: string, delta: number) => void
+    removeFromCart?: (productId: string) => void
+    clearCart?: () => void
+    totalItems?: number
+    totalAmount?: number
 }
 
-export function ShoppableReels({ products, business, whatsappNumber, instagramHandle }: ShoppableReelsProps) {
+export function ShoppableReels({
+    products,
+    business,
+    whatsappNumber,
+    instagramHandle,
+    ...props
+}: ShoppableReelsProps) {
     const [currentIndex, setCurrentIndex] = useState(0)
     const [isCartOpen, setIsCartOpen] = useState(false)
     const [step, setStep] = useState<'cart' | 'details'>('cart')
@@ -427,8 +441,68 @@ export function ShoppableReels({ products, business, whatsappNumber, instagramHa
 
     const slideRefs = useRef<(HTMLDivElement | null)[]>([])
 
-    const { cart, addToCart, updateQuantity, removeFromCart, clearCart, totalItems, totalAmount, generateOrderMessage } =
-        useCart(business.business_name || 'this business')
+    const localCartHelper = useCart(business.business_name || 'this business')
+
+    const cart = props.cart ?? localCartHelper.cart
+    const addToCart = props.addToCart ?? localCartHelper.addToCart
+    const updateQuantity = props.updateQuantity ?? localCartHelper.updateQuantity
+    const removeFromCart = props.removeFromCart ?? localCartHelper.removeFromCart
+    const clearCart = props.clearCart ?? localCartHelper.clearCart
+    const totalItems = props.totalItems ?? localCartHelper.totalItems
+    const totalAmount = props.totalAmount ?? localCartHelper.totalAmount
+
+    // Sync checkout details from localStorage
+    useEffect(() => {
+        try {
+            const savedName = localStorage.getItem('nb-customer-name')
+            if (savedName) setCustomerName(savedName)
+
+            const savedAddress = localStorage.getItem('nb-customer-address')
+            if (savedAddress) setCustomerAddress(savedAddress)
+
+            const savedMethod = localStorage.getItem('nb-order-method')
+            if (savedMethod === 'whatsapp' || savedMethod === 'instagram') {
+                setOrderMethod(savedMethod)
+            }
+        } catch { /* ignore */ }
+    }, [])
+
+    useEffect(() => {
+        try {
+            localStorage.setItem('nb-customer-name', customerName)
+        } catch { /* ignore */ }
+    }, [customerName])
+
+    useEffect(() => {
+        try {
+            localStorage.setItem('nb-customer-address', customerAddress)
+        } catch { /* ignore */ }
+    }, [customerAddress])
+
+    useEffect(() => {
+        try {
+            localStorage.setItem('nb-order-method', orderMethod)
+        } catch { /* ignore */ }
+    }, [orderMethod])
+
+    const generateOrderMessage = (custName?: string, custAddr?: string) => {
+        const itemsList = cart
+            .map(item => `• ${item.quantity}x ${item.name} (${formatPrice(item.price * item.quantity)})`)
+            .join('\n')
+
+        return `Hello! I am ordering from your NaijaBiz page: *${business.business_name || ''}*
+
+*Customer Details:*
+Name: ${custName || 'Not provided'}
+${custAddr ? `Address: ${custAddr}` : ''}
+
+*Order Items:*
+${itemsList}
+
+*Total: ${formatPrice(totalAmount)}*
+
+Please confirm my order. Thank you!`
+    }
 
     // Track visible slide via IntersectionObserver
     useEffect(() => {
@@ -452,6 +526,14 @@ export function ShoppableReels({ products, business, whatsappNumber, instagramHa
         addToCart(product)
     }
 
+    const handleClearCart = () => {
+        clearCart()
+        setIsCartOpen(false)
+        setStep('cart')
+        setCustomerName('')
+        setCustomerAddress('')
+    }
+
     const handleCheckout = () => {
         if (!customerName.trim()) return
         const message = generateOrderMessage(customerName, customerAddress)
@@ -461,8 +543,7 @@ export function ShoppableReels({ products, business, whatsappNumber, instagramHa
             navigator.clipboard.writeText(message)
             window.open(`https://instagram.com/direct/t/${instagramHandle.replace('@', '')}`, '_blank')
         }
-        clearCart(); setIsCartOpen(false); setStep('cart')
-        setCustomerName(''); setCustomerAddress('')
+        handleClearCart()
     }
 
     return (
@@ -587,7 +668,7 @@ export function ShoppableReels({ products, business, whatsappNumber, instagramHa
                                         >
                                             Continue to Checkout →
                                         </button>
-                                        <button onClick={() => { clearCart(); setIsCartOpen(false) }} className="w-full py-2 text-sm text-gray-400 hover:text-gray-600 transition-colors">
+                                        <button onClick={handleClearCart} className="w-full py-2 text-sm text-gray-400 hover:text-gray-600 transition-colors">
                                             Clear Cart
                                         </button>
                                     </div>

@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { formatPrice, generateWhatsAppLink } from '@/lib/utils'
 import type { Product, CartItem } from '@/lib/types'
+import { useCart } from '@/lib/useCart'
 import {
     ShoppingCart,
     Plus,
@@ -23,55 +24,84 @@ interface OrderCartProps {
     whatsappNumber: string
     instagramHandle?: string | null
     extraBottomSpacing?: boolean
+    // Shared cart props
+    cart?: CartItem[]
+    addToCart?: (product: Product) => void
+    updateQuantity?: (productId: string, delta: number) => void
+    removeFromCart?: (productId: string) => void
+    clearCart?: () => void
+    totalItems?: number
+    totalAmount?: number
 }
 
-export function OrderCart({ products, businessName, whatsappNumber, instagramHandle, extraBottomSpacing = false }: OrderCartProps) {
-    const [cart, setCart] = useState<CartItem[]>([])
+export function OrderCart({
+    products,
+    businessName,
+    whatsappNumber,
+    instagramHandle,
+    extraBottomSpacing = false,
+    ...props
+}: OrderCartProps) {
+    const localCartHelper = useCart(businessName)
+
+    const cart = props.cart ?? localCartHelper.cart
+    const addToCart = props.addToCart ?? localCartHelper.addToCart
+    const updateQuantity = props.updateQuantity ?? localCartHelper.updateQuantity
+    const removeFromCart = props.removeFromCart ?? localCartHelper.removeFromCart
+    const clearCart = props.clearCart ?? localCartHelper.clearCart
+    const totalItems = props.totalItems ?? localCartHelper.totalItems
+    const totalAmount = props.totalAmount ?? localCartHelper.totalAmount
+
     const [isOpen, setIsOpen] = useState(false)
     const [customerName, setCustomerName] = useState('')
     const [customerAddress, setCustomerAddress] = useState('')
     const [orderMethod, setOrderMethod] = useState<'whatsapp' | 'instagram'>('whatsapp')
     const [step, setStep] = useState<'cart' | 'details'>('cart')
 
-    const addToCart = (product: Product) => {
-        setCart(prev => {
-            const existing = prev.find(item => item.id === product.id)
-            if (existing) {
-                return prev.map(item =>
-                    item.id === product.id
-                        ? { ...item, quantity: item.quantity + 1 }
-                        : item
-                )
+    // Restore checkout info from localStorage on mount
+    useEffect(() => {
+        try {
+            const savedName = localStorage.getItem('nb-customer-name')
+            if (savedName) setCustomerName(savedName)
+
+            const savedAddress = localStorage.getItem('nb-customer-address')
+            if (savedAddress) setCustomerAddress(savedAddress)
+
+            const savedMethod = localStorage.getItem('nb-order-method')
+            if (savedMethod === 'whatsapp' || savedMethod === 'instagram') {
+                setOrderMethod(savedMethod)
             }
-            return [...prev, { ...product, quantity: 1 }]
-        })
-    }
+        } catch { /* ignore */ }
+    }, [])
 
-    const updateQuantity = (productId: string, delta: number) => {
-        setCart(prev => {
-            return prev.map(item => {
-                if (item.id === productId) {
-                    const newQty = item.quantity + delta
-                    return newQty > 0 ? { ...item, quantity: newQty } : item
-                }
-                return item
-            }).filter(item => item.quantity > 0)
-        })
-    }
+    // Save checkout info to localStorage when they change
+    useEffect(() => {
+        try {
+            localStorage.setItem('nb-customer-name', customerName)
+        } catch { /* ignore */ }
+    }, [customerName])
 
-    const removeFromCart = (productId: string) => {
-        setCart(prev => prev.filter(item => item.id !== productId))
-    }
+    useEffect(() => {
+        try {
+            localStorage.setItem('nb-customer-address', customerAddress)
+        } catch { /* ignore */ }
+    }, [customerAddress])
 
-    const clearCart = () => {
-        setCart([])
+    useEffect(() => {
+        try {
+            localStorage.setItem('nb-order-method', orderMethod)
+        } catch { /* ignore */ }
+    }, [orderMethod])
+
+    const handleClearCart = () => {
+        clearCart()
         setStep('cart')
         setCustomerName('')
         setCustomerAddress('')
     }
 
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0)
-    const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+    const totalItemsCalculated = totalItems
+    const totalAmountCalculated = totalAmount
 
     const generateOrderMessage = () => {
         const itemsList = cart.map(item =>
@@ -106,7 +136,7 @@ Please confirm my order. Thank you!`
             window.open(`https://instagram.com/direct/t/${instagramHandle.replace('@', '')}`, '_blank')
         }
 
-        clearCart()
+        handleClearCart()
         setIsOpen(false)
     }
 
@@ -246,7 +276,7 @@ Please confirm my order. Thank you!`
                                         Continue to Checkout
                                     </Button>
                                     <button
-                                        onClick={clearCart}
+                                        onClick={handleClearCart}
                                         className="w-full text-sm text-gray-500 hover:text-gray-700"
                                     >
                                         Clear Cart

@@ -1,11 +1,36 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Product, CartItem } from '@/lib/types'
 import { formatPrice } from '@/lib/utils'
 
 export function useCart(businessName: string) {
     const [cart, setCart] = useState<CartItem[]>([])
+    const [isLoaded, setIsLoaded] = useState(false)
+
+    // Load initial cart state on client mount
+    useEffect(() => {
+        if (typeof window === 'undefined') return
+        try {
+            const saved = localStorage.getItem(`nb-cart-${businessName}`)
+            if (saved) {
+                setCart(JSON.parse(saved))
+            }
+        } catch (e) {
+            console.error('Failed to load cart from localStorage:', e)
+        }
+        setIsLoaded(true)
+    }, [businessName])
+
+    // Save cart state to localStorage on changes
+    useEffect(() => {
+        if (!isLoaded || typeof window === 'undefined') return
+        try {
+            localStorage.setItem(`nb-cart-${businessName}`, JSON.stringify(cart))
+        } catch (e) {
+            console.error('Failed to save cart to localStorage:', e)
+        }
+    }, [cart, businessName, isLoaded])
 
     const addToCart = (product: Product) => {
         setCart(prev => {
