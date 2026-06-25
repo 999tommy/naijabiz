@@ -4,7 +4,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { headers } from 'next/headers'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
-import { OrderCart } from '@/components/OrderCart'
 import { VerifiedBadge } from '@/components/VerifiedBadge'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -13,7 +12,6 @@ import {
     MessageCircle,
     Star,
     ArrowLeft,
-    Package,
     Instagram,
     LayoutDashboard
 } from 'lucide-react'
@@ -22,6 +20,7 @@ import { UpvoteButton } from '@/components/UpvoteButton'
 import { BusinessShareButton } from '@/components/BusinessShareButton'
 import { AiChatWidget } from '@/components/AiChatWidget'
 import { checkAndDowngradeUser } from '@/lib/subscription'
+import { StorefrontClient } from '@/components/StorefrontClient'
 
 export const dynamic = 'force-dynamic'
 
@@ -236,7 +235,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             {/* Header */}
-            <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+            <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
                 <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
                         <ArrowLeft className="w-5 h-5" />
@@ -365,81 +364,17 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                 </div>
             </div>
 
-            {/* Products */}
-            <div className="max-w-4xl mx-auto px-4 py-8">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                    Products ({products.length})
-                </h2>
-
-                {products.length === 0 ? (
-                    <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
-                        <Package className="w-12 h-12 mx-auto text-gray-300 mb-4" />
-                        <p className="text-gray-500">No products listed yet</p>
-                    </div>
-                ) : (
-                    <OrderCart
-                        products={products}
-                        businessName={business.business_name}
-                        whatsappNumber={business.whatsapp_number || ''}
-                        instagramHandle={business.instagram_handle}
-                    />
-                )}
-            </div>
-
-            {/* Reviews (Pro only) */}
-            {isPro && (
-                <div className="max-w-4xl mx-auto px-4 pb-8">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                        Customer Reviews ({reviews.length})
-                    </h2>
-
-                    {reviews.length > 0 ? (
-                        <div className="space-y-4">
-                            {reviews.map(review => (
-                                <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <div className="flex">
-                                            {[...Array(5)].map((_, i) => (
-                                                <Star
-                                                    key={i}
-                                                    className={`w-4 h-4 ${i < review.rating
-                                                        ? 'text-yellow-500 fill-yellow-500'
-                                                        : 'text-gray-300'
-                                                        }`}
-                                                />
-                                            ))}
-                                        </div>
-                                        <span className="text-sm font-medium text-gray-900">
-                                            {review.customer_name}
-                                        </span>
-                                        <span className="text-xs text-gray-400">
-                                            {new Date(review.created_at).toLocaleDateString()}
-                                        </span>
-                                    </div>
-                                    {review.comment && (
-                                        <p className="text-gray-600 text-sm italic">"{review.comment}"</p>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-12 bg-white rounded-xl border border-gray-200 shadow-sm">
-                            <Star className="w-12 h-12 mx-auto text-gray-200 mb-4" />
-                            <p className="text-gray-500">No reviews yet. Be the first to tell others about this business!</p>
-                        </div>
-                    )}
-
-                    {/* Leave a review CTA */}
-                    <div className="mt-8 text-center">
-                        <Link href={`/${slug}/review`}>
-                            <Button variant="outline" className="border-orange-200 text-orange-600 hover:bg-orange-50 hover:text-orange-700 font-bold px-8">
-                                <Star className="w-4 h-4 mr-2" />
-                                Leave a Review
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
-            )}
+            {/* Products + Reviews — managed by StorefrontClient (handles Grid/Reels toggle) */}
+            <StorefrontClient
+                products={products}
+                business={business}
+                isPro={isPro}
+                reviews={reviews}
+                slug={slug}
+                averageRating={averageRating}
+                whatsappNumber={business.whatsapp_number || ''}
+                instagramHandle={business.instagram_handle}
+            />
 
             {/* Footer */}
             <footer className="bg-white border-t border-gray-200 py-6">

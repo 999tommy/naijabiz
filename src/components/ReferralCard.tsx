@@ -31,11 +31,11 @@ export function ReferralCard({ user, referralStats }: ReferralCardProps) {
     }, [])
 
     const referralLink = mounted ? `${window.location.origin}/signup?ref=${user.business_slug}` : `...`
-    
+
     // Logic: calculate progress towards the NEXT 5
     const payingCount = referralStats.payingReferredCount
     const roundsPaid = referralStats.payoutRounds
-    
+
     // We only process payouts for every 5 paying users.
     // If they have referred 7, and 1 round is paid, progress is 7 - (1 * 5) = 2.
     // If they refer 10, and 1 round is paid, progress is 10 - 5 = 5 (waiting for payment).
@@ -115,12 +115,12 @@ export function ReferralCard({ user, referralStats }: ReferralCardProps) {
                 <CardContent>
                     {!isEditingBank && (
                         <p className="text-sm text-indigo-700 mb-6">
-                            Make up to <span className="font-bold">₦60,000</span> referring businesses to NaijaBiz! 
-                            When a business subscribes to Pro through your link, you get a commission. 
+                            Make up to <span className="font-bold">₦60,000</span> referring brands to NaijaBiz!
+                            When a business subscribes to Pro through your link, you get a commission.
                             Refer 5 paying businesses and you'll receive ₦3,000 sent directly to your bank account within an hour.
                         </p>
                     )}
-                    
+
                     <form onSubmit={handleJoinSubmit} className="space-y-4">
                         <div className="space-y-2">
                             <label className="text-xs font-semibold text-indigo-900">Bank Name</label>
@@ -170,7 +170,7 @@ export function ReferralCard({ user, referralStats }: ReferralCardProps) {
             <CardContent>
                 <div className="space-y-4">
                     <p className="text-sm text-indigo-700">
-                        Make up to <span className="font-bold">₦60,000</span> referring businesses! 
+                        Make up to <span className="font-bold">₦60,000</span> referring brands!
                         For every <span className="font-bold">{target} paying businesses</span> you refer, you earn ₦3,000 paid to your bank account within an hour.
                     </p>
 

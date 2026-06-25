@@ -145,7 +145,7 @@ export default async function HomePage() {
           <Link href="/signup">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-bold border border-green-200 hover:bg-green-200 transition-colors shadow-sm">
               <Banknote className="w-4 h-4" />
-              <span>Earn up to ₦60k referring businesses</span>
+              <span>Earn up to ₦60k referring brands</span>
               <ArrowRight className="w-3 h-3" />
             </div>
           </Link>
