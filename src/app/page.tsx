@@ -75,10 +75,10 @@ export default async function HomePage() {
     <div className="min-h-screen font-sans" style={{ background: '#f0eeea', color: '#1a1a1a' }}>
 
       {/* ── NAVBAR — floating glass pill like Timmo ── */}
-      <nav className="sticky top-0 z-50 px-4 pt-4">
+      <nav className="sticky top-0 z-50 px-3 pt-4 sm:px-4">
         <div className="max-w-5xl mx-auto">
           <div
-            className="flex justify-between items-center h-14 px-5 rounded-2xl"
+            className="flex justify-between items-center h-14 px-3 rounded-2xl sm:px-5"
             style={{
               backdropFilter: 'blur(20px) saturate(180%)',
               background: 'rgba(255,255,255,0.72)',
@@ -86,9 +86,9 @@ export default async function HomePage() {
               boxShadow: '0 2px 24px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.9)',
             }}
           >
-            <Link href="/" className="flex items-center gap-2">
-              <Image src="/small-logo.png" alt="NaijaBiz" width={28} height={28} style={{ width: 28, height: 'auto' }} />
-              <span className="font-bold text-lg text-gray-900 tracking-tight">NaijaBiz</span>
+            <Link href="/" className="flex min-w-0 items-center gap-1.5 sm:gap-2">
+              <Image src="/small-logo.png" alt="NaijaBiz" width={28} height={28} className="w-6 sm:w-7" style={{ height: 'auto' }} />
+              <span className="truncate text-base font-bold text-gray-900 tracking-tight sm:text-lg">NaijaBiz</span>
             </Link>
 
             <div className="hidden md:flex items-center gap-1">
@@ -106,20 +106,21 @@ export default async function HomePage() {
               ))}
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-shrink-0 items-center gap-1 sm:gap-2">
               <Link href="/login">
                 <button
-                  className="px-4 py-1.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-black/5 transition-all"
+                  className="px-2.5 py-1.5 rounded-xl text-xs font-medium text-gray-600 hover:bg-black/5 transition-all sm:px-4 sm:text-sm"
                 >
                   Login
                 </button>
               </Link>
               <Link href="/signup">
                 <button
-                  className="px-4 py-2 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
+                  className="whitespace-nowrap px-3 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90 sm:px-4 sm:text-sm"
                   style={{ background: '#da552f' }}
                 >
-                  Get Started ↗
+                  <span className="sm:hidden">Start ↗</span>
+                  <span className="hidden sm:inline">Get Started ↗</span>
                 </button>
               </Link>
             </div>
@@ -163,7 +164,7 @@ export default async function HomePage() {
               letterSpacing: '-0.02em',
             }}
           >
-            AI-powered online page
+            AI-powered website
           </span>
           <span className="block text-5xl font-black text-gray-900">
             that sells for you
@@ -249,7 +250,7 @@ export default async function HomePage() {
                 </div>
                 <h3 className="text-white font-black text-2xl leading-tight mb-2">AI Sales Assistant</h3>
                 <p className="text-white/80 text-sm leading-relaxed">
-                  Automatically replies to customers on WhatsApp — even when you're busy or asleep.
+                  Automatically replies to customers for you — even when you're busy or asleep.
                 </p>
               </div>
               <div className="relative z-10 flex items-center gap-2">
