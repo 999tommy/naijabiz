@@ -250,7 +250,7 @@ export default async function HomePage() {
                 </div>
                 <h3 className="text-white font-black text-2xl leading-tight mb-2">AI Sales Assistant</h3>
                 <p className="text-white/80 text-sm leading-relaxed">
-                  Automatically replies to customers for you — even when you're busy or asleep.
+                  Automatically replies to customers for you, even when you're busy or asleep.
                 </p>
               </div>
               <div className="relative z-10 flex items-center gap-2">
