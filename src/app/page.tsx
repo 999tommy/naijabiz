@@ -87,7 +87,7 @@ export default async function HomePage() {
             }}
           >
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/small-logo.png" alt="NaijaBiz" width={28} height={28} />
+              <Image src="/small-logo.png" alt="NaijaBiz" width={28} height={28} style={{ width: 28, height: 'auto' }} />
               <span className="font-bold text-lg text-gray-900 tracking-tight">NaijaBiz</span>
             </Link>
 
@@ -673,7 +673,7 @@ export default async function HomePage() {
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-6" style={{ borderTop: '1px solid rgba(0,0,0,0.08)' }}>
             <div className="flex items-center gap-2">
-              <Image src="/small-logo.png" alt="NaijaBiz" width={22} height={22} />
+              <Image src="/small-logo.png" alt="NaijaBiz" width={22} height={22} style={{ width: 22, height: 'auto' }} />
               <span className="font-bold text-gray-900">NaijaBiz</span>
               <span className="text-gray-300">|</span>
               <span className="text-gray-400 text-sm">© {new Date().getFullYear()} NaijaBiz. Made with ❤️ in Lagos.</span>

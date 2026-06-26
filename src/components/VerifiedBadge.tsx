@@ -34,10 +34,10 @@ export function VerifiedBadge({
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger asChild>
-                        <div className={cn("inline-flex items-center gap-1", className)}>
+                        <span className={cn("inline-flex items-center gap-1", className)}>
                             <BadgeCheck className={cn(iconSize, "text-green-500 fill-green-50")} />
                             {showText && <span className={cn("font-semibold text-green-700", textSize)}>Verified</span>}
-                        </div>
+                        </span>
                     </TooltipTrigger>
                     <TooltipContent>
                         <p>Official Verified Business (Pro)</p>
@@ -53,10 +53,10 @@ export function VerifiedBadge({
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger asChild>
-                        <div className={cn("inline-flex items-center gap-1", className)}>
+                        <span className={cn("inline-flex items-center gap-1", className)}>
                             <ShieldCheck className={cn(iconSize, "text-yellow-500 fill-yellow-50")} />
                             {showText && <span className={cn("font-semibold text-yellow-600", textSize)}>Trusted</span>}
-                        </div>
+                        </span>
                     </TooltipTrigger>
                     <TooltipContent>
                         <p>Community Trusted (Active & Reviewed)</p>
