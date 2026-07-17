@@ -172,7 +172,7 @@ export default async function HomePage() {
         </h1>
 
         <p className="text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed">
-          Create a free professional store for your brand. Now with an AI Assistant that replies to customers while you sleep.
+          Get your brand&apos;s own website in 60 seconds — complete with gallery, reviews, WhatsApp ordering, and an AI assistant that replies to customers while you sleep.
         </p>
 
         {/* CTA Buttons — Timmo pill style */}
@@ -182,7 +182,7 @@ export default async function HomePage() {
               className="h-14 px-8 rounded-2xl text-base font-bold text-white transition-all hover:opacity-90 hover:-translate-y-0.5 shadow-lg flex items-center gap-2"
               style={{ background: '#1a1a1a', boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }}
             >
-              Create My AI Brand Page ↗
+              Launch My Business Website ↗
             </button>
           </Link>
           <Link href="/tolas-kitchen">
@@ -190,7 +190,7 @@ export default async function HomePage() {
               className="h-14 px-8 rounded-2xl text-base font-semibold text-gray-700 bg-white transition-all hover:bg-gray-50 hover:-translate-y-0.5 flex items-center gap-2"
               style={{ border: '1px solid rgba(0,0,0,0.1)', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}
             >
-              See example page
+              See example website
               <ArrowRight className="w-4 h-4" />
             </button>
           </Link>
@@ -200,6 +200,7 @@ export default async function HomePage() {
         <div className="flex flex-wrap items-center justify-center gap-3">
           {[
             { icon: <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />, text: 'Free forever' },
+            { icon: <Globe className="w-3.5 h-3.5 text-blue-500" />, text: 'Your own website' },
             { icon: <Bot className="w-3.5 h-3.5 text-orange-500" />, text: 'AI Auto-Replies' },
             { icon: <Banknote className="w-3.5 h-3.5 text-green-500" />, text: 'Earn ₦60k by referring' },
           ].map(({ icon, text }) => (
@@ -225,7 +226,7 @@ export default async function HomePage() {
           <div className="text-center mb-12">
             <p className="text-xs font-bold tracking-widest text-orange-500 uppercase mb-3">Everything you need</p>
             <h2 className="text-3xl md:text-4xl font-black text-gray-900">
-              A business page that actually works
+              A full website, not just a page
             </h2>
           </div>
 
@@ -293,7 +294,7 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Unique Link — spans 2 cols */}
+            {/* Your own website — spans 2 cols */}
             <div
               className="col-span-2 rounded-3xl p-5 flex items-center gap-5"
               style={{
@@ -307,8 +308,8 @@ export default async function HomePage() {
                 <Globe className="w-6 h-6 text-orange-500" />
               </div>
               <div>
-                <h3 className="font-black text-gray-900 text-base mb-1">Your unique link</h3>
-                <p className="text-gray-400 text-xs font-mono">naijabiz.org/<span className="text-orange-500">yourbrand</span></p>
+                <h3 className="font-black text-gray-900 text-base mb-1">Your own website</h3>
+                <p className="text-gray-400 text-xs">Hero, gallery, reviews &amp; store — all at <span className="font-mono text-orange-500">naijabiz.org/<span className="text-orange-600">yourbrand</span></span></p>
               </div>
             </div>
 
@@ -546,9 +547,9 @@ export default async function HomePage() {
 
           <div className="grid md:grid-cols-3 gap-4">
             {[
-              { step: '01', title: 'Create your page', desc: 'Enter your business name, location, photos, and what you sell. It\'s simple.', icon: <ImagePlus className="w-5 h-5" /> },
-              { step: '02', title: 'Share your link', desc: 'Put your NaijaBiz link on WhatsApp status, Instagram bio, or send it to customers.', icon: <Globe className="w-5 h-5" /> },
-              { step: '03', title: 'Get messages & orders', desc: 'Customers click your link, see what you sell, and message you on WhatsApp to pay.', icon: <MessageCircle className="w-5 h-5" /> },
+              { step: '01', title: 'Set up your brand', desc: 'Enter your business name, category, photos, and products. NaijaBiz auto-builds your full website instantly.', icon: <ImagePlus className="w-5 h-5" /> },
+              { step: '02', title: 'Share your website', desc: 'Put your NaijaBiz link on WhatsApp status, Instagram bio, or anywhere. It looks like a real business website.', icon: <Globe className="w-5 h-5" /> },
+              { step: '03', title: 'Get messages & orders', desc: 'Customers browse your site, add to cart, and order directly on WhatsApp — no payment gateway stress.', icon: <MessageCircle className="w-5 h-5" /> },
             ].map(({ step, title, desc, icon }) => (
               <div
                 key={step}
@@ -596,26 +597,26 @@ export default async function HomePage() {
               <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
                 <div>
                   <h2 className="text-3xl md:text-4xl font-black text-white mb-4 leading-tight">
-                    "I finally stopped sending pictures manually."
+                    &ldquo;I finally have a real website for my business.&rdquo;
                   </h2>
                   <p className="text-white/60 text-base leading-relaxed mb-8">
-                    Madam Tola used to spend hours sending food photos to every new customer. Now, she just sends her{' '}
-                    <span className="text-orange-400 font-bold">NaijaBiz link</span>.
+                    Madam Tola used to share food photos manually. Now she has a full website at{' '}
+                    <span className="text-orange-400 font-bold">naijabiz.org/tolas-kitchen</span>{' '}— gallery, reviews, WhatsApp ordering, everything.
                   </p>
-                  <Link href="/signup">
+                  <Link href="/tolas-kitchen">
                     <button
                       className="h-12 px-7 rounded-2xl text-sm font-bold text-gray-900 bg-white hover:bg-gray-100 transition-all flex items-center gap-2"
                     >
-                      Create your page like Tola <ArrowRight className="w-4 h-4" />
+                      See Tola&apos;s website <ArrowRight className="w-4 h-4" />
                     </button>
                   </Link>
                 </div>
 
                 <div className="mt-8 md:mt-0 grid grid-cols-1 gap-3">
                   {[
-                    { title: 'Full Menu', desc: 'Shoppers see full menu and prices instantly.', icon: '📋' },
-                    { title: 'Saves Time', desc: 'No more searching gallery for photos to forward.', icon: '⏱️' },
-                    { title: 'More Sales', desc: 'Easier for customers to choose and pay.', icon: '📈' },
+                    { title: 'Full Website', desc: 'Hero, gallery, about, reviews — auto-generated from your data.', icon: '🌐' },
+                    { title: 'Saves Time', desc: 'No more searching gallery for photos to send manually.', icon: '⏱️' },
+                    { title: 'More Sales', desc: 'Pro store with shoppable reels, cart, and WhatsApp checkout.', icon: '📈' },
                   ].map(({ title, desc, icon }) => (
                     <div
                       key={title}
@@ -652,17 +653,17 @@ export default async function HomePage() {
             }}
           >
             <h2 className="text-2xl md:text-4xl font-black text-gray-900 mb-4 max-w-2xl mx-auto leading-tight">
-              NaijaBiz is built for Nigerian small businesses — barbers, salons, food vendors, repairers, and more.
+              NaijaBiz gives Nigerian brands a real website — not just a store page.
             </h2>
             <p className="text-gray-500 text-lg mb-10">
-              Join thousands of businesses putting their business online the simple way.
+              Join thousands of businesses that now have a website they&apos;re proud to share.
             </p>
             <Link href="/signup">
               <button
                 className="h-13 px-8 py-3.5 rounded-2xl text-base font-bold text-white transition-all hover:opacity-90 hover:-translate-y-0.5"
                 style={{ background: '#da552f', boxShadow: '0 8px 32px rgba(218,85,47,0.30)' }}
               >
-                Create my free business page
+                Launch my free business website
               </button>
             </Link>
           </div>

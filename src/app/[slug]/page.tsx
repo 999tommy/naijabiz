@@ -13,7 +13,10 @@ import {
     Star,
     ArrowLeft,
     Instagram,
-    LayoutDashboard
+    LayoutDashboard,
+    ShoppingBag,
+    ArrowRight,
+    Phone,
 } from 'lucide-react'
 import { getCategoryIcon } from '@/lib/category-icons'
 import { UpvoteButton } from '@/components/UpvoteButton'
@@ -21,6 +24,7 @@ import { BusinessShareButton } from '@/components/BusinessShareButton'
 import { AiChatWidget } from '@/components/AiChatWidget'
 import { checkAndDowngradeUser } from '@/lib/subscription'
 import { StorefrontClient } from '@/components/StorefrontClient'
+import { getWebsiteTheme } from '@/lib/website-theme'
 
 export const dynamic = 'force-dynamic'
 
@@ -36,11 +40,8 @@ async function getBusiness(slug: string) {
         .eq('business_slug', slug)
         .single()
 
-    // Quick separate queries to get counts for "Community Verified" logic
-    // In production, use a materialized view or `count` in select
     if (data) {
         const checkedData = await checkAndDowngradeUser(data)
-
         const { count: reviewCount } = await supabase.from('reviews').select('*', { count: 'exact', head: true }).eq('business_id', data.id)
         const { count: viewCount } = await supabase.from('page_views').select('*', { count: 'exact', head: true }).eq('business_id', data.id)
 
@@ -68,7 +69,6 @@ async function getProducts(userId: string, limit?: number) {
     }
 
     const { data } = await query
-
     return data || []
 }
 
@@ -89,8 +89,6 @@ async function recordPageView(businessId: string) {
     const supabase = await createServiceClient()
     const headersList = await headers()
     const viewerIp = headersList.get('x-forwarded-for')?.split(',')[0] || headersList.get('x-real-ip') || 'unknown'
-
-    // Check if we already recorded a view for this IP and business in the last 24 hours
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
 
     const { data: existingView } = await supabase
@@ -111,20 +109,17 @@ async function recordPageView(businessId: string) {
     }
 }
 
-
 export async function generateMetadata({ params }: BusinessPageProps): Promise<Metadata> {
     const { slug } = await params
     const business = await getBusiness(slug)
 
     if (!business || !business.business_name) {
-        return {
-            title: 'Business Not Found',
-        }
+        return { title: 'Business Not Found' }
     }
 
     const isPro = business.plan === 'pro'
-    const title = `${business.business_name} ${isPro ? '- Verified Business' : ''} | NaijaBiz`
-    const description = business.description || `Order from ${business.business_name} on NaijaBiz. View products, prices, and reviews.`
+    const title = `${business.business_name}${isPro ? ' – Official Website' : ''} | NaijaBiz`
+    const description = business.description || `Visit ${business.business_name} on NaijaBiz. View products, prices, and reviews.`
     const imageUrl = business.logo_url || '/logo.png'
 
     return {
@@ -134,14 +129,7 @@ export async function generateMetadata({ params }: BusinessPageProps): Promise<M
             title,
             description,
             type: 'website',
-            images: [
-                {
-                    url: imageUrl,
-                    width: 800,
-                    height: 800,
-                    alt: business.business_name,
-                },
-            ],
+            images: [{ url: imageUrl, width: 800, height: 800, alt: business.business_name }],
         },
         twitter: {
             card: 'summary_large_image',
@@ -160,11 +148,9 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
         notFound()
     }
 
-    // Check if current user is the owner
     const supabase = await createClient()
     const { data: { user: currentUser } } = await supabase.auth.getUser()
     const isOwner = currentUser?.id === business.id
-    // ... rest of component
 
     const isPro = business.plan === 'pro'
 
@@ -173,15 +159,14 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
         getReviews(business.id),
     ])
 
-    // Record page view (async, don't await)
     recordPageView(business.id)
 
     const isVerified = business.is_verified && isPro
     const averageRating = reviews.length > 0
-        ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+        ? (reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / reviews.length).toFixed(1)
         : null
 
-    // Generate JSON-LD Structured Data (AIO)
+    // JSON-LD structured data
     const jsonLd = {
         '@context': 'https://schema.org',
         '@type': 'LocalBusiness',
@@ -195,7 +180,6 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
             addressCountry: 'NG',
             addressLocality: business.location || 'Nigeria',
         },
-        // Pro-only rich data
         ...(isPro ? {
             priceRange: '$$',
             aggregateRating: reviews.length > 0 ? {
@@ -205,193 +189,677 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                 bestRating: '5',
                 worstRating: '1'
             } : undefined,
-            hasOfferCatalog: products.length > 0 ? {
-                '@type': 'OfferCatalog',
-                name: 'Products',
-                itemListElement: products.map((product, index) => ({
-                    '@type': 'Offer',
-                    itemOffered: {
-                        '@type': 'Product',
-                        name: product.name,
-                        description: product.description,
-                        image: product.image_url,
-                        sku: product.id,
-                        offers: {
-                            '@type': 'Offer',
-                            price: product.price,
-                            priceCurrency: 'NGN'
-                        }
-                    },
-                    position: index + 1
-                }))
-            } : undefined
         } : {})
     }
 
-    return (
-        <div className="min-h-screen bg-cream-50">
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-            />
-            {/* Header */}
-            <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-                <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-                        <ArrowLeft className="w-5 h-5" />
-                        <span className="hidden sm:inline">Back to Directory</span>
-                    </Link>
-                    <div className="flex items-center gap-3">
-                        {isOwner && (
-                            <Link href="/dashboard">
-                                <Button variant="outline" className="text-orange-600 border-orange-200 hover:bg-orange-50 flex items-center gap-2">
-                                    <LayoutDashboard className="w-4 h-4" />
-                                    <span className="hidden sm:inline">Go to </span>
-                                    Dashboard
-                                </Button>
-                            </Link>
-                        )}
-                        <BusinessShareButton businessName={business.business_name} />
-                    </div>
-                </div>
-            </header>
-
-            {/* Business info */}
-            <div className="bg-white border-b border-gray-200">
-                <div className="max-w-4xl mx-auto px-4 py-8">
-                    <div className="flex flex-col sm:flex-row items-start gap-6">
-                        {/* Logo */}
-                        <div className="flex-shrink-0">
-                            {business.logo_url ? (
-                                <Image
-                                    src={business.logo_url}
-                                    alt={business.business_name}
-                                    width={100}
-                                    height={100}
-                                    className="rounded-xl object-cover"
-                                    priority
-                                    loading="eager"
-                                    unoptimized={business.logo_url.includes('supabase.co/storage/v1/object/public/')}
-                                />
-                            ) : (
-                                <div className="w-[100px] h-[100px] rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-3xl font-bold">
-                                    {business.business_name[0].toUpperCase()}
-                                </div>
+    // ── FREE USERS → Original storefront layout ────────────────────────────────
+    if (!isPro) {
+        return (
+            <div className="min-h-screen bg-gray-50">
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                />
+                <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+                    <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+                        <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+                            <ArrowLeft className="w-5 h-5" />
+                            <span className="hidden sm:inline">Back to Directory</span>
+                        </Link>
+                        <div className="flex items-center gap-3">
+                            {isOwner && (
+                                <Link href="/dashboard">
+                                    <Button variant="outline" className="text-orange-600 border-orange-200 hover:bg-orange-50 flex items-center gap-2">
+                                        <LayoutDashboard className="w-4 h-4" />
+                                        <span className="hidden sm:inline">Go to </span>Dashboard
+                                    </Button>
+                                </Link>
                             )}
+                            <BusinessShareButton businessName={business.business_name} />
                         </div>
+                    </div>
+                </header>
 
-                        {/* Info */}
-                        <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-3 flex-wrap">
-                                <h1 className="text-2xl font-bold text-gray-900">
-                                    {business.business_name}
-                                </h1>
-                                <VerifiedBadge
-                                    size="md"
-                                    isVerified={isPro && business.is_verified}
-                                    isCommunityVerified={!isPro && (business.reviewCount >= 5 && business.viewCount >= 50)} // Simple MVP logic
-                                />
-                                <UpvoteButton userId={business.id} initialUpvotes={business.upvotes || 0} size="sm" />
-                            </div>
-
-                            {business.description && (
-                                <p className="text-gray-600 mt-2">{business.description}</p>
-                            )}
-
-                            <div className="flex flex-wrap items-center gap-4 mt-4">
-                                {business.category && (
-                                    <Badge variant="outline" className="gap-1.5 pl-1.5">
-                                        {getCategoryIcon(business.category.name)} {business.category.name}
-                                    </Badge>
-                                )}
-                                {business.location && (
-                                    <span className="flex items-center gap-1 text-sm text-gray-500">
-                                        <MapPin className="w-4 h-4" />
-                                        {business.location}
-                                    </span>
-                                )}
-                                {averageRating && (
-                                    <span className="flex items-center gap-1 text-sm text-gray-500">
-                                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                                        {averageRating} ({reviews.length} reviews)
-                                    </span>
+                <div className="bg-white border-b border-gray-200">
+                    <div className="max-w-4xl mx-auto px-4 py-8">
+                        <div className="flex flex-col sm:flex-row items-start gap-6">
+                            <div className="flex-shrink-0">
+                                {business.logo_url ? (
+                                    <Image
+                                        src={business.logo_url}
+                                        alt={business.business_name}
+                                        width={100}
+                                        height={100}
+                                        className="rounded-xl object-cover"
+                                        priority
+                                        loading="eager"
+                                        unoptimized={business.logo_url.includes('supabase.co/storage/v1/object/public/')}
+                                    />
+                                ) : (
+                                    <div className="w-[100px] h-[100px] rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-3xl font-bold">
+                                        {business.business_name[0].toUpperCase()}
+                                    </div>
                                 )}
                             </div>
-
-                            {/* Quick contact */}
-                            <div className="flex flex-wrap gap-3 mt-4">
-                                {business.whatsapp_number && (
-                                    <a
-                                        href={`https://wa.me/${business.whatsapp_number}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <Button size="sm" className="bg-green-600 hover:bg-green-700 font-semibold shadow-sm">
-                                            <MessageCircle className="w-4 h-4 mr-2" />
-                                            WhatsApp
-                                        </Button>
-                                    </a>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-3 flex-wrap">
+                                    <h1 className="text-2xl font-bold text-gray-900">{business.business_name}</h1>
+                                    <VerifiedBadge
+                                        size="md"
+                                        isCommunityVerified={business.reviewCount >= 5 && business.viewCount >= 50}
+                                    />
+                                    <UpvoteButton userId={business.id} initialUpvotes={business.upvotes || 0} size="sm" />
+                                </div>
+                                {business.description && (
+                                    <p className="text-gray-600 mt-2">{business.description}</p>
                                 )}
-                                {business.instagram_handle && (
-                                    <a
-                                        href={`https://instagram.com/${business.instagram_handle}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <Button size="sm" className="bg-gradient-to-tr from-[#f09433] via-[#bc1888] to-[#2cc6cb] hover:opacity-90 text-white border-0 font-semibold shadow-sm">
-                                            <Instagram className="w-4 h-4 mr-2" />
-                                            Instagram
-                                        </Button>
-                                    </a>
-                                )}
-                                {business.tiktok_handle && (
-                                    <div className={business.whatsapp_number && business.instagram_handle ? "w-full" : ""}>
-                                        <a
-                                            href={`https://tiktok.com/@${business.tiktok_handle.replace('@', '')}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            <Button size="sm" className="bg-black hover:bg-gray-800 text-white border-0 font-semibold shadow-sm">
-                                                <svg className="w-4 h-4 mr-2 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-                                                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
-                                                </svg>
-                                                TikTok
+                                <div className="flex flex-wrap items-center gap-4 mt-4">
+                                    {business.category && (
+                                        <Badge variant="outline" className="gap-1.5 pl-1.5">
+                                            {getCategoryIcon(business.category.name)} {business.category.name}
+                                        </Badge>
+                                    )}
+                                    {business.location && (
+                                        <span className="flex items-center gap-1 text-sm text-gray-500">
+                                            <MapPin className="w-4 h-4" />{business.location}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="flex flex-wrap gap-3 mt-4">
+                                    {business.whatsapp_number && (
+                                        <a href={`https://wa.me/${business.whatsapp_number}`} target="_blank" rel="noopener noreferrer">
+                                            <Button size="sm" className="bg-green-600 hover:bg-green-700 font-semibold shadow-sm">
+                                                <MessageCircle className="w-4 h-4 mr-2" />WhatsApp
                                             </Button>
                                         </a>
+                                    )}
+                                    {business.instagram_handle && (
+                                        <a href={`https://instagram.com/${business.instagram_handle}`} target="_blank" rel="noopener noreferrer">
+                                            <Button size="sm" className="bg-gradient-to-tr from-[#f09433] via-[#bc1888] to-[#2cc6cb] hover:opacity-90 text-white border-0 font-semibold shadow-sm">
+                                                <Instagram className="w-4 h-4 mr-2" />Instagram
+                                            </Button>
+                                        </a>
+                                    )}
+                                </div>
+
+                                {/* Pro upgrade CTA for owners */}
+                                {isOwner && (
+                                    <div className="mt-5 p-4 rounded-xl bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200">
+                                        <p className="text-sm font-bold text-orange-800 mb-1">🚀 Get your own website</p>
+                                        <p className="text-xs text-orange-700 mb-3">Upgrade to Pro and get a full branded website at naijabiz.org/{slug}</p>
+                                        <Link href="/pricing">
+                                            <button className="px-4 py-1.5 rounded-lg bg-orange-600 text-white text-xs font-bold hover:bg-orange-700 transition-colors">
+                                                Upgrade to Pro ↗
+                                            </button>
+                                        </Link>
                                     </div>
                                 )}
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Products + Reviews — managed by StorefrontClient (handles Grid/Reels toggle) */}
-            <StorefrontClient
-                products={products}
-                business={business}
-                isPro={isPro}
-                reviews={reviews}
-                slug={slug}
-                averageRating={averageRating}
-                whatsappNumber={business.whatsapp_number || ''}
-                instagramHandle={business.instagram_handle}
+                <StorefrontClient
+                    products={products}
+                    business={business}
+                    isPro={false}
+                    reviews={reviews}
+                    slug={slug}
+                    averageRating={averageRating}
+                    whatsappNumber={business.whatsapp_number || ''}
+                    instagramHandle={business.instagram_handle}
+                />
+
+                <footer className="bg-white border-t border-gray-200 py-6">
+                    <div className="max-w-4xl mx-auto px-4 text-center">
+                        <p className="text-sm text-gray-500">
+                            Powered by{' '}
+                            <Link href="/" className="text-orange-600 hover:underline font-medium">NaijaBiz</Link>
+                            {' '}– The link that proves you are legit
+                        </p>
+                    </div>
+                </footer>
+            </div>
+        )
+    }
+
+    // ── PRO USERS → Full branded website ──────────────────────────────────────
+    const theme = getWebsiteTheme(
+        business.category?.slug,
+        business.category?.name,
+        slug
+    )
+
+    // Gallery images: pull from product images (up to 6)
+    const galleryImages = products
+        .filter((p: any) => p.image_url)
+        .slice(0, 6)
+        .map((p: any) => ({ url: p.image_url, name: p.name }))
+
+    const storeUrl = `/${slug}/store`
+
+    return (
+        <div style={{ background: theme.pageBg, color: theme.bodyText, minHeight: '100vh' }}>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
 
-            {/* Footer */}
-            <footer className="bg-white border-t border-gray-200 py-6">
-                <div className="max-w-4xl mx-auto px-4 text-center">
-                    <p className="text-sm text-gray-500">
-                        Powered by{' '}
-                        <Link href="/" className="text-orange-600 hover:underline font-medium">
+            {/* ── NAVBAR ── */}
+            <nav className="sticky top-0 z-50 px-3 pt-3 sm:px-4">
+                <div
+                    className="max-w-5xl mx-auto flex justify-between items-center h-14 px-4 rounded-2xl"
+                    style={{
+                        backdropFilter: 'blur(20px) saturate(180%)',
+                        background: theme.navBg,
+                        border: '1px solid rgba(255,255,255,0.85)',
+                        boxShadow: '0 2px 24px rgba(0,0,0,0.07)',
+                    }}
+                >
+                    <Link href="/" className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 transition-colors">
+                        <ArrowLeft className="w-4 h-4" />
+                        <span className="hidden sm:inline text-sm font-medium">NaijaBiz</span>
+                    </Link>
+
+                    <div className="flex items-center gap-2">
+                        {isOwner && (
+                            <Link href="/dashboard">
+                                <button
+                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all hover:opacity-80"
+                                    style={{ background: theme.accent, color: theme.accentText }}
+                                >
+                                    <LayoutDashboard className="w-3.5 h-3.5" />
+                                    Dashboard
+                                </button>
+                            </Link>
+                        )}
+                        <BusinessShareButton businessName={business.business_name} />
+                        <Link href={storeUrl}>
+                            <button
+                                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all hover:opacity-90"
+                                style={{ background: theme.accent, color: theme.accentText }}
+                            >
+                                <ShoppingBag className="w-4 h-4" />
+                                Order Now
+                            </button>
+                        </Link>
+                    </div>
+                </div>
+            </nav>
+
+            {/* ── HERO ── */}
+            <section
+                className="relative overflow-hidden"
+                style={{ background: theme.heroBg }}
+            >
+                {/* Decorative orbs */}
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-10 pointer-events-none"
+                    style={{ background: 'white', transform: 'translate(30%, -30%)' }} />
+                <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-10 pointer-events-none"
+                    style={{ background: 'white', transform: 'translate(-30%, 30%)' }} />
+
+                <div className="relative z-10 max-w-5xl mx-auto px-4 py-20 md:py-28">
+                    <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
+                        {/* Logo */}
+                        <div className="flex-shrink-0">
+                            <div
+                                className="w-32 h-32 md:w-40 md:h-40 rounded-3xl overflow-hidden relative shadow-2xl"
+                                style={{ border: `3px solid ${theme.logoRing}`, boxShadow: `0 0 0 6px ${theme.logoRing}22` }}
+                            >
+                                {business.logo_url ? (
+                                    <Image
+                                        src={business.logo_url}
+                                        alt={business.business_name}
+                                        fill
+                                        className="object-cover"
+                                        priority
+                                        sizes="160px"
+                                        unoptimized={business.logo_url.includes('supabase.co/storage/v1/object/public/')}
+                                    />
+                                ) : (
+                                    <div
+                                        className="w-full h-full flex items-center justify-center text-5xl font-black text-white"
+                                        style={{ background: theme.accent }}
+                                    >
+                                        {business.business_name[0].toUpperCase()}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Info */}
+                        <div className="flex-1 text-center md:text-left">
+                            <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                                {business.category && (
+                                    <span
+                                        className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider"
+                                        style={{ background: 'rgba(255,255,255,0.15)', color: theme.heroText }}
+                                    >
+                                        {getCategoryIcon(business.category.name)} {business.category.name}
+                                    </span>
+                                )}
+                                {isVerified && (
+                                    <span
+                                        className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider"
+                                        style={{ background: 'rgba(255,255,255,0.15)', color: theme.heroText }}
+                                    >
+                                        ✓ Verified
+                                    </span>
+                                )}
+                            </div>
+
+                            <h1
+                                className="text-4xl md:text-6xl font-black mb-3 leading-tight tracking-tight"
+                                style={{ color: theme.heroText }}
+                            >
+                                {business.business_name}
+                            </h1>
+
+                            {business.description && (
+                                <p
+                                    className="text-lg md:text-xl mb-6 max-w-lg leading-relaxed"
+                                    style={{ color: theme.heroSubText }}
+                                >
+                                    {business.description}
+                                </p>
+                            )}
+
+                            <div className="flex items-center justify-center md:justify-start gap-3 mb-8 flex-wrap">
+                                {business.location && (
+                                    <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: theme.heroSubText }}>
+                                        <MapPin className="w-4 h-4" />{business.location}
+                                    </span>
+                                )}
+                                {averageRating && (
+                                    <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: theme.heroSubText }}>
+                                        <Star className="w-4 h-4 fill-current text-yellow-400" />
+                                        {averageRating} ({reviews.length} reviews)
+                                    </span>
+                                )}
+                                <UpvoteButton userId={business.id} initialUpvotes={business.upvotes || 0} size="sm" />
+                            </div>
+
+                            {/* CTA Buttons */}
+                            <div className="flex items-center justify-center md:justify-start gap-3 flex-wrap">
+                                <Link href={storeUrl}>
+                                    <button
+                                        className="h-13 px-8 py-3.5 rounded-2xl text-base font-black flex items-center gap-2 transition-all hover:opacity-90 hover:-translate-y-0.5 shadow-xl"
+                                        style={{ background: theme.ctaBg, color: theme.ctaText }}
+                                    >
+                                        <ShoppingBag className="w-5 h-5" />
+                                        View Store & Order
+                                        <ArrowRight className="w-4 h-4" />
+                                    </button>
+                                </Link>
+                                {business.whatsapp_number && (
+                                    <a
+                                        href={`https://wa.me/${business.whatsapp_number}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <button
+                                            className="h-13 px-6 py-3.5 rounded-2xl text-base font-bold flex items-center gap-2 transition-all hover:opacity-80"
+                                            style={{ background: 'rgba(255,255,255,0.15)', color: theme.heroText, border: '1px solid rgba(255,255,255,0.25)' }}
+                                        >
+                                            <MessageCircle className="w-5 h-5" />
+                                            WhatsApp
+                                        </button>
+                                    </a>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── ABOUT / STORY ── */}
+            {business.description && (
+                <section className="py-16 px-4">
+                    <div className="max-w-5xl mx-auto">
+                        <div className="grid md:grid-cols-2 gap-10 items-center">
+                            <div>
+                                <p
+                                    className="text-xs font-bold tracking-widest uppercase mb-3"
+                                    style={{ color: theme.accent }}
+                                >
+                                    About Us
+                                </p>
+                                <h2
+                                    className="text-3xl md:text-4xl font-black mb-5 leading-tight"
+                                    style={{ color: theme.headingText }}
+                                >
+                                    Who we are
+                                </h2>
+                                <p
+                                    className="text-lg leading-relaxed mb-6"
+                                    style={{ color: theme.mutedText }}
+                                >
+                                    {business.description}
+                                </p>
+                                <div className="flex flex-col gap-3">
+                                    {business.location && (
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                                                style={{ background: theme.accent + '22' }}>
+                                                <MapPin className="w-4 h-4" style={{ color: theme.accent }} />
+                                            </div>
+                                            <span className="text-sm font-medium" style={{ color: theme.bodyText }}>
+                                                {business.location}
+                                            </span>
+                                        </div>
+                                    )}
+                                    {business.whatsapp_number && (
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                                                style={{ background: '#dcfce7' }}>
+                                                <Phone className="w-4 h-4 text-green-600" />
+                                            </div>
+                                            <a
+                                                href={`https://wa.me/${business.whatsapp_number}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-sm font-medium hover:underline"
+                                                style={{ color: theme.bodyText }}
+                                            >
+                                                +{business.whatsapp_number}
+                                            </a>
+                                        </div>
+                                    )}
+                                    {business.instagram_handle && (
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                                                style={{ background: '#fce7f3' }}>
+                                                <Instagram className="w-4 h-4 text-pink-600" />
+                                            </div>
+                                            <a
+                                                href={`https://instagram.com/${business.instagram_handle}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-sm font-medium hover:underline"
+                                                style={{ color: theme.bodyText }}
+                                            >
+                                                @{business.instagram_handle}
+                                            </a>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Stats card */}
+                            <div
+                                className="rounded-3xl p-8"
+                                style={{
+                                    background: theme.cardBg,
+                                    border: `1px solid ${theme.cardBorder}`,
+                                    backdropFilter: 'blur(16px)',
+                                }}
+                            >
+                                <div className="grid grid-cols-2 gap-6">
+                                    {[
+                                        { label: 'Products', value: products.length, suffix: '+' },
+                                        { label: 'Reviews', value: reviews.length, suffix: '' },
+                                        { label: 'Upvotes', value: business.upvotes || 0, suffix: '' },
+                                        { label: 'Rating', value: averageRating || '—', suffix: averageRating ? '★' : '' },
+                                    ].map(({ label, value, suffix }) => (
+                                        <div key={label} className="text-center">
+                                            <p
+                                                className="text-3xl font-black mb-1"
+                                                style={{ color: theme.accent }}
+                                            >
+                                                {value}{suffix}
+                                            </p>
+                                            <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: theme.mutedText }}>
+                                                {label}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="mt-8">
+                                    <Link href={storeUrl}>
+                                        <button
+                                            className="w-full py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all hover:opacity-90"
+                                            style={{ background: theme.accent, color: theme.accentText }}
+                                        >
+                                            <ShoppingBag className="w-4 h-4" />
+                                            Browse Products
+                                            <ArrowRight className="w-4 h-4" />
+                                        </button>
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* ── GALLERY ── */}
+            {galleryImages.length > 0 && (
+                <section className="py-16 px-4" style={{ borderTop: `1px solid ${theme.divider}` }}>
+                    <div className="max-w-5xl mx-auto">
+                        <div className="text-center mb-10">
+                            <p className="text-xs font-bold tracking-widest uppercase mb-3" style={{ color: theme.accent }}>
+                                Gallery
+                            </p>
+                            <h2 className="text-3xl md:text-4xl font-black" style={{ color: theme.headingText }}>
+                                Our Products
+                            </h2>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            {galleryImages.map((img, i) => (
+                                <Link href={storeUrl} key={i} className="group relative aspect-square rounded-2xl overflow-hidden block">
+                                    <Image
+                                        src={img.url}
+                                        alt={img.name}
+                                        fill
+                                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                        sizes="(max-width: 768px) 50vw, 33vw"
+                                        unoptimized={img.url.includes('supabase.co/')}
+                                    />
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-3">
+                                        <p className="text-white text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            {img.name}
+                                        </p>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+
+                        <div className="text-center mt-8">
+                            <Link href={storeUrl}>
+                                <button
+                                    className="px-8 py-3.5 rounded-2xl font-bold text-sm inline-flex items-center gap-2 transition-all hover:opacity-90 hover:-translate-y-0.5"
+                                    style={{ background: theme.accent, color: theme.accentText }}
+                                >
+                                    <ShoppingBag className="w-4 h-4" />
+                                    See All Products & Order
+                                    <ArrowRight className="w-4 h-4" />
+                                </button>
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* ── REVIEWS ── */}
+            {reviews.length > 0 && (
+                <section className="py-16 px-4" style={{ borderTop: `1px solid ${theme.divider}` }}>
+                    <div className="max-w-5xl mx-auto">
+                        <div className="text-center mb-10">
+                            <p className="text-xs font-bold tracking-widest uppercase mb-3" style={{ color: theme.accent }}>
+                                Testimonials
+                            </p>
+                            <h2 className="text-3xl md:text-4xl font-black" style={{ color: theme.headingText }}>
+                                What customers say
+                            </h2>
+                            {averageRating && (
+                                <div className="flex items-center justify-center gap-2 mt-3">
+                                    <div className="flex">
+                                        {[1, 2, 3, 4, 5].map(i => (
+                                            <Star
+                                                key={i}
+                                                className={`w-5 h-5 ${parseFloat(averageRating) >= i ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200'}`}
+                                            />
+                                        ))}
+                                    </div>
+                                    <span className="font-bold text-lg" style={{ color: theme.headingText }}>{averageRating}</span>
+                                    <span className="text-sm" style={{ color: theme.mutedText }}>({reviews.length} reviews)</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {reviews.map((review: any) => (
+                                <div
+                                    key={review.id}
+                                    className="rounded-2xl p-6"
+                                    style={{
+                                        background: theme.cardBg,
+                                        border: `1px solid ${theme.cardBorder}`,
+                                        backdropFilter: 'blur(12px)',
+                                    }}
+                                >
+                                    <div className="flex mb-3">
+                                        {[1, 2, 3, 4, 5].map(i => (
+                                            <Star
+                                                key={i}
+                                                className={`w-4 h-4 ${i <= review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200'}`}
+                                            />
+                                        ))}
+                                    </div>
+                                    {review.comment && (
+                                        <p className="text-sm leading-relaxed mb-4 italic" style={{ color: theme.bodyText }}>
+                                            &ldquo;{review.comment}&rdquo;
+                                        </p>
+                                    )}
+                                    <div className="flex items-center gap-2">
+                                        <div
+                                            className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                                            style={{ background: theme.accent }}
+                                        >
+                                            {review.customer_name[0].toUpperCase()}
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold" style={{ color: theme.headingText }}>{review.customer_name}</p>
+                                            <p className="text-xs" style={{ color: theme.mutedText }}>
+                                                {new Date(review.created_at).toLocaleDateString('en-NG', { month: 'short', year: 'numeric' })}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="text-center mt-8">
+                            <Link href={`/${slug}/review`}>
+                                <button
+                                    className="px-6 py-2.5 rounded-xl text-sm font-bold border-2 transition-all hover:opacity-80"
+                                    style={{ borderColor: theme.accent, color: theme.accent }}
+                                >
+                                    <Star className="w-4 h-4 inline mr-1.5" />
+                                    Leave a Review
+                                </button>
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* ── CONTACT / FINAL CTA ── */}
+            <section className="py-20 px-4" style={{ borderTop: `1px solid ${theme.divider}` }}>
+                <div className="max-w-5xl mx-auto">
+                    <div
+                        className="rounded-3xl p-10 md:p-16 text-center relative overflow-hidden"
+                        style={{ background: theme.heroBg }}
+                    >
+                        <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10 pointer-events-none"
+                            style={{ background: 'white', transform: 'translate(30%, -30%)' }} />
+
+                        <div className="relative z-10">
+                            <p
+                                className="text-xs font-bold tracking-widest uppercase mb-4"
+                                style={{ color: 'rgba(255,255,255,0.7)' }}
+                            >
+                                Ready to order?
+                            </p>
+                            <h2
+                                className="text-3xl md:text-4xl font-black mb-4 leading-tight"
+                                style={{ color: theme.heroText }}
+                            >
+                                Get in touch with {business.business_name}
+                            </h2>
+                            <p className="text-base mb-8 max-w-lg mx-auto" style={{ color: theme.heroSubText }}>
+                                Browse our full product catalogue, place an order, or send us a message on WhatsApp.
+                            </p>
+
+                            <div className="flex items-center justify-center gap-3 flex-wrap">
+                                <Link href={storeUrl}>
+                                    <button
+                                        className="h-13 px-8 py-3.5 rounded-2xl font-black text-base flex items-center gap-2 transition-all hover:opacity-90 hover:-translate-y-0.5 shadow-xl"
+                                        style={{ background: theme.ctaBg, color: theme.ctaText }}
+                                    >
+                                        <ShoppingBag className="w-5 h-5" />
+                                        View Our Store
+                                        <ArrowRight className="w-4 h-4" />
+                                    </button>
+                                </Link>
+                                {business.whatsapp_number && (
+                                    <a href={`https://wa.me/${business.whatsapp_number}`} target="_blank" rel="noopener noreferrer">
+                                        <button
+                                            className="h-13 px-6 py-3.5 rounded-2xl font-bold text-base flex items-center gap-2 transition-all hover:opacity-80"
+                                            style={{ background: 'rgba(255,255,255,0.15)', color: theme.heroText, border: '1px solid rgba(255,255,255,0.25)' }}
+                                        >
+                                            <MessageCircle className="w-5 h-5" />
+                                            WhatsApp Us
+                                        </button>
+                                    </a>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── FOOTER ── */}
+            <footer className="py-8 px-4" style={{ borderTop: `1px solid ${theme.divider}` }}>
+                <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+                    <p className="text-sm" style={{ color: theme.mutedText }}>
+                        © {new Date().getFullYear()} {business.business_name}. Powered by{' '}
+                        <Link href="/" className="font-semibold hover:underline" style={{ color: theme.accent }}>
                             NaijaBiz
                         </Link>
                         {' '}– The link that proves you are legit
                     </p>
+                    <div className="flex items-center gap-4">
+                        {business.instagram_handle && (
+                            <a
+                                href={`https://instagram.com/${business.instagram_handle}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hover:opacity-70 transition-opacity"
+                                style={{ color: theme.mutedText }}
+                            >
+                                <Instagram className="w-5 h-5" />
+                            </a>
+                        )}
+                        {business.whatsapp_number && (
+                            <a
+                                href={`https://wa.me/${business.whatsapp_number}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hover:opacity-70 transition-opacity"
+                                style={{ color: theme.mutedText }}
+                            >
+                                <MessageCircle className="w-5 h-5" />
+                            </a>
+                        )}
+                    </div>
                 </div>
             </footer>
 
+            {/* AI Chat Widget — only if Pro and AI enabled */}
             <AiChatWidget business={business} />
-        </div >
+        </div>
     )
 }
