@@ -24,6 +24,8 @@ export interface User {
     plan: 'free' | 'pro'
     subscription_id: string | null
     subscription_ends_at: string | null
+    paystack_customer_code?: string | null
+    paystack_plan_code?: string | null
     referral_count: number
     referred_by: string | null
     has_joined_referral: boolean

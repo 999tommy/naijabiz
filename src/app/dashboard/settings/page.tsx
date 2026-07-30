@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { DashboardLayout } from '@/components/DashboardLayout'
 import SettingsClient from './SettingsClient'
+import { checkAndDowngradeUser } from '@/lib/subscription'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,9 +23,11 @@ export default async function SettingsPage() {
         redirect('/signup?step=business')
     }
 
+    const checkedUser = await checkAndDowngradeUser(user)
+
     return (
-        <DashboardLayout user={user}>
-            <SettingsClient user={user} initialCategories={categories || []} />
+        <DashboardLayout user={checkedUser}>
+            <SettingsClient user={checkedUser} initialCategories={categories || []} />
         </DashboardLayout>
     )
 }

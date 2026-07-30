@@ -3,12 +3,18 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight, Bot, CheckCircle2, Globe2, Menu, ShoppingBag, Star, CalendarCheck, ShieldCheck, X, Users, BarChart2, Wrench, BadgePercent, MessageCircle } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import { ArrowRight, Bot, CheckCircle2, Globe2, Menu, ShoppingBag, Star, ShieldCheck, X, Users, BarChart2, Wrench, BadgePercent } from 'lucide-react'
 
 const navLinks = [
   { href: '/directory', label: 'Discover brands' },
   { href: '/pricing', label: 'Pricing' },
   { href: '/agents', label: 'Agents' },
+]
+
+const demoLinks: Array<[string, string, string, string, LucideIcon, string]> = [
+  ['Product demo', "Tola's Kitchen", 'Food menu, reviews, WhatsApp ordering', '/tolas-kitchen', ShoppingBag, '#e8b8aa'],
+  ['Service demo', 'MusaFix Electricals', 'Repair services, appointments, quote requests', '/musafix-electricals', Wrench, '#9bd4bd'],
 ]
 
 export default function HomePage() {
@@ -127,24 +133,24 @@ export default function HomePage() {
           <div className="absolute -z-0 w-48 h-48 rounded-full bg-[#f5d8a0] blur-3xl opacity-40 top-20 right-10 pointer-events-none" />
 
           {/* Pill label */}
-          <p className="relative inline-flex items-center gap-2 rounded-full bg-[#f5e5de] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.16em] text-[#9d4430] mb-6">
-            Get your virtual assistant
+          <p className="relative inline-flex items-center gap-2 rounded-full bg-[#f5e5de] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.16em] text-[#9d4430] mb-6 micro-reveal">
+            Get your Ai virtual assistant
           </p>
 
           {/* Headline */}
-          <h1 className="relative text-[2.6rem] sm:text-6xl md:text-7xl font-black tracking-[-0.04em] leading-[1.0] mb-5">
+          <h1 className="relative text-[2.6rem] sm:text-6xl md:text-7xl font-black tracking-[-0.04em] leading-[1.0] mb-5 micro-reveal micro-delay-1">
             Growing your brand<br />
             <em className="font-serif font-bold not-italic text-[#a84b35]">has never been easier.</em>
           </h1>
 
           {/* Subtext */}
-          <p className="relative mx-auto max-w-lg text-base sm:text-lg leading-relaxed text-[#725e57] mb-8">
+          <p className="relative mx-auto max-w-lg text-base sm:text-lg leading-relaxed text-[#725e57] mb-8 micro-reveal micro-delay-2">
             Claim one beautiful link where customers discover your story, browse your catalog,
-            and book your services. A highly trained <span className='font-bold'>virtual assistant</span> runs your business for you when you're asleep or busy.
+            and book your services. A highly trained <span className="font-bold">virtual assistant</span> runs your business for you when you&apos;re asleep or busy.
           </p>
 
           {/* Slug input */}
-          <form action="/signup" method="GET" className="relative mx-auto max-w-md p-2 rounded-2xl bg-white border border-[#eadfd8] shadow-[0_18px_40px_rgba(70,35,25,.10)] flex gap-2">
+          <form action="/signup" method="GET" className="relative mx-auto max-w-md p-2 rounded-2xl bg-white border border-[#eadfd8] shadow-[0_18px_40px_rgba(70,35,25,.10)] flex gap-2 micro-reveal micro-delay-3 micro-lift">
             <span className="hidden sm:flex pl-3 py-3 font-mono text-sm text-[#a98f84] items-center whitespace-nowrap">naijabiz.org/</span>
             <input
               required
@@ -171,7 +177,7 @@ export default function HomePage() {
             {[
               ['24/7', 'Virtual Assistant', 'to answer questions, negotiate with customers and capture intent after hours.'],
             ].map(([value, label, text]) => (
-              <div key={label} className="rounded-2xl bg-white border border-[#eadfd8] p-5 shadow-[0_10px_28px_rgba(70,35,25,.05)]">
+              <div key={label} className="rounded-2xl bg-white border border-[#eadfd8] p-5 shadow-[0_10px_28px_rgba(70,35,25,.05)] micro-lift">
                 <p className="text-3xl font-black text-[#a84b35]">{value}</p>
                 <p className="text-sm font-black text-[#2a1d1a] mt-1">{label}</p>
                 <p className="text-xs text-[#725e57] leading-relaxed mt-2">{text}</p>
@@ -194,11 +200,8 @@ export default function HomePage() {
                   Product sellers get shoppable menus. Service brands get booking-ready pages. Both get trust signals, WhatsApp actions, and a Virtual Assistant.
                 </p>
                 <div className="grid gap-3">
-                  {[
-                    ['Product demo', "Tola's Kitchen", 'Food menu, reviews, WhatsApp ordering', '/tolas-kitchen', ShoppingBag, '#e8b8aa'],
-                    ['Service demo', 'MusaFix Electricals', 'Repair services, appointments, quote requests', '/musafix-electricals', Wrench, '#9bd4bd'],
-                  ].map(([type, name, text, href, Icon, color]: any) => (
-                    <Link key={name} href={href} className="group flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.06] p-4 hover:bg-white/[0.1] transition-colors">
+                  {demoLinks.map(([type, name, text, href, Icon, color]) => (
+                    <Link key={name} href={href} className="group flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.06] p-4 hover:bg-white/[0.1] transition-colors micro-lift">
                       <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: color + '22' }}>
                           <Icon className="w-5 h-5" style={{ color }} />
@@ -216,7 +219,7 @@ export default function HomePage() {
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4 items-stretch">
-                <div className="rounded-[1.6rem] bg-[#fffaf5] p-4 text-[#2a1d1a] rotate-[-1.5deg] shadow-2xl">
+                <div className="rounded-[1.6rem] bg-[#fffaf5] p-4 text-[#2a1d1a] rotate-[-1.5deg] shadow-2xl animate-soft-float">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-[#a84b35] flex items-center justify-center text-white font-black">T</div>
@@ -241,7 +244,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="rounded-[1.6rem] bg-[#f5fffa] p-4 text-[#15382b] rotate-[1.5deg] shadow-2xl mt-6 sm:mt-12">
+                <div className="rounded-[1.6rem] bg-[#f5fffa] p-4 text-[#15382b] rotate-[1.5deg] shadow-2xl mt-6 sm:mt-12 animate-soft-float [animation-delay:900ms]">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-[#2f6f58] flex items-center justify-center text-white font-black">M</div>
@@ -275,7 +278,7 @@ export default function HomePage() {
 
         {/* AGENT CTA */}
         <section className="max-w-5xl mx-auto px-4 py-10">
-          <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center rounded-3xl bg-white border border-[#eadfd8] p-6 sm:p-8 shadow-[0_14px_35px_rgba(70,35,25,.06)]">
+          <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center rounded-3xl bg-white border border-[#eadfd8] p-6 sm:p-8 shadow-[0_14px_35px_rgba(70,35,25,.06)] micro-lift">
             <div className="flex gap-4">
               <div className="w-12 h-12 rounded-2xl bg-[#f9f0ee] flex items-center justify-center shrink-0">
                 <BadgePercent className="w-6 h-6 text-[#a84b35]" />
@@ -304,7 +307,7 @@ export default function HomePage() {
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             {/* Before */}
-            <div className="rounded-3xl p-6 sm:p-8 bg-[#f9f0ee] border border-[#e8d5cf]">
+            <div className="rounded-3xl p-6 sm:p-8 bg-[#f9f0ee] border border-[#e8d5cf] micro-lift">
               <p className="text-xs font-bold uppercase tracking-widest text-[#a84b35] mb-5">Without NaijaBiz</p>
               <ul className="space-y-4">
                 {beforeItems.map(item => (
@@ -318,7 +321,7 @@ export default function HomePage() {
               </ul>
             </div>
             {/* After */}
-            <div className="rounded-3xl p-6 sm:p-8 bg-[#2a1d1a] text-white">
+            <div className="rounded-3xl p-6 sm:p-8 bg-[#2a1d1a] text-white micro-lift">
               <p className="text-xs font-bold uppercase tracking-widest text-[#e8b8aa] mb-5">With NaijaBiz</p>
               <ul className="space-y-4">
                 {afterItems.map(item => (
@@ -407,7 +410,7 @@ export default function HomePage() {
           </div>
           <div className="grid lg:grid-cols-3 gap-4">
             {businessTypes.map(({ icon: Icon, title, example, description, href, cta, color, proof }) => (
-              <div key={title} className="rounded-3xl bg-white border border-[#eadfd8] p-6 flex flex-col">
+              <div key={title} className="rounded-3xl bg-white border border-[#eadfd8] p-6 flex flex-col micro-lift">
                 <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-5" style={{ background: `${color}22` }}>
                   <Icon className="w-5 h-5" style={{ color }} />
                 </div>
@@ -472,7 +475,7 @@ export default function HomePage() {
                 bg: "#f0e8ff"
               }
             ].map((t, i) => (
-              <div key={i} className="p-6 rounded-3xl border border-[#eadfd8] flex flex-col" style={{ backgroundColor: t.bg }}>
+              <div key={i} className="p-6 rounded-3xl border border-[#eadfd8] flex flex-col micro-lift" style={{ backgroundColor: t.bg }}>
                 <div className="flex gap-1 mb-4 text-[#a84b35]">
                   {[...Array(5)].map((_, idx) => <Star key={idx} className="w-4 h-4 fill-current" />)}
                 </div>
@@ -488,7 +491,7 @@ export default function HomePage() {
 
         {/* FINAL CTA */}
         <section className="max-w-5xl mx-auto px-4 pb-24">
-          <div className="rounded-[2rem] bg-[#a84b35] text-white p-8 sm:p-14 text-center relative overflow-hidden">
+          <div className="rounded-[2rem] bg-[#a84b35] text-white p-8 sm:p-14 text-center relative overflow-hidden animate-gentle-scale">
             <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-white/5 pointer-events-none transform translate-x-1/3 -translate-y-1/3" />
             <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-white/5 pointer-events-none transform -translate-x-1/3 translate-y-1/3" />
             <div className="relative z-10">

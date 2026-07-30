@@ -15,9 +15,7 @@ import {
   Star,
   BarChart2,
   Zap,
-  Lock,
   MessageCircle,
-  Shield,
 } from 'lucide-react'
 
 // ── Feature Sections ──────────────────────────────────────────────────────────
@@ -202,6 +200,18 @@ const faqs = [
   },
 ]
 
+const billingOptions: Array<{
+  cycle: 'monthly' | 'quarterly' | 'biannual' | 'yearly'
+  label: string
+  cadence: string
+  save?: string
+}> = [
+  { cycle: 'monthly', label: 'Monthly', cadence: 'Pay as you go' },
+  { cycle: 'quarterly', label: 'Quarterly', cadence: 'Every 3 months', save: 'Save 7%' },
+  { cycle: 'biannual', label: 'Biannual', cadence: 'Every 6 months', save: 'Save 10%' },
+  { cycle: 'yearly', label: 'Yearly', cadence: 'Best value', save: 'Save 33%' },
+]
+
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false)
   return (
@@ -270,31 +280,39 @@ export default function PricingPage() {
           </p>
 
           {/* Billing Toggle */}
-          <div className="mt-8 flex flex-wrap justify-center items-center gap-2 bg-white rounded-2xl p-2 border border-[#eadfd8] shadow-sm max-w-xl mx-auto">
-            <button
-              onClick={() => setBillingCycle('monthly')}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${billingCycle === 'monthly' ? 'bg-[#a84b35] text-white shadow-md' : 'text-[#725e57] hover:bg-[#f9f0ee]'}`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setBillingCycle('quarterly')}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex flex-col sm:flex-row items-center gap-1 ${billingCycle === 'quarterly' ? 'bg-[#a84b35] text-white shadow-md' : 'text-[#725e57] hover:bg-[#f9f0ee]'}`}
-            >
-              Quarterly <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${billingCycle === 'quarterly' ? 'bg-white/20 text-white' : 'bg-[#e8d5cf] text-[#a84b35]'}`}>-7%</span>
-            </button>
-            <button
-              onClick={() => setBillingCycle('biannual')}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex flex-col sm:flex-row items-center gap-1 ${billingCycle === 'biannual' ? 'bg-[#a84b35] text-white shadow-md' : 'text-[#725e57] hover:bg-[#f9f0ee]'}`}
-            >
-              Biannual <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${billingCycle === 'biannual' ? 'bg-white/20 text-white' : 'bg-[#e8d5cf] text-[#a84b35]'}`}>-10%</span>
-            </button>
-            <button
-              onClick={() => setBillingCycle('yearly')}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex flex-col sm:flex-row items-center gap-1 ${billingCycle === 'yearly' ? 'bg-[#a84b35] text-white shadow-md' : 'text-[#725e57] hover:bg-[#f9f0ee]'}`}
-            >
-              Yearly <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${billingCycle === 'yearly' ? 'bg-white/20 text-white' : 'bg-[#e8d5cf] text-[#a84b35]'}`}>-33%</span>
-            </button>
+          <div className="mt-8 max-w-2xl mx-auto rounded-3xl border border-[#eadfd8] bg-white/90 p-2 shadow-[0_18px_45px_rgba(70,35,25,.08)]">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {billingOptions.map(option => {
+                const active = billingCycle === option.cycle
+                return (
+                  <button
+                    key={option.cycle}
+                    type="button"
+                    onClick={() => setBillingCycle(option.cycle)}
+                    aria-pressed={active}
+                    className={`min-h-[74px] rounded-2xl px-3 py-3 text-left transition-all focus-visible:ring-2 focus-visible:ring-[#a84b35]/40 ${
+                      active
+                        ? 'bg-[#2a1d1a] text-white shadow-[0_10px_24px_rgba(42,29,26,.18)]'
+                        : 'text-[#725e57] hover:bg-[#fff6f0]'
+                    }`}
+                  >
+                    <span className="flex items-center justify-between gap-2">
+                      <span className="text-sm font-black">{option.label}</span>
+                      {option.save && (
+                        <span className={`whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-black ${
+                          active ? 'bg-white/15 text-[#ffe0d2]' : 'bg-[#f5e5de] text-[#a84b35]'
+                        }`}>
+                          {option.save}
+                        </span>
+                      )}
+                    </span>
+                    <span className={`mt-1 block text-xs font-semibold ${active ? 'text-white/55' : 'text-[#9a8279]'}`}>
+                      {option.cadence}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </div>
 

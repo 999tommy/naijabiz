@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import type { LucideIcon } from 'lucide-react'
 import { ArrowRight, BadgePercent, Banknote, CheckCircle2, ClipboardList, Copy, MessageCircle, Repeat, Share2, ShieldCheck, Target, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -60,6 +61,32 @@ const payoutRules = [
     'Payouts require valid bank details and may be reviewed for duplicate or suspicious signups.',
 ]
 
+const retentionLadder = [
+    ['Month 2-3', '₦200', 'per active Pro client monthly'],
+    ['Month 4-6', '₦300', 'per active Pro client monthly'],
+    ['Month 7-12', '₦500', 'per active Pro client monthly'],
+    ['Month 13+', '₦750', 'per active Pro client monthly'],
+]
+
+const milestoneBonuses = [
+    ['₦15,000', '10 active Pro clients still subscribed at Month 3'],
+    ['₦40,000', '25 active Pro clients still subscribed at Month 3'],
+    ['₦100,000', '50 active Pro clients still subscribed at Month 6'],
+]
+
+const expectations = [
+    'Represent NaijaBiz honestly and never promise features we do not offer.',
+    'Refer businesses that genuinely need a storefront, booking page, or AI sales assistant.',
+    'Never create a business account for someone without their knowledge and consent.',
+    'Help prospects understand the product, then let the tracked link handle signup and attribution.',
+]
+
+const trustItems: Array<[LucideIcon, string, string]> = [
+    [ShieldCheck, 'Tracked by signup link', 'The referred business is connected to your account when they sign up with your link.'],
+    [Banknote, 'Payout details saved once', 'Add bank details from the agent dashboard and update them when needed.'],
+    [MessageCircle, 'Easy to explain on WhatsApp', 'The product is simple enough to pitch in one message and demonstrate with live example links.'],
+]
+
 const referralTargets = [
     'Restaurants, food vendors, bakers, and caterers',
     'Salons, makeup artists, barbers, spas, and nail techs',
@@ -117,11 +144,11 @@ export default function AgentsPage() {
                         </div>
                     </div>
 
-                    <div className="bg-white border border-[#eadfd8] rounded-3xl p-6 shadow-sm">
+                    <div className="bg-white border border-[#eadfd8] rounded-3xl p-6 shadow-[0_24px_70px_rgba(70,35,25,.10)]">
                         <div className="flex items-center justify-between mb-6">
                             <div>
                                 <p className="text-sm text-[#725e57]">Agent earnings model</p>
-                                <h2 className="text-2xl font-black">15% first month</h2>
+                                <h2 className="text-2xl font-black">Earn upfront, then monthly</h2>
                             </div>
                             <div className="w-12 h-12 rounded-2xl bg-[#f9f0ee] flex items-center justify-center">
                                 <BadgePercent className="w-6 h-6 text-[#a84b35]" />
@@ -129,9 +156,9 @@ export default function AgentsPage() {
                         </div>
                         <div className="space-y-4">
                             {[
-                                ['Pro monthly referral', '₦2,500 plan', '₦375 first-month commission'],
+                                ['First Pro payment', '15% commission', 'Paid when the referral upgrades'],
                                 ['Longer billing cycles', 'Quarterly, biannual, yearly', 'Stronger upfront value'],
-                                ['Retention bonuses', 'Active referred clients', 'Recurring reward milestones'],
+                                ['Retention bonuses', 'Active referred Pro clients', 'Monthly recurring rewards'],
                             ].map(([title, meta, value]) => (
                                 <div key={title} className="flex items-center justify-between gap-4 border border-[#f1e5de] rounded-2xl p-4">
                                     <div>
@@ -139,6 +166,49 @@ export default function AgentsPage() {
                                         <p className="text-sm text-[#806b63]">{meta}</p>
                                     </div>
                                     <p className="text-sm font-black text-[#a84b35] text-right">{value}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                <section className="max-w-6xl mx-auto px-4 pb-16">
+                    <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-8 items-start">
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-widest text-[#a84b35] mb-3">Recurring earnings</p>
+                            <h2 className="text-3xl font-black mb-4">Earn the first month, then keep earning while clients stay active.</h2>
+                            <p className="text-[#725e57] leading-relaxed">
+                                The stronger version of this program rewards agents for retained businesses, not just signups. These rates are a working draft until the final NaijaBiz payout policy is confirmed.
+                            </p>
+                        </div>
+                        <div className="bg-white border border-[#eadfd8] rounded-3xl p-5 shadow-sm">
+                            <div className="grid sm:grid-cols-2 gap-3">
+                                {retentionLadder.map(([period, amount, detail]) => (
+                                    <div key={period} className="rounded-2xl border border-[#f1e5de] bg-[#fffaf5] p-4">
+                                        <p className="text-xs font-black uppercase tracking-[.14em] text-[#a84b35]">{period}</p>
+                                        <p className="text-3xl font-black mt-2">{amount}</p>
+                                        <p className="text-sm text-[#725e57] mt-1">{detail}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="bg-white border-y border-[#eadfd8]">
+                    <div className="max-w-6xl mx-auto px-4 py-16 grid lg:grid-cols-[0.95fr_1.05fr] gap-8 items-start">
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-widest text-[#a84b35] mb-3">Milestone bonuses</p>
+                            <h2 className="text-3xl font-black mb-4">Build a retained base and unlock lump sums.</h2>
+                            <p className="text-[#725e57] leading-relaxed">
+                                Milestones help serious agents turn trust into a real book of business. We should finalize whether these bonuses are paid monthly, per cohort, or once per agent tier.
+                            </p>
+                        </div>
+                        <div className="space-y-3">
+                            {milestoneBonuses.map(([amount, target]) => (
+                                <div key={amount} className="flex items-center justify-between gap-5 rounded-2xl border border-[#eadfd8] bg-[#fffaf5] p-5">
+                                    <p className="text-3xl font-black text-[#a84b35]">{amount}</p>
+                                    <p className="text-sm font-bold text-[#2a1d1a] text-right">{target}</p>
                                 </div>
                             ))}
                         </div>
@@ -235,6 +305,26 @@ export default function AgentsPage() {
                     </div>
                 </section>
 
+                <section className="max-w-6xl mx-auto px-4 pb-16">
+                    <div className="grid lg:grid-cols-[0.85fr_1.15fr] gap-8 items-start">
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-widest text-[#a84b35] mb-3">What we expect</p>
+                            <h2 className="text-3xl font-black mb-4">Generous rewards for honest agents.</h2>
+                            <p className="text-[#725e57] leading-relaxed">
+                                The program should feel easy to sell because the product is useful, not because agents overpromise.
+                            </p>
+                        </div>
+                        <div className="grid sm:grid-cols-2 gap-3">
+                            {expectations.map(item => (
+                                <div key={item} className="flex gap-3 bg-white border border-[#eadfd8] rounded-2xl p-4">
+                                    <ShieldCheck className="w-5 h-5 text-[#a84b35] shrink-0 mt-0.5" />
+                                    <p className="text-sm font-semibold text-[#725e57] leading-relaxed">{item}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
                 <section className="max-w-4xl mx-auto px-4 pb-16">
                     <div className="bg-[#2a1d1a] text-white rounded-3xl p-8 sm:p-10 text-center">
                         <Repeat className="w-9 h-9 text-[#e8b8aa] mx-auto mb-4" />
@@ -256,11 +346,7 @@ export default function AgentsPage() {
                             <p className="text-xs font-bold uppercase tracking-widest text-[#a84b35] mb-3">Trust and payouts</p>
                             <h2 className="text-3xl font-black mb-4">Built to be simple, trackable, and honest.</h2>
                             <div className="space-y-3">
-                                {[
-                                    [ShieldCheck, 'Tracked by signup link', 'The referred business is connected to your account when they sign up with your link.'],
-                                    [Banknote, 'Payout details saved once', 'Add bank details from the agent dashboard and update them when needed.'],
-                                    [MessageCircle, 'Easy to explain on WhatsApp', 'The product is simple enough to pitch in one message and demonstrate with live example links.'],
-                                ].map(([Icon, title, text]: any) => (
+                                {trustItems.map(([Icon, title, text]) => (
                                     <div key={title} className="flex gap-3 bg-white border border-[#eadfd8] rounded-2xl p-4">
                                         <Icon className="w-5 h-5 text-[#a84b35] shrink-0 mt-0.5" />
                                         <div>

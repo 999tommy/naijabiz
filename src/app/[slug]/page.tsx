@@ -16,8 +16,9 @@ import {
     ArrowRight,
     Phone,
     ShoppingBag,
-    Crown,
+    Sparkles,
 } from 'lucide-react'
+import type { Review } from '@/lib/types'
 import { getCategoryIcon } from '@/lib/category-icons'
 import { UpvoteButton } from '@/components/UpvoteButton'
 import { BusinessShareButton } from '@/components/BusinessShareButton'
@@ -124,7 +125,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
 
     const isVerified = isPro
     const averageRating = reviews.length > 0
-        ? (reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / reviews.length).toFixed(1)
+        ? (reviews.reduce((sum: number, review: Review) => sum + review.rating, 0) / reviews.length).toFixed(1)
         : null
 
     const jsonLd = {
@@ -286,9 +287,9 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-10 pointer-events-none" style={{ background: 'white', transform: 'translate(30%, -30%)' }} />
                 <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-10 pointer-events-none" style={{ background: 'white', transform: 'translate(-30%, 30%)' }} />
                 <div className="relative z-10 max-w-5xl mx-auto px-4 py-20 md:py-28">
-                    <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
+                    <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16 micro-reveal">
                         <div className="flex-shrink-0">
-                            <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl overflow-hidden relative shadow-2xl" style={{ border: `3px solid ${theme.logoRing}`, boxShadow: `0 0 0 6px ${theme.logoRing}22` }}>
+                            <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl overflow-hidden relative shadow-2xl animate-soft-float" style={{ border: `3px solid ${theme.logoRing}`, boxShadow: `0 0 0 6px ${theme.logoRing}22` }}>
                                 {business.logo_url ? (
                                     <Image src={business.logo_url} alt={business.business_name} fill className="object-cover" priority sizes="160px" unoptimized={business.logo_url.includes('supabase.co/storage/v1/object/public/')} />
                                 ) : (
@@ -310,7 +311,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                             </div>
                             <div className="flex items-center justify-center md:justify-start gap-3 flex-wrap">
                                 <a href="#catalog">
-                                    <button className="h-13 px-8 py-3.5 rounded-2xl text-base font-black flex items-center gap-2 transition-all hover:opacity-90 hover:-translate-y-0.5 shadow-xl" style={{ background: theme.ctaBg, color: theme.ctaText }}>
+                                    <button className="h-13 px-8 py-3.5 rounded-2xl text-base font-black flex items-center gap-2 transition-all hover:opacity-90 hover:-translate-y-0.5 shadow-xl micro-lift" style={{ background: theme.ctaBg, color: theme.ctaText }}>
                                         <ShoppingBag className="w-5 h-5" />Shop Now<ArrowRight className="w-4 h-4" />
                                     </button>
                                 </a>
@@ -320,6 +321,18 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                             <MessageCircle className="w-5 h-5" />WhatsApp
                                         </button>
                                     </a>
+                                )}
+                                {business.ai_enabled && business.plan === 'pro' && (
+                                    <button
+                                        onClick={() => {
+                                            const event = new CustomEvent('open-ai-chat')
+                                            window.dispatchEvent(event)
+                                        }}
+                                        className="h-13 px-6 py-3.5 rounded-2xl text-base font-bold flex items-center gap-2 transition-all hover:opacity-80"
+                                        style={{ background: 'rgba(255,255,255,0.15)', color: theme.heroText, border: '1px solid rgba(255,255,255,0.25)' }}
+                                    >
+                                        <Sparkles className="w-5 h-5" />Chat with AI
+                                    </button>
                                 )}
                             </div>
                         </div>
@@ -357,7 +370,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                     )}
                                 </div>
                             </div>
-                            <div className="rounded-3xl p-8" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(16px)' }}>
+                            <div className="rounded-3xl p-8 micro-lift" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(16px)' }}>
                                 <div className="grid grid-cols-2 gap-6">
                                     {[{ label: 'Products', value: products.length, suffix: '+' }, { label: 'Reviews', value: reviews.length, suffix: '' }, { label: 'Upvotes', value: business.upvotes || 0, suffix: '' }, { label: 'Rating', value: averageRating || '—', suffix: averageRating ? '★' : '' }].map(({ label, value, suffix }) => (
                                         <div key={label} className="text-center">
@@ -414,8 +427,8 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                             )}
                         </div>
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {reviews.map((review: any) => (
-                                <div key={review.id} className="rounded-2xl p-6" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}>
+                            {reviews.map((review: Review) => (
+                                <div key={review.id} className="rounded-2xl p-6 micro-lift" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}>
                                     <div className="flex mb-3">{[1,2,3,4,5].map(i => <Star key={i} className={`w-4 h-4 ${i <= review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200'}`} />)}</div>
                                     {review.comment && <p className="text-sm leading-relaxed mb-4 italic" style={{ color: theme.bodyText }}>&ldquo;{review.comment}&rdquo;</p>}
                                     <div className="flex items-center gap-2">
@@ -442,7 +455,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
             {/* FINAL CTA */}
             <section className="py-20 px-4" style={{ borderTop: `1px solid ${theme.divider}` }}>
                 <div className="max-w-5xl mx-auto">
-                    <div className="rounded-3xl p-10 md:p-16 text-center relative overflow-hidden" style={{ background: theme.heroBg }}>
+                    <div className="rounded-3xl p-10 md:p-16 text-center relative overflow-hidden animate-gentle-scale" style={{ background: theme.heroBg }}>
                         <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10 pointer-events-none" style={{ background: 'white', transform: 'translate(30%, -30%)' }} />
                         <div className="relative z-10">
                             <p className="text-xs font-bold tracking-widest uppercase mb-4" style={{ color: 'rgba(255,255,255,0.7)' }}>Ready to order?</p>

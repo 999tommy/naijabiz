@@ -106,6 +106,28 @@ body {
   }
 }
 
+@keyframes softFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes gentleScale {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.025);
+  }
+}
+
 .animate-fadeIn {
   animation: fadeIn 0.5s ease-out forwards;
 }
@@ -116,6 +138,49 @@ body {
 
 .animate-pulse-glow {
   animation: pulse-glow 2s infinite;
+}
+
+.animate-soft-float {
+  animation: softFloat 5s ease-in-out infinite;
+}
+
+.animate-gentle-scale {
+  animation: gentleScale 7s ease-in-out infinite;
+}
+
+.micro-reveal {
+  animation: fadeIn 0.65s ease-out both;
+}
+
+.micro-delay-1 {
+  animation-delay: 90ms;
+}
+
+.micro-delay-2 {
+  animation-delay: 180ms;
+}
+
+.micro-delay-3 {
+  animation-delay: 270ms;
+}
+
+.micro-lift {
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease, background-color 220ms ease;
+}
+
+.micro-lift:hover {
+  transform: translateY(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
 /* Gradient text */
