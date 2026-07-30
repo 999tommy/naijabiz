@@ -99,8 +99,8 @@ export default function HomePage() {
             <div className="grid gap-1">
               {[
                 ...navLinks,
-                { href: '/tolas-kitchen', label: "Tola's Kitchen demo" },
-                { href: '/musafix-electricals', label: 'MusaFix service demo' },
+                { href: '/tolas-kitchen', label: "Product Brand demo" },
+                { href: '/musafix-electricals', label: 'Service Brand demo' },
                 { href: '/login', label: 'Log in' },
               ].map(link => (
                 <Link
@@ -128,7 +128,7 @@ export default function HomePage() {
 
           {/* Pill label */}
           <p className="relative inline-flex items-center gap-2 rounded-full bg-[#f5e5de] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.16em] text-[#9d4430] mb-6">
-            Get a free virtual assistant
+            Get your virtual assistant
           </p>
 
           {/* Headline */}
@@ -140,7 +140,7 @@ export default function HomePage() {
           {/* Subtext */}
           <p className="relative mx-auto max-w-lg text-base sm:text-lg leading-relaxed text-[#725e57] mb-8">
             Claim one beautiful link where customers discover your story, browse your catalog,
-            and book your services. A highly trained <span>virtual assistant</span> runs your business for you when you're asleep or busy.
+            and book your services. A highly trained <span className='font-bold'>virtual assistant</span> runs your business for you when you're asleep or busy.
           </p>
 
           {/* Slug input */}
@@ -169,9 +169,7 @@ export default function HomePage() {
         <section className="max-w-5xl mx-auto px-4 py-8">
           <div className="grid sm:grid-cols-3 gap-3">
             {[
-              ['2', 'Inspectable demo pages', 'See a product brand and a service artisan before signing up.'],
-              ['4.7★', 'Example review signal', 'Brand pages make ratings and customer proof visible.'],
-              ['24/7', 'Virtual Assistant positioning', 'Pro pages can answer questions and capture intent after hours.'],
+              ['24/7', 'Virtual Assistant', 'to answer questions, negotiate with customers and capture intent after hours.'],
             ].map(([value, label, text]) => (
               <div key={label} className="rounded-2xl bg-white border border-[#eadfd8] p-5 shadow-[0_10px_28px_rgba(70,35,25,.05)]">
                 <p className="text-3xl font-black text-[#a84b35]">{value}</p>
@@ -273,51 +271,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* BUSINESS TYPE COMPARISON */}
-        <section className="max-w-5xl mx-auto px-4 py-14">
-          <div className="text-center mb-10">
-            <p className="text-xs uppercase tracking-[.16em] font-bold text-[#a84b35] mb-3">For products, services, and hybrid brands</p>
-            <h2 className="text-3xl sm:text-4xl font-black">One trusted link, shaped around what you sell.</h2>
-          </div>
-          <div className="grid lg:grid-cols-3 gap-4">
-            {businessTypes.map(({ icon: Icon, title, example, description, href, cta, color, proof }) => (
-              <div key={title} className="rounded-3xl bg-white border border-[#eadfd8] p-6 flex flex-col">
-                <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-5" style={{ background: `${color}22` }}>
-                  <Icon className="w-5 h-5" style={{ color }} />
-                </div>
-                <p className="text-xs font-black uppercase tracking-[.14em] text-[#a84b35] mb-2">{proof}</p>
-                <h3 className="text-xl font-black mb-1">{title}</h3>
-                <p className="text-sm font-bold text-[#725e57] mb-3">{example}</p>
-                <p className="text-sm text-[#725e57] leading-relaxed flex-1">{description}</p>
-                <Link href={href} className="mt-6 inline-flex items-center justify-between rounded-xl border border-[#eadfd8] px-4 py-3 text-sm font-bold text-[#2a1d1a] hover:bg-[#fffaf5]">
-                  {cta}
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            ))}
-          </div>
-        </section>
 
-        {/* PAYMENT POSITIONING */}
-        <section className="max-w-5xl mx-auto px-4 pb-14">
-          <div className="rounded-3xl bg-[#f5fffa] border border-[#cfe9dc] p-6 sm:p-8 flex flex-col md:flex-row gap-5 md:items-center md:justify-between">
-            <div className="flex gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shrink-0">
-                <MessageCircle className="w-6 h-6 text-[#2f6f58]" />
-              </div>
-              <div>
-                <p className="text-xs font-black uppercase tracking-[.16em] text-[#2f6f58] mb-2">Lightweight by design</p>
-                <h2 className="text-2xl font-black mb-2">WhatsApp-first today. No heavy checkout setup.</h2>
-                <p className="text-sm text-[#587468] leading-relaxed">
-                  Customers browse, ask questions, order, or request appointments through WhatsApp. In-platform customer payments are not live yet, so NaijaBiz stays focused on speed, trust, AI, discovery, and referral-led growth.
-                </p>
-              </div>
-            </div>
-            <Link href="/pricing" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2f6f58] text-white px-5 py-3 text-sm font-bold hover:bg-[#265946]">
-              See plans <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </section>
 
         {/* AGENT CTA */}
         <section className="max-w-5xl mx-auto px-4 py-10">
@@ -445,26 +399,28 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* WHO IT'S FOR */}
-        <section className="bg-[#f2e7df] py-16">
-          <div className="max-w-5xl mx-auto px-4">
-            <p className="text-center text-xs uppercase tracking-[.16em] font-bold text-[#a84b35] mb-3">Built around your business</p>
-            <h2 className="text-center text-3xl sm:text-4xl font-black mb-10">Whatever you sell, we have you covered.</h2>
-            <div className="grid sm:grid-cols-3 gap-4">
-              {[
-                [ShoppingBag, 'Product brands', 'Show your collection, make selection easy, and let customers order straight to WhatsApp.', '#c36f4d'],
-                [CalendarCheck, 'Service brands', 'Present your services beautifully and turn interest into clear booking enquiries.', '#5c8a5e'],
-                [Users, 'Hybrid brands', 'Sell products and offer services from the same brand page — no separate links needed.', '#7c5cbf'],
-              ].map(([Icon, title, text, color]: any) => (
-                <div key={title as string} className="rounded-3xl p-6 bg-[#fffaf5] border border-[#eadfd8]">
-                  <div className="w-10 h-10 rounded-2xl flex items-center justify-center mb-4" style={{ background: color + '22' }}>
-                    <Icon className="w-5 h-5" style={{ color }} />
-                  </div>
-                  <h3 className="font-black text-lg mb-2">{title as string}</h3>
-                  <p className="text-sm text-[#725e57] leading-relaxed">{text as string}</p>
+        {/* BUSINESS TYPE COMPARISON */}
+        <section className="max-w-5xl mx-auto px-4 py-14">
+          <div className="text-center mb-10">
+            <p className="text-xs uppercase tracking-[.16em] font-bold text-[#a84b35] mb-3">For products, services, and hybrid brands</p>
+            <h2 className="text-3xl sm:text-4xl font-black">One trusted link, shaped around what you sell.</h2>
+          </div>
+          <div className="grid lg:grid-cols-3 gap-4">
+            {businessTypes.map(({ icon: Icon, title, example, description, href, cta, color, proof }) => (
+              <div key={title} className="rounded-3xl bg-white border border-[#eadfd8] p-6 flex flex-col">
+                <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-5" style={{ background: `${color}22` }}>
+                  <Icon className="w-5 h-5" style={{ color }} />
                 </div>
-              ))}
-            </div>
+                <p className="text-xs font-black uppercase tracking-[.14em] text-[#a84b35] mb-2">{proof}</p>
+                <h3 className="text-xl font-black mb-1">{title}</h3>
+                <p className="text-sm font-bold text-[#725e57] mb-3">{example}</p>
+                <p className="text-sm text-[#725e57] leading-relaxed flex-1">{description}</p>
+                <Link href={href} className="mt-6 inline-flex items-center justify-between rounded-xl border border-[#eadfd8] px-4 py-3 text-sm font-bold text-[#2a1d1a] hover:bg-[#fffaf5]">
+                  {cta}
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -511,7 +467,7 @@ export default function HomePage() {
               },
               {
                 quote: "Upgrading to Pro was the best decision. Having my own themed website makes my skincare brand look so much more expensive and trustworthy.",
-                name: "Sarah M.",
+                name: "Chioma B.",
                 business: "Beauty Store",
                 bg: "#f0e8ff"
               }
