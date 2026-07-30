@@ -40,7 +40,9 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
 
     // Listen for custom event to open chat
     useEffect(() => {
-        const handleOpenChat = () => setActualOpen(true)
+        const handleOpenChat = () => {
+            if (setActualOpen) setActualOpen(true)
+        }
         window.addEventListener('open-ai-chat', handleOpenChat)
         return () => window.removeEventListener('open-ai-chat', handleOpenChat)
     }, [setActualOpen])
@@ -138,9 +140,34 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
         if (!match) return { cleanText: text, summary: null }
 
         try {
-            const summary = JSON.parse(match[1])
-            const cleanText = text.replace(/\[ORDER_SUMMARY:\s*({[\s\S]*?})\]/, '').trim()
-            return { cleanText, summary }
+            const parsed = JSON.parse(match[1])
+            
+            // Validate the parsed object matches OrderSummary structure
+            if (
+                typeof parsed === 'object' &&
+                parsed !== null &&
+                Array.isArray(parsed.items) &&
+                typeof parsed.total === 'number' &&
+                parsed.items.every((item: unknown) => 
+                    typeof item === 'object' &&
+                    item !== null &&
+                    'name' in item &&
+                    'price' in item &&
+                    'quantity' in item
+                )
+            ) {
+                const summary: OrderSummary = {
+                    items: parsed.items,
+                    total: parsed.total,
+                    customer_name: typeof parsed.customer_name === 'string' ? parsed.customer_name : undefined,
+                    delivery_address: typeof parsed.delivery_address === 'string' ? parsed.delivery_address : undefined,
+                    type: parsed.type === 'product' || parsed.type === 'service' ? parsed.type : undefined,
+                }
+                const cleanText = text.replace(/\[ORDER_SUMMARY:\s*({[\s\S]*?})\]/, '').trim()
+                return { cleanText, summary }
+            }
+            
+            return { cleanText: text, summary: null }
         } catch {
             return { cleanText: text, summary: null }
         }
@@ -208,7 +235,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                                 </p>
                             </div>
                         </div>
-                        <Button size="icon" variant="ghost" className="text-[#6f6258] hover:bg-[#e7ddd2] h-8 w-8 rounded-xl" onClick={() => setActualOpen(false)}>
+                        <Button size="icon" variant="ghost" className="text-[#6f6258] hover:bg-[#e7ddd2] h-8 w-8 rounded-xl" onClick={() => setActualOpen && setActualOpen(false)}>
                             <ChevronDown className="w-5 h-5" />
                         </Button>
                     </div>
@@ -322,7 +349,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
             {/* Floating Toggle Button */}
             {!actualOpen && (
                 <Button
-                    onClick={() => setActualOpen(true)}
+                    onClick={() => setActualOpen && setActualOpen(true)}
                     className="h-14 px-5 rounded-2xl bg-[#2f2721] hover:bg-[#463a31] text-[#fffaf4] shadow-[0_18px_45px_rgba(47,39,33,.24)] flex items-center gap-3 transition-all hover:-translate-y-0.5 active:translate-y-0 border border-[#5b4c41]"
                 >
                     <div className="relative">
