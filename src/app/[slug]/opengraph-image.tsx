@@ -20,7 +20,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
     let business = null
 
     try {
-        const response = await fetch(`${supabaseUrl}/rest/v1/users?business_slug=eq.${encodeURIComponent(slug)}&select=business_name,description,location,is_verified,logo_url`, {
+        const response = await fetch(`${supabaseUrl}/rest/v1/users?business_slug=eq.${encodeURIComponent(slug)}&select=business_name,description,location,plan,logo_url`, {
             headers: {
                 'apikey': supabaseKey || '',
                 'Authorization': `Bearer ${supabaseKey}`,
@@ -122,7 +122,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
                 </div>
 
                 {/* Verified Badge */}
-                {business.is_verified && (
+                {business.plan === 'pro' && (
                     <div
                         style={{
                             display: 'flex',

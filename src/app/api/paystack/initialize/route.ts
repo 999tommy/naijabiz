@@ -3,18 +3,34 @@ import { createServiceClient } from '@/lib/supabase/server'
 
 export const runtime = 'nodejs'
 
-type BillingCycle = 'monthly' | 'yearly'
+type BillingCycle = 'monthly' | 'quarterly' | 'biannual' | 'yearly'
 
 const AMOUNTS_KOBO: Record<BillingCycle, number> = {
-    monthly: 1000 * 100,
-    yearly: 7500 * 100,
+    monthly: 2500 * 100,
+    quarterly: 6975 * 100,
+    biannual: 13500 * 100,
+    yearly: 20000 * 100,
+}
+
+const PLAN_CODE_ENV_KEYS: Record<BillingCycle, string> = {
+    monthly: 'PAYSTACK_PLAN_CODE_MONTHLY',
+    quarterly: 'PAYSTACK_PRO_QUARTERLY_PLAN',
+    biannual: 'PAYSTACK_PRO_BIANNUAL_PLAN',
+    yearly: 'PAYSTACK_PLAN_CODE_YEARLY',
+}
+
+function normalizeBillingCycle(billing?: string): BillingCycle {
+    if (billing === 'quarterly' || billing === 'biannual' || billing === 'yearly') {
+        return billing
+    }
+    return 'monthly'
 }
 
 export async function POST(request: NextRequest) {
     try {
         const { userId, billing, type = 'subscription' } = (await request.json()) as {
             userId?: string
-            billing?: BillingCycle
+            billing?: string
             type?: 'subscription' | 'onetime'
         }
 
@@ -22,7 +38,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'User ID required' }, { status: 400 })
         }
 
-        const billingCycle: BillingCycle = billing === 'yearly' ? 'yearly' : 'monthly'
+        const billingCycle = normalizeBillingCycle(billing)
 
         const secretKey = process.env.PAYSTACK_SECRET_KEY
         if (!secretKey) {
@@ -34,10 +50,7 @@ export async function POST(request: NextRequest) {
 
         // Only require plan code if it's a subscription
         if (type === 'subscription') {
-            planCode =
-                billingCycle === 'yearly'
-                    ? process.env.PAYSTACK_PLAN_CODE_YEARLY
-                    : process.env.PAYSTACK_PLAN_CODE_MONTHLY
+            planCode = process.env[PLAN_CODE_ENV_KEYS[billingCycle]]
 
             if (!planCode) {
                 console.error('Missing Paystack plan code for billing:', billingCycle)

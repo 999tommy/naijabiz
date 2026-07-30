@@ -1,8 +1,4 @@
 import { Metadata } from 'next';
-import { Inter, Playfair_Display } from 'next/font/google';
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' });
 
 export const metadata: Metadata = {
   title: 'Her Excellence | Every elegant woman\'s closet',
@@ -42,7 +38,7 @@ export default function HerExcellenceLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`${inter.variable} ${playfair.variable} font-sans bg-[#0a0a0a] text-[#f5f5f5] min-h-screen selection:bg-[#d4af37] selection:text-black`}>
+    <div className="font-sans bg-[#0a0a0a] text-[#f5f5f5] min-h-screen selection:bg-[#d4af37] selection:text-black">
       {children}
     </div>
   );

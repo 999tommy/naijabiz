@@ -14,6 +14,8 @@ export async function updateAiSettings(formData: FormData) {
     const ai_enabled = formData.get('ai_enabled') === 'on'
     const ai_instructions = formData.get('ai_instructions') as string
     const ai_welcome_msg = formData.get('ai_welcome_msg') as string
+    const ai_persona = (formData.get('ai_persona') as string) || 'friendly'
+    const business_type = (formData.get('business_type') as string) || 'products'
 
     const { error } = await supabase
         .from('users')
@@ -21,6 +23,8 @@ export async function updateAiSettings(formData: FormData) {
             ai_enabled,
             ai_instructions,
             ai_welcome_msg,
+            ai_persona,
+            business_type,
         })
         .eq('id', user.id)
 

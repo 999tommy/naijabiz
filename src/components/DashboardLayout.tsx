@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import {
@@ -29,7 +29,6 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ children, user }: DashboardLayoutProps) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const pathname = usePathname()
-    const router = useRouter()
     const supabase = createClient()
 
     const handleLogout = async () => {
@@ -37,9 +36,15 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
         window.location.href = '/'
     }
 
+    const catalogLabel = user.business_type === 'services'
+        ? 'Services'
+        : user.business_type === 'both'
+            ? 'Products & Services'
+            : 'Products'
+
     const navigation = [
         { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-        { name: 'Products', href: '/dashboard/products', icon: Package },
+        { name: catalogLabel, href: '/dashboard/products', icon: Package },
         { name: 'Settings', href: '/dashboard/settings', icon: Settings },
         {
             name: 'AI Assistant',
@@ -166,13 +171,13 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                             <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg p-4 text-white">
                                 <p className="font-semibold mb-1">Upgrade to Pro</p>
                                 <p className="text-xs text-orange-100 mb-3">
-                                    Get verified badge, unlimited products & more!
+                                    Get verified badge, unlimited {user.business_type === 'services' ? 'services' : 'catalog items'} & more!
                                 </p>
                                 <Link
                                     href="/dashboard/settings#upgrade"
                                     className="block text-center bg-white text-orange-600 rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-50 transition-colors"
                                 >
-                                    Upgrade Now - ₦1000/mo
+                                    Upgrade Now - ₦2,500/mo
                                 </Link>
                             </div>
                         </div>
@@ -199,7 +204,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
             {/* Main content */}
             <div className="lg:pl-64">
                 {/* Top bar */}
-                <header className="sticky top-0 z-30 h-16 bg-white/80 backdrop-blur border-b border-gray-200 flex items-center px-4">
+                <header className="sticky top-0 z-30 h-16 bg-gradient-to-r from-gray-50 to-white backdrop-blur border-b border-gray-100 flex items-center px-4 shadow-sm">
                     <button
                         onClick={() => setSidebarOpen(true)}
                         className="lg:hidden p-2 text-gray-600 hover:text-gray-900 flex items-center gap-2"

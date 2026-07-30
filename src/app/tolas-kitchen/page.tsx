@@ -20,6 +20,7 @@ import { MockHeaderActions } from '@/components/MockHeaderActions'
 import { MockSocialActions } from '@/components/MockSocialActions'
 import { getWebsiteTheme } from '@/lib/website-theme'
 import { getCategoryIcon } from '@/lib/category-icons'
+import { AiChatWidget } from '@/components/AiChatWidget'
 
 const MOCK_BUSINESS = {
     id: 'mock-id-123',
@@ -559,6 +560,9 @@ export default function ExampleBusinessPage() {
                     </Button>
                 </Link>
             </div>
+
+            {/* AI Assistant Widget on Example Page */}
+            <AiChatWidget business={business as any} />
         </div>
     )
 }

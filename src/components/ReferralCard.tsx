@@ -109,15 +109,14 @@ export function ReferralCard({ user, referralStats }: ReferralCardProps) {
                 <CardHeader className="pb-2">
                     <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
                         <Banknote className="w-5 h-5 text-indigo-600" />
-                        {isEditingBank ? 'Update Bank Details' : 'Join the NaijaBiz Cash Referral Program'}
+                        {isEditingBank ? 'Update Bank Details' : 'Join the NaijaBiz Agent Program'}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     {!isEditingBank && (
                         <p className="text-sm text-indigo-700 mb-6">
-                            Make up to <span className="font-bold">₦60,000</span> referring brands to NaijaBiz!
-                            When a business subscribes to Pro through your link, you get a commission.
-                            Refer 5 paying businesses and you'll receive ₦3,000 sent directly to your bank account within an hour.
+                            Register as an agent, refer businesses to NaijaBiz, and earn from the clients you bring in.
+                            Agents earn 15% of the first month when a referred business upgrades, plus recurring retention bonuses as those clients stay active.
                         </p>
                     )}
 
@@ -160,7 +159,7 @@ export function ReferralCard({ user, referralStats }: ReferralCardProps) {
                 <div className="flex items-center justify-between">
                     <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
                         <Gift className="w-5 h-5 text-indigo-600" />
-                        Cash Referral Program
+                        Agent Program
                     </CardTitle>
                     <Button variant="ghost" size="sm" onClick={() => setIsEditingBank(true)} className="text-indigo-600 h-8 px-2 text-xs">
                         Edit Bank Details
@@ -170,15 +169,14 @@ export function ReferralCard({ user, referralStats }: ReferralCardProps) {
             <CardContent>
                 <div className="space-y-4">
                     <p className="text-sm text-indigo-700">
-                        Make up to <span className="font-bold">₦60,000</span> referring brands!
-                        For every <span className="font-bold">{target} paying businesses</span> you refer, you earn ₦3,000 paid to your bank account within an hour.
+                        Share your agent link with business owners. You earn a 15% first-month commission when a referred client upgrades, plus recurring retention bonuses for active clients.
                     </p>
 
                     {/* Progress */}
                     <div className="space-y-2">
                         <div className="flex justify-between text-xs font-semibold text-indigo-900">
-                            <span>Your Progress</span>
-                            <span>{currentProgress} / {target} Paying Users</span>
+                            <span>Retention Bonus Progress</span>
+                            <span>{currentProgress} / {target} Active Clients</span>
                         </div>
                         <div className="h-3 w-full bg-indigo-100 rounded-full overflow-hidden">
                             <div
@@ -188,7 +186,7 @@ export function ReferralCard({ user, referralStats }: ReferralCardProps) {
                         </div>
                         {currentProgress >= target && (
                             <p className="text-xs text-green-600 font-bold mt-1">
-                                Goal reached! You will receive your payout soon.
+                                Bonus milestone reached! Your payout can be processed soon.
                             </p>
                         )}
                     </div>

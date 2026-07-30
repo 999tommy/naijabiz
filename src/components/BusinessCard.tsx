@@ -47,7 +47,7 @@ export function BusinessCard({ business, rank, isNew }: BusinessCardProps) {
                             <h3 className="font-semibold text-gray-900 text-sm sm:text-base group-hover:text-orange-600 transition-colors truncate max-w-full">
                                 {business.business_name}
                             </h3>
-                            {business.is_verified && business.plan === 'pro' && (
+                            {business.plan === 'pro' && (
                                 <VerifiedBadge size="sm" showText={false} />
                             )}
                             {isNew && (

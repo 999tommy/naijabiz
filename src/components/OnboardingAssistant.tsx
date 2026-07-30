@@ -39,12 +39,14 @@ export function OnboardingAssistant({ user, productCount }: OnboardingAssistantP
         activeStep = 2
     }
 
+    const isService = user.business_type === 'services'
+
     const steps = [
         {
             id: 'product',
-            title: 'Add your first product',
-            description: 'Customers need to see what you sell. Add a photo and price.',
-            cta: 'Add a Product',
+            title: isService ? 'Add your first service' : 'Add your first product',
+            description: isService ? 'Customers need to know what you offer. Add a service and price.' : 'Customers need to see what you sell. Add a photo and price.',
+            cta: isService ? 'Add a Service' : 'Add a Product',
             href: '/dashboard/products',
             icon: <ShoppingBag className="w-5 h-5" />,
             isComplete: hasAddedProduct

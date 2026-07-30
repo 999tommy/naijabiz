@@ -25,7 +25,7 @@ export default async function SearchPage({
             .from('users')
             .select('id, business_name, business_slug, description, logo_url, upvotes, is_verified, plan, location')
             .or(`business_name.ilike.%${query}%,description.ilike.%${query}%,location.ilike.%${query}%`)
-            .order('is_verified', { ascending: false })
+            .order('plan', { ascending: false })
             .order('upvotes', { ascending: false, nullsFirst: false })
             .limit(50)
 
@@ -94,7 +94,7 @@ export default async function SearchPage({
                                             <div className="flex flex-col gap-1">
                                                 <h3 className="text-base sm:text-lg font-bold text-gray-900 leading-tight flex items-center gap-1">
                                                     {biz.business_name}
-                                                    {biz.is_verified && <VerifiedBadge size="sm" showText={false} />}
+                                                    {biz.plan === 'pro' && <VerifiedBadge size="sm" showText={false} />}
                                                 </h3>
 
                                                 {biz.location && (

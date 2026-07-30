@@ -27,8 +27,8 @@ export default async function AiDashboardPage() {
         <DashboardLayout user={user}>
             <div className="max-w-3xl mx-auto">
                 <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-gray-900">AI Sales Assistant</h1>
-                    <p className="text-gray-500">Train your automated receptionist to answer customer questions.</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Virtual Assistant</h1>
+                    <p className="text-gray-500">Train your automated receptionist to answer product questions, service inquiries, orders, and booking requests.</p>
                 </div>
                 <AiSettingsForm user={user} />
             </div>

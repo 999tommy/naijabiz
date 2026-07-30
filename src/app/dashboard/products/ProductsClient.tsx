@@ -17,7 +17,11 @@ import {
     Loader2,
     ImagePlus,
     AlertCircle,
-    Package
+    Package,
+    Check,
+    Ban,
+    Briefcase,
+    ShoppingBag
 } from 'lucide-react'
 import { compressImage } from '@/lib/image-compression'
 
@@ -39,12 +43,14 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
     const [name, setName] = useState('')
     const [price, setPrice] = useState('')
     const [description, setDescription] = useState('')
+    const [inStock, setInStock] = useState<boolean>(true)
+    const [itemType, setItemType] = useState<'product' | 'service'>('product')
 
     const router = useRouter()
     const supabase = createClient()
 
     const isPro = user.plan === 'pro'
-    const maxProducts = isPro ? Infinity : 3
+    const maxProducts = isPro ? Infinity : 5
     const canAddMore = products.length < maxProducts
 
     const fetchProducts = useCallback(async () => {
@@ -65,6 +71,8 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
         setName('')
         setPrice('')
         setDescription('')
+        setInStock(true)
+        setItemType('product')
         setImageFile(null)
         setImagePreview(null)
         setEditingProduct(null)
@@ -85,11 +93,6 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
             const compressedFile = await compressImage(file)
             setImageFile(compressedFile)
             setImagePreview(URL.createObjectURL(compressedFile))
-
-            // If it's still over 200KB (rare with the library but possible if source is massive/non-compressible)
-            if (compressedFile.size > 200 * 1024) {
-                console.warn('Image still over 200KB after compression:', compressedFile.size)
-            }
         } catch (err) {
             console.error('Compression error:', err)
             setError('Failed to process image. Please try another one.')
@@ -140,6 +143,8 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                 price: parseFloat(price),
                 description: description || null,
                 image_url: imageUrl,
+                in_stock: inStock,
+                item_type: itemType,
                 user_id: user.id,
             }
 
@@ -162,7 +167,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
             resetForm()
             router.refresh()
         } catch (err: unknown) {
-            const errorMessage = err instanceof Error ? err.message : 'Failed to save product'
+            const errorMessage = err instanceof Error ? err.message : 'Failed to save product/service'
             setError(errorMessage)
         } finally {
             setLoading(false)
@@ -174,12 +179,29 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
         setName(product.name)
         setPrice(product.price.toString())
         setDescription(product.description || '')
+        setInStock(product.in_stock !== false)
+        setItemType(product.item_type || 'product')
         setImagePreview(product.image_url)
         setShowForm(true)
     }
 
+    const handleToggleStock = async (product: Product) => {
+        const newStockState = !product.in_stock
+        setProducts(prev => prev.map(p => p.id === product.id ? { ...p, in_stock: newStockState } : p))
+
+        const { error } = await supabase
+            .from('products')
+            .update({ in_stock: newStockState })
+            .eq('id', product.id)
+
+        if (error) {
+            console.error('Failed to toggle stock:', error)
+            await fetchProducts()
+        }
+    }
+
     const handleDelete = async (productId: string) => {
-        if (!confirm('Are you sure you want to delete this product?')) return
+        if (!confirm('Are you sure you want to delete this product/service?')) return
 
         try {
             const { error } = await supabase
@@ -200,16 +222,16 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
         <div className="max-w-6xl mx-auto">
             <div className="flex items-center justify-between mb-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Products</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">Products & Services Catalog</h1>
                     <p className="text-gray-500">
-                        {products.length} / {isPro ? '∞' : '3'} products
+                        {products.length} / {isPro ? '∞' : '5'} items listed
                     </p>
                 </div>
 
                 {canAddMore ? (
-                    <Button onClick={() => setShowForm(true)}>
+                    <Button onClick={() => setShowForm(true)} className="bg-orange-600 hover:bg-orange-700 font-bold">
                         <Plus className="w-4 h-4 mr-2" />
-                        Add Product
+                        Add Item / Service
                     </Button>
                 ) : (
                     <Button variant="outline" onClick={() => router.push('/dashboard/settings#upgrade')}>
@@ -220,14 +242,14 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
 
             {/* Product limit warning */}
             {!isPro && products.length >= 2 && (
-                <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-lg flex items-start gap-3">
+                <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-xl flex items-start gap-3">
                     <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
                     <div>
                         <p className="font-medium text-orange-800">
-                            {products.length === 3 ? 'Product limit reached!' : 'Almost at limit!'}
+                            {products.length >= 5 ? 'Catalog limit reached!' : 'Almost at limit!'}
                         </p>
                         <p className="text-sm text-orange-700 mt-1">
-                            Free accounts can add up to 3 products. Upgrade to Pro for unlimited products.
+                            Free accounts can add up to 5 items. Upgrade to Pro for unlimited products, services & AI Sales Assistant.
                         </p>
                     </div>
                 </div>
@@ -235,24 +257,55 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
 
             {/* Add/Edit Form */}
             {showForm && (
-                <Card className="mb-6">
-                    <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</CardTitle>
+                <Card className="mb-6 border-orange-200 shadow-md">
+                    <CardHeader className="flex flex-row items-center justify-between border-b border-gray-100 bg-gray-50">
+                        <CardTitle>{editingProduct ? 'Edit Catalog Item' : 'Add New Item / Service'}</CardTitle>
                         <Button variant="ghost" size="icon" onClick={resetForm}>
                             <X className="w-4 h-4" />
                         </Button>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="pt-6">
                         <form onSubmit={handleSubmit} className="space-y-4">
+                            {/* Type Selector */}
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-gray-700">Listing Type</label>
+                                <div className="flex gap-4">
+                                    <label className="flex items-center gap-2 px-4 py-2 border rounded-xl cursor-pointer hover:border-orange-500 bg-white">
+                                        <input
+                                            type="radio"
+                                            name="item_type"
+                                            value="product"
+                                            checked={itemType === 'product'}
+                                            onChange={() => setItemType('product')}
+                                            className="text-orange-600 focus:ring-orange-500"
+                                        />
+                                        <ShoppingBag className="w-4 h-4 text-orange-600" />
+                                        <span className="text-sm font-semibold">Physical Product</span>
+                                    </label>
+                                    <label className="flex items-center gap-2 px-4 py-2 border rounded-xl cursor-pointer hover:border-orange-500 bg-white">
+                                        <input
+                                            type="radio"
+                                            name="item_type"
+                                            value="service"
+                                            checked={itemType === 'service'}
+                                            onChange={() => setItemType('service')}
+                                            className="text-orange-600 focus:ring-orange-500"
+                                        />
+                                        <Briefcase className="w-4 h-4 text-orange-600" />
+                                        <span className="text-sm font-semibold">Service / Booking</span>
+                                    </label>
+                                </div>
+                            </div>
+
                             <div className="grid md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label htmlFor="name" className="text-sm font-medium text-gray-700">
-                                        Product Name *
+                                        {itemType === 'service' ? 'Service Name *' : 'Product Name *'}
                                     </label>
                                     <Input
                                         id="name"
                                         type="text"
-                                        placeholder="e.g. Brazilian Hair 20 inches"
+                                        placeholder={itemType === 'service' ? "e.g. Full Glam Makeup Session" : "e.g. Brazilian Hair 20 inches"}
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
                                         required
@@ -282,7 +335,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                                 </label>
                                 <textarea
                                     id="description"
-                                    placeholder="Describe your product..."
+                                    placeholder={itemType === 'service' ? "Describe booking process, duration, requirements..." : "Describe product features, quality, sizing..."}
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
                                     rows={3}
@@ -290,9 +343,23 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                                 />
                             </div>
 
+                            {/* In Stock / Available Toggle */}
+                            <div className="flex items-center gap-3 p-3 bg-gray-50 border rounded-xl">
+                                <input
+                                    type="checkbox"
+                                    id="in_stock"
+                                    checked={inStock}
+                                    onChange={(e) => setInStock(e.target.checked)}
+                                    className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500"
+                                />
+                                <label htmlFor="in_stock" className="text-sm font-medium text-gray-800 cursor-pointer">
+                                    {itemType === 'service' ? 'Currently accepting bookings' : 'Currently in stock & available for purchase'}
+                                </label>
+                            </div>
+
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">
-                                    Product Image
+                                    Photo / Banner
                                 </label>
                                 <div className="flex items-start gap-4">
                                     {imagePreview ? (
@@ -334,10 +401,6 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                                             />
                                         </label>
                                     )}
-                                    <div className="text-xs text-gray-500">
-                                        <p>Images are automatically compressed</p>
-
-                                    </div>
                                 </div>
                             </div>
 
@@ -347,15 +410,15 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                                 </p>
                             )}
 
-                            <div className="flex gap-2">
-                                <Button type="submit" disabled={loading}>
+                            <div className="flex gap-2 pt-2">
+                                <Button type="submit" disabled={loading} className="bg-orange-600 hover:bg-orange-700">
                                     {loading ? (
                                         <>
                                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                                             Saving...
                                         </>
                                     ) : (
-                                        editingProduct ? 'Update Product' : 'Add Product'
+                                        editingProduct ? 'Update Item' : 'Add Item'
                                     )}
                                 </Button>
                                 <Button type="button" variant="outline" onClick={resetForm}>
@@ -367,70 +430,108 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                 </Card>
             )}
 
-            {/* Products grid */}
+            {/* Catalog Grid */}
             {products.length === 0 ? (
                 <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
                     <Package className="w-12 h-12 mx-auto text-gray-300 mb-4" />
-                    <h3 className="font-medium text-gray-900 mb-2">No products yet</h3>
+                    <h3 className="font-medium text-gray-900 mb-2">No items listed yet</h3>
                     <p className="text-gray-500 text-sm mb-4">
-                        Add your first product to start receiving orders
+                        Add your first product or service so your AI Assistant can start closing sales
                     </p>
-                    <Button onClick={() => setShowForm(true)}>
+                    <Button onClick={() => setShowForm(true)} className="bg-orange-600 hover:bg-orange-700 font-bold">
                         <Plus className="w-4 h-4 mr-2" />
-                        Add Your First Product
+                        Add Your First Item
                     </Button>
                 </div>
             ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {products.map((product) => (
-                        <Card key={product.id} className="overflow-hidden">
-                            <div className="aspect-square relative bg-gray-100">
-                                {product.image_url ? (
-                                    <Image
-                                        src={product.image_url}
-                                        alt={product.name}
-                                        fill
-                                        className="object-cover"
-                                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                        <Package className="w-12 h-12" />
+                    {products.map((product) => {
+                        const isInStock = product.in_stock !== false
+                        const isService = product.item_type === 'service'
+
+                        return (
+                            <Card key={product.id} className="overflow-hidden flex flex-col justify-between border-gray-200 hover:border-orange-200 transition-colors">
+                                <div>
+                                    <div className="aspect-square relative bg-gray-100">
+                                        {product.image_url ? (
+                                            <Image
+                                                src={product.image_url}
+                                                alt={product.name}
+                                                fill
+                                                className="object-cover"
+                                                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                                <Package className="w-12 h-12" />
+                                            </div>
+                                        )}
+
+                                        {/* Badges */}
+                                        <div className="absolute top-2 left-2 flex gap-1.5 flex-wrap">
+                                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm ${isInStock ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'}`}>
+                                                {isInStock ? 'IN STOCK' : 'OUT OF STOCK'}
+                                            </span>
+                                            {isService && (
+                                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white shadow-sm">
+                                                    SERVICE
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
-                                )}
-                            </div>
-                            <CardContent className="pt-4">
-                                <h3 className="font-medium text-gray-900 truncate">{product.name}</h3>
-                                <p className="text-lg font-bold text-orange-600 mt-1">
-                                    {formatPrice(product.price)}
-                                </p>
-                                {product.description && (
-                                    <p className="text-sm text-gray-500 mt-2 line-clamp-2">
-                                        {product.description}
-                                    </p>
-                                )}
-                                <div className="flex gap-2 mt-4">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="flex-1"
-                                        onClick={() => handleEdit(product)}
-                                    >
-                                        <Pencil className="w-4 h-4 mr-1" />
-                                        Edit
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="text-red-600 hover:bg-red-50"
-                                        onClick={() => handleDelete(product.id)}
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </Button>
+
+                                    <CardContent className="pt-4">
+                                        <h3 className="font-bold text-gray-900 truncate">{product.name}</h3>
+                                        <p className="text-lg font-extrabold text-orange-600 mt-1">
+                                            {formatPrice(product.price)}
+                                        </p>
+                                        {product.description && (
+                                            <p className="text-sm text-gray-500 mt-2 line-clamp-2">
+                                                {product.description}
+                                            </p>
+                                        )}
+                                    </CardContent>
                                 </div>
-                            </CardContent>
-                        </Card>
-                    ))}
+
+                                <CardContent className="pt-0 pb-4 space-y-2">
+                                    {/* Quick Stock Toggle */}
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className={`w-full font-bold text-xs ${isInStock ? 'border-emerald-200 text-emerald-700 bg-emerald-50/50 hover:bg-emerald-100' : 'border-red-200 text-red-700 bg-red-50/50 hover:bg-red-100'}`}
+                                        onClick={() => handleToggleStock(product)}
+                                    >
+                                        {isInStock ? (
+                                            <><Check className="w-3.5 h-3.5 mr-1" /> Available (Click to mark Out of Stock)</>
+                                        ) : (
+                                            <><Ban className="w-3.5 h-3.5 mr-1" /> Out of Stock (Click to mark Available)</>
+                                        )}
+                                    </Button>
+
+
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="flex-1"
+                                            onClick={() => handleEdit(product)}
+                                        >
+                                            <Pencil className="w-4 h-4 mr-1" />
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="text-red-600 hover:bg-red-50"
+                                            onClick={() => handleDelete(product.id)}
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        )
+                    })}
                 </div>
             )}
         </div>

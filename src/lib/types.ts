@@ -32,12 +32,14 @@ export interface User {
     created_at: string
     updated_at: string
     category?: Category
-    // AI Fields
+    // AI & Business Config Fields
     ai_enabled: boolean
     ai_instructions: string | null
     ai_welcome_msg: string
     ai_usage_limit: number
     ai_usage_count: number
+    ai_persona?: 'friendly' | 'formal' | 'pidgin'
+    business_type?: 'products' | 'services' | 'both'
 }
 
 export interface Product {
@@ -48,6 +50,8 @@ export interface Product {
     description: string | null
     image_url: string | null
     is_active: boolean
+    in_stock?: boolean
+    item_type?: 'product' | 'service'
     created_at: string
     updated_at: string
 }

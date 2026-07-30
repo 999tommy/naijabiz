@@ -1,13 +1,6 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  variable: '--font-montserrat',
-  weight: ['300', '400', '500', '600', '700']
-});
 
 export const metadata: Metadata = {
   title: {
@@ -76,7 +69,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} font-sans antialiased text-gray-900 bg-white`}>
+      <body className="font-sans antialiased text-gray-900 bg-white">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

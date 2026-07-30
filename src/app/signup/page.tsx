@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Mail, Key, Loader2, Store, CheckCircle, ShieldCheck, Sparkles, ImagePlus, X } from 'lucide-react'
+import { Mail, Key, Loader2, Store, CheckCircle, ShieldCheck, Sparkles, ImagePlus, X, Scissors } from 'lucide-react'
 import { CategorySelect } from '@/components/CategorySelect'
 import type { Category } from '@/lib/types'
 import { compressImage } from '@/lib/image-compression'
@@ -21,6 +21,7 @@ export default function SignupPage() {
     const [password, setPassword] = useState('')
     const [businessName, setBusinessName] = useState('')
     const [whatsappNumber, setWhatsappNumber] = useState('')
+    const [businessType, setBusinessType] = useState<'products' | 'services'>('products')
     const [location, setLocation] = useState('')
     const [categoryId, setCategoryId] = useState('')
     const [categories, setCategories] = useState<Category[]>([])
@@ -49,6 +50,17 @@ export default function SignupPage() {
         const urlStep = searchParams.get('step')
         if (urlStep === 'business') {
             setStep('business')
+        }
+
+        // Prefill brand name if passed from landing page
+        const urlBrand = searchParams.get('brand')
+        if (urlBrand) {
+            // Un-slugify it for the input (e.g. 'glam-by-zainab' -> 'Glam By Zainab')
+            const unslugged = urlBrand
+                .split('-')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ')
+            setBusinessName(unslugged)
         }
     }, [supabase, searchParams])
 
@@ -198,6 +210,7 @@ export default function SignupPage() {
                 phone: user.phone || null,
                 business_name: businessName,
                 business_slug: finalSlug,
+                business_type: businessType,
                 whatsapp_number: formattedWhatsApp,
                 description,
                 instagram_handle: instagramHandle.replace('@', ''),
@@ -236,8 +249,10 @@ export default function SignupPage() {
                             className="mx-auto mb-4"
                         />
                     </Link>
-                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Create Your Verified Page</h1>
-                    <p className="text-gray-600 mt-2 text-lg">Join 500+ Nigerian businesses selling with trust.</p>
+                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Claim Your Brand</h1>
+                    <p className="text-gray-600 mt-2 text-lg">
+                        <span className="font-mono bg-orange-100 text-orange-800 px-2 py-0.5 rounded-md">naijabiz.org/{businessName ? businessName.toLowerCase().replace(/[\s\W-]+/g, '-') : 'your-brand'}</span> is waiting for you.
+                    </p>
                 </div>
 
                 {/* Progress Steps */}
@@ -382,6 +397,29 @@ export default function SignupPage() {
                                                 />
                                             </label>
                                         )}
+                                    </div>
+                                </div>
+
+                                {/* Business Type Selection */}
+                                <div className="space-y-3 pb-2 pt-2">
+                                    <label className="text-sm font-medium text-gray-700">Business Type</label>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => setBusinessType('products')}
+                                            className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${businessType === 'products' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-gray-200 bg-white text-gray-500 hover:border-orange-200 hover:bg-orange-50/50'}`}
+                                        >
+                                            <Store className="w-4 h-4" />
+                                            <span className="font-semibold text-sm">Selling Products</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setBusinessType('services')}
+                                            className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${businessType === 'services' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-gray-200 bg-white text-gray-500 hover:border-orange-200 hover:bg-orange-50/50'}`}
+                                        >
+                                            <Scissors className="w-4 h-4" />
+                                            <span className="font-semibold text-sm">Offering Services</span>
+                                        </button>
                                     </div>
                                 </div>
 

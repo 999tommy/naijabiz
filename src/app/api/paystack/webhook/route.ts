@@ -21,12 +21,23 @@ function verifyPaystackSignature(params: {
     return crypto.timingSafeEqual(computedBuf, receivedBuf)
 }
 
-type BillingCycle = 'monthly' | 'yearly'
+type BillingCycle = 'monthly' | 'quarterly' | 'biannual' | 'yearly'
+
+function normalizeBillingCycle(cycle?: string): BillingCycle {
+    if (cycle === 'quarterly' || cycle === 'biannual' || cycle === 'yearly') {
+        return cycle
+    }
+    return 'monthly'
+}
 
 function computeSubscriptionEndsAt(cycle: BillingCycle) {
     const d = new Date()
     if (cycle === 'yearly') {
         d.setFullYear(d.getFullYear() + 1)
+    } else if (cycle === 'biannual') {
+        d.setMonth(d.getMonth() + 6)
+    } else if (cycle === 'quarterly') {
+        d.setMonth(d.getMonth() + 3)
     } else {
         d.setMonth(d.getMonth() + 1)
     }
@@ -69,10 +80,10 @@ export async function POST(request: NextRequest) {
         const amount: number | undefined = data?.amount // in kobo
 
         const metadataUserId: string | undefined = data?.metadata?.user_id
-        const metadataCycle: BillingCycle | undefined = data?.metadata?.billing_cycle
+        const metadataCycle: string | undefined = data?.metadata?.billing_cycle
         const paymentType: 'subscription' | 'onetime' | undefined = data?.metadata?.payment_type
 
-        const billingCycle: BillingCycle = metadataCycle === 'yearly' ? 'yearly' : 'monthly'
+        const billingCycle = normalizeBillingCycle(metadataCycle)
 
         const userLookupEmail = email || undefined
         const userId = metadataUserId || undefined

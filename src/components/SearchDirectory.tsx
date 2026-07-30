@@ -45,7 +45,7 @@ export function SearchDirectory({ initialBusinesses = [], showFilters = true, li
                 .from('users')
                 .select('*, category:categories(*)')
                 .not('business_name', 'is', null)
-                .order('is_verified', { ascending: false })
+
                 .order('plan', { ascending: false })
                 .order('created_at', { ascending: false })
 

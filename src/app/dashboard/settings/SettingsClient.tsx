@@ -24,6 +24,21 @@ import {
 import { CategorySelect } from '@/components/CategorySelect'
 import { compressImage } from '@/lib/image-compression'
 
+type BillingCycle = 'monthly' | 'quarterly' | 'biannual' | 'yearly'
+
+const billingOptions: Array<{
+    cycle: BillingCycle
+    label: string
+    price: string
+    period: string
+    badge?: string
+}> = [
+    { cycle: 'monthly', label: 'Monthly', price: '₦2,500', period: '/mo' },
+    { cycle: 'quarterly', label: 'Quarterly', price: '₦6,975', period: '/3 mos', badge: 'SAVE 7%' },
+    { cycle: 'biannual', label: 'Biannual', price: '₦13,500', period: '/6 mos', badge: 'SAVE 10%' },
+    { cycle: 'yearly', label: 'Yearly', price: '₦20,000', period: '/yr', badge: 'SAVE 33%' },
+]
+
 interface SettingsClientProps {
     user: User
     initialCategories: Category[]
@@ -39,7 +54,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
     const [verificationFile, setVerificationFile] = useState<File | null>(null)
     const [verificationUploading, setVerificationUploading] = useState(false)
     const [logoCompressing, setLogoCompressing] = useState(false)
-    const [upgradeBillingCycle, setUpgradeBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
+    const [upgradeBillingCycle, setUpgradeBillingCycle] = useState<BillingCycle>('monthly')
 
     // Form fields
     const [businessName, setBusinessName] = useState(user.business_name || '')
@@ -47,6 +62,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
     const [whatsappNumber, setWhatsappNumber] = useState(user.whatsapp_number || '')
     const [instagramHandle, setInstagramHandle] = useState(user.instagram_handle || '')
     const [tiktokHandle, setTiktokHandle] = useState(user.tiktok_handle || '')
+    const [businessType, setBusinessType] = useState<'products' | 'services' | 'both'>(user.business_type || 'products')
     const [location, setLocation] = useState(user.location || '')
     const [categoryId, setCategoryId] = useState(user.category_id || '')
 
@@ -200,6 +216,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                 .update({
                     business_name: businessName,
                     business_slug: slug,
+                    business_type: businessType,
                     description,
                     whatsapp_number: formattedWhatsApp,
                     instagram_handle: instagramHandle.replace('@', ''),
@@ -285,7 +302,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
         }
     }
 
-    const handleOneTimePayment = async (cycle: 'monthly' | 'yearly') => {
+    const handleOneTimePayment = async (cycle: BillingCycle) => {
         setLoading(true)
         try {
             const response = await fetch('/api/paystack/initialize', {
@@ -408,6 +425,33 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                         </div>
 
                         <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">Business Type</label>
+                            <div className="flex bg-gray-100 p-1 rounded-lg max-w-xl">
+                                <button
+                                    type="button"
+                                    onClick={() => setBusinessType('products')}
+                                    className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${businessType === 'products' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
+                                >
+                                    Products
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setBusinessType('services')}
+                                    className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${businessType === 'services' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
+                                >
+                                    Services
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setBusinessType('both')}
+                                    className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${businessType === 'both' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
+                                >
+                                    Both
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
                             <label className="text-sm font-medium text-gray-700">Description</label>
                             <textarea
                                 value={description}
@@ -516,8 +560,8 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                     <h4 className="font-medium">Free Plan includes:</h4>
                                     <ul className="text-sm text-gray-500 space-y-1">
                                         <li>• Basic business page</li>
-                                        <li>• Up to 3 products</li>
-                                        <li>• WhatsApp order links</li>
+                                        <li>• Up to 5 products or services</li>
+                                        <li>• WhatsApp order and booking links</li>
                                         <li>• Listed in directory</li>
                                     </ul>
                                 </div>
@@ -530,7 +574,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                         </li>
                                         <li className="flex items-center gap-1">
                                             <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                            Unlimited products
+                                            Unlimited products and services
                                         </li>
                                         <li className="flex items-center gap-1">
                                             <CheckCircle2 className="w-4 h-4 text-green-500" />
@@ -546,7 +590,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                         </li>
                                         <li className="flex items-center gap-1 font-bold text-orange-700">
                                             <CheckCircle2 className="w-4 h-4 text-orange-600" />
-                                            AI Assistant (100 replies/mo)
+                                            AI Assistant for orders and bookings (100 replies/mo)
                                         </li>
                                     </ul>
                                 </div>
@@ -558,32 +602,26 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                     <p className="text-sm text-gray-500">Choose how you want to pay</p>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-3">
-                                    <button
-                                        type="button"
-                                        onClick={() => setUpgradeBillingCycle('monthly')}
-                                        className={`p-4 rounded-xl border-2 text-left transition-all ${upgradeBillingCycle === 'monthly'
-                                            ? 'border-orange-500 bg-white shadow-md'
-                                            : 'border-gray-100 bg-white/50 hover:border-orange-200'
-                                            }`}
-                                    >
-                                        <div className="text-sm font-medium text-gray-500">Monthly</div>
-                                        <div className="text-xl font-bold text-gray-900 mt-1">₦1,000<span className="text-xs font-normal">/mo</span></div>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setUpgradeBillingCycle('yearly')}
-                                        className={`p-4 rounded-xl border-2 text-left transition-all relative overflow-hidden ${upgradeBillingCycle === 'yearly'
-                                            ? 'border-orange-500 bg-white shadow-md'
-                                            : 'border-gray-100 bg-white/50 hover:border-orange-200'
-                                            }`}
-                                    >
-                                        <div className="absolute top-0 right-0 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-lg">
-                                            SAVE 37%
-                                        </div>
-                                        <div className="text-sm font-medium text-gray-500">Yearly</div>
-                                        <div className="text-xl font-bold text-gray-900 mt-1">₦7,500<span className="text-xs font-normal">/yr</span></div>
-                                    </button>
+                                <div className="grid sm:grid-cols-2 gap-3">
+                                    {billingOptions.map(option => (
+                                        <button
+                                            key={option.cycle}
+                                            type="button"
+                                            onClick={() => setUpgradeBillingCycle(option.cycle)}
+                                            className={`p-4 rounded-xl border-2 text-left transition-all relative overflow-hidden ${upgradeBillingCycle === option.cycle
+                                                ? 'border-orange-500 bg-white shadow-md'
+                                                : 'border-gray-100 bg-white/50 hover:border-orange-200'
+                                                }`}
+                                        >
+                                            {option.badge && (
+                                                <div className="absolute top-0 right-0 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-lg">
+                                                    {option.badge}
+                                                </div>
+                                            )}
+                                            <div className="text-sm font-medium text-gray-500">{option.label}</div>
+                                            <div className="text-xl font-bold text-gray-900 mt-1">{option.price}<span className="text-xs font-normal">{option.period}</span></div>
+                                        </button>
+                                    ))}
                                 </div>
 
                                 <Button
@@ -601,7 +639,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                     ) : (
                                         <>
                                             <Crown className="w-4 h-4 mr-2" />
-                                            {upgradeBillingCycle === 'yearly' ? 'Upgrade Yearly - ₦7,500' : 'Upgrade Monthly - ₦1,000'}
+                                            Upgrade {billingOptions.find(option => option.cycle === upgradeBillingCycle)?.label} - {billingOptions.find(option => option.cycle === upgradeBillingCycle)?.price}
                                         </>
                                     )}
                                 </Button>
@@ -609,25 +647,19 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                 {/* One-Time Payment Option */}
                                 <div className="text-center pt-4 border-t border-orange-100">
                                     <p className="text-sm text-gray-500 mb-3">Don't have a card? Use Bank Transfer or USSD</p>
-                                    <div className="flex gap-3 justify-center">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => handleOneTimePayment('monthly')}
-                                            disabled={loading}
-                                            className="text-gray-600 border-orange-200 hover:bg-orange-50 hover:text-orange-700"
-                                        >
-                                            Pay ₦1,000 (1 Month)
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => handleOneTimePayment('yearly')}
-                                            disabled={loading}
-                                            className="text-gray-600 border-orange-200 hover:bg-orange-50 hover:text-orange-700"
-                                        >
-                                            Pay ₦7,500 (1 Year)
-                                        </Button>
+                                    <div className="flex gap-3 justify-center flex-wrap">
+                                        {billingOptions.map(option => (
+                                            <Button
+                                                key={option.cycle}
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleOneTimePayment(option.cycle)}
+                                                disabled={loading}
+                                                className="text-gray-600 border-orange-200 hover:bg-orange-50 hover:text-orange-700"
+                                            >
+                                                Pay {option.price} ({option.label})
+                                            </Button>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -636,98 +668,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                 </CardContent>
             </Card>
 
-            {/* Verification */}
-            {isPro && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Shield className="w-5 h-5 text-green-600" />
-                            Identity Verification
-                        </CardTitle>
-                        <CardDescription>
-                            Get the green verified badge by verifying your identity
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        {user.is_verified ? (
-                            <div className="flex items-center gap-3">
-                                <VerifiedBadge />
-                                <span className="text-green-700">Your business is verified!</span>
-                            </div>
-                        ) : user.verification_status === 'pending' ? (
-                            <div className="flex items-center gap-3 text-yellow-700">
-                                <Clock className="w-5 h-5" />
-                                <span>Your verification is under review. We&apos;ll notify you once approved.</span>
-                            </div>
-                        ) : user.verification_status === 'rejected' ? (
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-3 text-red-600">
-                                    <AlertCircle className="w-5 h-5" />
-                                    <span>Your verification was rejected. Please upload a clearer document.</span>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    <label className="flex items-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-500 transition-colors">
-                                        <Upload className="w-5 h-5 text-gray-400" />
-                                        <span className="text-sm text-gray-600">Upload NIN, CAC, or ID</span>
-                                        <input
-                                            type="file"
-                                            accept="image/*,.pdf"
-                                            onChange={(e) => setVerificationFile(e.target.files?.[0] || null)}
-                                            className="hidden"
-                                        />
-                                    </label>
-                                    {verificationFile && (
-                                        <Button onClick={handleVerificationUpload} disabled={verificationUploading}>
-                                            {verificationUploading ? (
-                                                <>
-                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                    Uploading...
-                                                </>
-                                            ) : (
-                                                'Submit'
-                                            )}
-                                        </Button>
-                                    )}
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="space-y-4">
-                                <p className="text-sm text-gray-600">
-                                    Upload a valid ID document (NIN slip, CAC certificate, or government ID) to get verified.
-                                </p>
-                                <div className="flex items-center gap-4">
-                                    <label className="flex items-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-500 transition-colors">
-                                        <Upload className="w-5 h-5 text-gray-400" />
-                                        <span className="text-sm text-gray-600">Upload NIN, CAC, or ID</span>
-                                        <input
-                                            type="file"
-                                            accept="image/*,.pdf"
-                                            onChange={(e) => setVerificationFile(e.target.files?.[0] || null)}
-                                            className="hidden"
-                                        />
-                                    </label>
-                                    {verificationFile && (
-                                        <>
-                                            <span className="text-sm text-gray-500">{verificationFile.name}</span>
-                                            <Button onClick={handleVerificationUpload} disabled={verificationUploading}>
-                                                {verificationUploading ? (
-                                                    <>
-                                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                        Uploading...
-                                                    </>
-                                                ) : (
-                                                    'Submit for Review'
-                                                )}
-                                            </Button>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-            )
-            }
+
         </div >
     )
 }

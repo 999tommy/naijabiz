@@ -5,23 +5,19 @@ import { DashboardLayout } from '@/components/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { VerifiedBadge } from '@/components/VerifiedBadge'
-import { formatPrice } from '@/lib/utils'
 import {
     Package,
     Eye,
     ShoppingCart,
     TrendingUp,
     Plus,
-    AlertCircle,
     ArrowRight,
     Hand,
     Rocket,
     Lightbulb,
     Check,
-    Banknote
 } from 'lucide-react'
 import { OnboardingAssistant } from '@/components/OnboardingAssistant'
-import { ReferralCard } from '@/components/ReferralCard'
 import { WhatsAppShareCenter } from '@/components/WhatsAppShareCenter'
 import { ShareRankCard } from '@/components/ShareRankCard'
 import { checkAndDowngradeUser } from '@/lib/subscription'
@@ -83,17 +79,6 @@ async function getDashboardData(userId: string) {
 
     const checkedUser = user ? await checkAndDowngradeUser(user) : null
 
-    const { count: payingReferredCount } = await supabase
-        .from('users')
-        .select('*', { count: 'exact', head: true })
-        .eq('referred_by', user?.business_slug)
-        .eq('plan', 'pro')
-
-    const { count: payoutRounds } = await supabase
-        .from('referral_payouts')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', userId)
-
     return {
         user: checkedUser,
         stats: {
@@ -102,10 +87,6 @@ async function getDashboardData(userId: string) {
             orders: orderCount || 0
         },
         rank: myRank,
-        referralStats: {
-            payingReferredCount: payingReferredCount || 0,
-            payoutRounds: payoutRounds || 0
-        }
     }
 }
 
@@ -117,15 +98,25 @@ export default async function DashboardPage() {
         redirect('/login')
     }
 
-    const { user, stats, rank, referralStats } = await getDashboardData(authUser.id)
+    const { user, stats, rank } = await getDashboardData(authUser.id)
 
     if (!user) {
         redirect('/signup?step=business')
     }
 
     const isPro = user.plan === 'pro'
-    const productLimit = isPro ? '∞' : '3'
-    const hasCompletedProfile = user.business_name && user.whatsapp_number && user.location
+    const productLimit = isPro ? '∞' : '5'
+    const catalogLabel = user.business_type === 'services'
+        ? 'Services'
+        : user.business_type === 'both'
+            ? 'Products & Services'
+            : 'Products'
+    const orderLabel = user.business_type === 'services' ? 'Bookings' : 'Bookings / Orders'
+    const addItemLabel = user.business_type === 'services'
+        ? 'Add a Service'
+        : user.business_type === 'both'
+            ? 'Add a Product or Service'
+            : 'Add a Product'
 
     return (
         <DashboardLayout user={user}>
@@ -140,14 +131,6 @@ export default async function DashboardPage() {
                     <p className="text-gray-500 mt-1">
                         Here&apos;s what&apos;s happening with your business today.
                     </p>
-                    <div className="mt-3">
-                        <a href="#referral-section">
-                            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold flex items-center gap-2">
-                                <Banknote className="w-4 h-4" />
-                                Referral Program
-                            </Button>
-                        </a>
-                    </div>
                 </div>
 
                 <OnboardingAssistant user={user} productCount={stats.products} />
@@ -160,7 +143,7 @@ export default async function DashboardPage() {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-500">Products</p>
+                                    <p className="text-sm text-gray-500">{catalogLabel}</p>
                                     <p className="text-2xl font-bold text-gray-900">
                                         {stats.products} <span className="text-sm font-normal text-gray-400">/ {productLimit}</span>
                                     </p>
@@ -193,7 +176,7 @@ export default async function DashboardPage() {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-500">Orders</p>
+                                    <p className="text-sm text-gray-500">{orderLabel}</p>
                                     <p className="text-2xl font-bold text-gray-900">{stats.orders}</p>
                                 </div>
                                 <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
@@ -208,11 +191,11 @@ export default async function DashboardPage() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm text-gray-500">Status</p>
-                                    {user.is_verified && isPro ? (
+                                    {isPro ? (
                                         <VerifiedBadge size="sm" className="mt-1" />
                                     ) : (
                                         <p className="text-sm font-medium text-gray-600">
-                                            {user.verification_status === 'pending' ? 'Verification Pending' : 'Not Verified'}
+                                            Upgrade to Pro to verify
                                         </p>
                                     )}
                                 </div>
@@ -237,7 +220,7 @@ export default async function DashboardPage() {
                                     <Button variant="outline" className="w-full justify-between">
                                         <span className="flex items-center gap-2">
                                             <Plus className="w-4 h-4" />
-                                            Add a Product
+                                            {addItemLabel}
                                         </span>
                                         <ArrowRight className="w-4 h-4" />
                                     </Button>
@@ -271,9 +254,7 @@ export default async function DashboardPage() {
                     <div className="min-w-0">
                         {/* Pro upsell or tips */}
                         {!isPro ? (
-                            <div id="referral-section" className="md:col-span-1 space-y-8">
-                                <ReferralCard user={user} referralStats={referralStats} />
-
+                            <div className="md:col-span-1 space-y-8">
                                 <Card className="bg-gradient-to-br from-orange-50 to-white border-orange-200">
                                     <CardHeader>
                                         <CardTitle className="text-lg flex items-center gap-2">
@@ -288,7 +269,7 @@ export default async function DashboardPage() {
                                             </li>
                                             <li className="flex items-center gap-2">
                                                 <Check className="w-4 h-4 text-green-500" />
-                                                Unlimited product listings
+                                                Unlimited {user.business_type === 'services' ? 'service listings' : 'product and service listings'}
                                             </li>
                                             <li className="flex items-center gap-2">
                                                 <Check className="w-4 h-4 text-green-500" />
@@ -310,11 +291,31 @@ export default async function DashboardPage() {
                                         </Link>
                                     </CardContent>
                                 </Card>
+
+                                <Card className="bg-gradient-to-br from-blue-50 to-white border-blue-200">
+                                    <CardHeader>
+                                        <CardTitle className="text-lg flex items-center gap-2">
+                                            <Lightbulb className="w-5 h-5 text-blue-600" /> Assistant tip
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="text-sm text-gray-600">
+                                        Add your {user.business_type === 'services' ? 'service list, prices, booking hours, and policies' : 'catalog, prices, delivery rules, and policies'} so the Virtual Assistant can answer customers clearly.
+                                    </CardContent>
+                                </Card>
                             </div>
                         ) : (
-                            <div id="referral-section" className="space-y-6">
+                            <div className="space-y-6">
                                 <WhatsAppShareCenter user={user} rank={rank} />
-                                <ReferralCard user={user} referralStats={referralStats} />
+                                <Card className="bg-gradient-to-br from-blue-50 to-white border-blue-200">
+                                    <CardHeader>
+                                        <CardTitle className="text-lg flex items-center gap-2">
+                                            <Lightbulb className="w-5 h-5 text-blue-600" /> Keep your assistant sharp
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="text-sm text-gray-600">
+                                        Update your {user.business_type === 'services' ? 'services, availability, appointment rules, and location notes' : 'products, pricing, stock, delivery rules, and location notes'} whenever they change.
+                                    </CardContent>
+                                </Card>
                             </div>
                         )}
                     </div>

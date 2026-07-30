@@ -14,7 +14,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'AI Service Config Error' }, { status: 500 })
         }
 
-        const { businessId, messages } = await req.json()
+        const { businessId, messages, isSandbox } = await req.json()
 
         if (!businessId || !messages) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -22,10 +22,10 @@ export async function POST(req: Request) {
 
         const supabase = await createServiceClient()
 
-        // 1. Fetch Business Info & Check Limits
+        // 1. Fetch Business Info & Products/Services
         const { data: business, error: userError } = await supabase
             .from('users')
-            .select('*, products(name, price, description)')
+            .select('*, products(id, name, price, description, is_active, in_stock, item_type)')
             .eq('id', businessId)
             .single()
 
@@ -33,15 +33,15 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Business not found' }, { status: 404 })
         }
 
-        if (business.plan !== 'pro') {
+        if (!isSandbox && business.plan !== 'pro') {
             return NextResponse.json({ error: 'AI is a Pro feature' }, { status: 403 })
         }
 
-        if (!business.ai_enabled) {
+        if (!isSandbox && !business.ai_enabled) {
             return NextResponse.json({ error: 'AI is disabled' }, { status: 403 })
         }
 
-        // Check Limit (100 per month)
+        // Check Limit (100 per month default)
         const limit = business.ai_usage_limit || 100
         const usage = business.ai_usage_count || 0
 
@@ -49,16 +49,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'LIMIT_REACHED' }, { status: 429 })
         }
 
-        // 2. Increment Usage (Optimistic: Increment before calling AI to prevent easy bypass)
-        // In a real high-scale app, use Redis or atomic increment. Here we use an RPC or simple update.
-        // We already created 'increment_ai_usage' RPC, let's try to use it, or fallback to update.
-
-        // Attempt RPC
+        // Increment usage
         const { data: incrementSuccess, error: rpcError } = await supabase.rpc('increment_ai_usage', { user_id: businessId })
 
-        // If RPC fails (maybe not migrated?), fallback to simple update logic (unsafe concurrency but okay for MVP)
         if (rpcError) {
-            console.warn('RPC increment failed, falling back to manual increment', rpcError)
             await supabase
                 .from('users')
                 .update({ ai_usage_count: usage + 1 })
@@ -67,33 +61,63 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'LIMIT_REACHED' }, { status: 429 })
         }
 
+        // 2. Build Catalog Context (Products & Services with Stock Status)
+        const activeItems = (business.products || []).filter((p: any) => p.is_active !== false)
 
-        // 3. Construct System Prompt
-        const productsContext = business.products && business.products.length > 0
-            ? `Here are the products we sell:\n${business.products.map((p: any) => `- ${p.name}: ₦${p.price} (${p.description || ''})`).join('\n')}`
-            : "We haven't listed any products yet."
+        const productsList = activeItems
+            .filter((p: any) => p.item_type !== 'service')
+            .map((p: any) => `- ${p.name}: ₦${Number(p.price).toLocaleString()} [${p.in_stock !== false ? 'IN STOCK' : 'OUT OF STOCK'}] (${p.description || 'No description'})`)
+            .join('\n')
+
+        const servicesList = activeItems
+            .filter((p: any) => p.item_type === 'service')
+            .map((p: any) => `- ${p.name}: ₦${Number(p.price).toLocaleString()} (${p.description || 'Service details'})`)
+            .join('\n')
+
+        const catalogContext = `
+PRODUCTS CATALOG:
+${productsList || 'No physical products currently listed.'}
+
+SERVICES CATALOG:
+${servicesList || 'No services currently listed.'}
+`
+
+        // Persona Guidelines
+        let personaInstruction = "Tone: Warm, friendly, professional Nigerian English."
+        if (business.ai_persona === 'pidgin') {
+            personaInstruction = "Tone: Natural Nigerian Pidgin English (e.g. 'How far!', 'Welcome to our shop!', 'We get am for stock!'). Be enthusiastic, respectful, and sharp."
+        } else if (business.ai_persona === 'formal') {
+            personaInstruction = "Tone: Executive, polite, clear, and professional."
+        }
 
         const businessContext = `
-    You are the helpful AI Sales Assistant for "${business.business_name}".
-    
-    BUSINESS INFO:
-    - Location: ${business.location || 'Not specified'}
-    - Description: ${business.description || ''}
-    - Instructions from Owner: ${business.ai_instructions || 'Be polite and helpful.'}
-    
-    PRODUCTS:
-    ${productsContext}
-    
-    YOUR GOAL:
-    Answer the customer's question politely and briefly.
-    If they ask to buy, tell them to click the WhatsApp button to chat with the owner.
-    Do NOT make up prices.
-    Keep responses as short as possible (under 3 sentences).
-    Tone: Friendly, Nigerian, Professional.
-    `
+You are the dedicated AI Sales Assistant & Order Closer for "${business.business_name}".
 
-        // 4. Call OpenRouter
-        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+BUSINESS DETAILS:
+- Location: ${business.location || 'Nigeria'}
+- About: ${business.description || 'Quality products & services.'}
+- Business Type: ${business.business_type || 'Products & Services'}
+- Owner's Special Directives: ${business.ai_instructions || 'Be helpful, answer questions accurately, and help customers place orders or book services.'}
+
+${catalogContext}
+
+YOUR MISSION & RULES:
+1. Greets buyers warmly and answer inquiries about products, services, prices, and location.
+2. Check Stock: If an item is [OUT OF STOCK], state politely that it is currently unavailable and suggest an [IN STOCK] alternative item.
+3. Service Bookings: If the customer asks about a service, ask for their preferred date, time, and specific requirements.
+4. Smart Upsell: When appropriate, politely suggest a complementary item or service (e.g., "Would you also like to add X?").
+5. Order & Booking Capture:
+   - When a buyer is ready to order or book, collect their item details, quantity/date, customer name, and delivery location/contact.
+   - At the very end of your response when order details are clear, append a structured JSON order tag in this exact format:
+     [ORDER_SUMMARY: {"items":[{"name":"Item Name","price":1000,"quantity":1}],"customer_name":"Buyer Name","delivery_address":"Lekki, Lagos","total":1000,"type":"product"}]
+   - For services, set "type":"service" and place booking details inside delivery_address or notes.
+6. Never make up prices that are not listed in the catalog.
+7. Keep conversation turns concise (2-4 sentences max per message).
+${personaInstruction}
+`
+
+        // 3. Call OpenRouter API with Gemini / High Performance model
+        const openRouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
@@ -102,22 +126,49 @@ export async function POST(req: Request) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                "model": "meta-llama/llama-3-8b-instruct:free", // Use free/cheap model
+                "model": "google/gemini-2.0-flash-001",
                 "messages": [
                     { "role": "system", "content": businessContext },
                     ...messages
                 ],
                 "temperature": 0.7,
-                "max_tokens": 150, // Keep answers short
+                "max_tokens": 400
             })
-        });
+        })
 
-        if (!response.ok) {
-            console.error("OpenRouter Error", await response.text())
-            return NextResponse.json({ error: 'AI Service Unavailable' }, { status: 502 })
+        if (!openRouterResponse.ok) {
+            // Fallback to Llama 3.3 70B if Gemini flash is unavailable
+            console.warn("Primary model failed, attempting fallback model...")
+            const fallbackResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+                    "HTTP-Referer": SITE_URL,
+                    "X-Title": SITE_NAME,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "model": "meta-llama/llama-3.3-70b-instruct",
+                    "messages": [
+                        { "role": "system", "content": businessContext },
+                        ...messages
+                    ],
+                    "temperature": 0.7,
+                    "max_tokens": 400
+                })
+            })
+
+            if (!fallbackResponse.ok) {
+                console.error("AI Fallback Error", await fallbackResponse.text())
+                return NextResponse.json({ error: 'AI Service Unavailable' }, { status: 502 })
+            }
+
+            const fallbackData = await fallbackResponse.json()
+            const aiReply = fallbackData.choices?.[0]?.message?.content || "I'm sorry, I couldn't process that request."
+            return NextResponse.json({ reply: aiReply })
         }
 
-        const aiData = await response.json()
+        const aiData = await openRouterResponse.json()
         const aiReply = aiData.choices?.[0]?.message?.content || "I'm sorry, I couldn't understand that."
 
         return NextResponse.json({ reply: aiReply })
