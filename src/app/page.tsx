@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import Image from 'next/image'
@@ -32,7 +32,7 @@ export default function HomePage() {
     'Your full catalog is always live and browsable',
     'Customers order directly from your page',
     'Reviews and ratings build trust automatically',
-    'A branded link that represents your identity',
+    'Personal subdomain (yourbrand.qriblo.com) on Pro',
     'Virtual Assistant handles enquiries 24/7',
   ]
 
@@ -163,9 +163,15 @@ export default function HomePage() {
             </button>
           </form>
 
+          {/* Subdomain hint */}
+          <p className="relative mt-2 text-xs text-[#806b63]">
+            Free link: <span className="font-mono font-bold text-[#1E1410]">qriblo.com/yourbrand</span> &bull; Pro gets <span className="font-mono font-bold text-[#B84D34]">yourbrand.qriblo.com</span>
+          </p>
+
           {/* Trust pills */}
           <div className="relative mt-5 flex justify-center gap-4 flex-wrap text-xs font-semibold text-[#6B5850]">
             <span className="flex gap-1.5 items-center"><CheckCircle2 className="w-4 h-4 text-[#62ba82]" />Free to start</span>
+            <span className="flex gap-1.5 items-center"><Globe2 className="w-4 h-4 text-[#7c5cbf]" />Personal Subdomain on Pro</span>
             <span className="flex gap-1.5 items-center"><ShieldCheck className="w-4 h-4 text-[#62ba82]" />No card required</span>
             <span className="flex gap-1.5 items-center"><Bot className="w-4 h-4 text-[#B84D34]" />Virtual Assistant included on Pro</span>
           </div>
@@ -175,7 +181,9 @@ export default function HomePage() {
         <section className="max-w-5xl mx-auto px-4 py-8">
           <div className="grid sm:grid-cols-3 gap-3">
             {[
-              ['24/7', 'Virtual Assistant', 'to answer questions, negotiate with customers and capture intent after hours.'],
+              ['yourbrand', '.qriblo.com', 'Every Pro business gets their own personal subdomain for a clean, standout web presence.'],
+              ['24/7', 'Virtual Assistant', 'Answers questions, manages appointments, and captures order requests while you sleep.'],
+              ['100%', 'WhatsApp First', 'Turn visitors into direct chats — bookings, menu orders, and inquiries land straight in WhatsApp.'],
             ].map(([value, label, text]) => (
               <div key={label} className="rounded-2xl bg-white border border-[#eadfd8] p-5 shadow-[0_10px_28px_rgba(70,35,25,.05)] micro-lift">
                 <p className="text-3xl font-black text-[#B84D34]">{value}</p>
@@ -350,9 +358,9 @@ export default function HomePage() {
               <div className="w-10 h-10 rounded-2xl bg-[#7c5cbf] flex items-center justify-center mb-5">
                 <Globe2 className="w-5 h-5 text-white" />
               </div>
-              <h3 className="text-xl font-black mb-2">Your identity online</h3>
+              <h3 className="text-xl font-black mb-2">Personal Subdomain & Link</h3>
               <p className="text-sm text-[#5a4870] leading-relaxed">
-                A branded business page with your logo, story, socials, and everything customers want to see before they buy.
+                Give your business its own personal subdomain (<span className="font-bold">yourbrand.qriblo.com</span>) on Pro, complete with your logo, story, catalog, and socials.
               </p>
             </div>
 
@@ -436,7 +444,7 @@ export default function HomePage() {
           <div className="grid sm:grid-cols-3 gap-6 sm:gap-8">
             {[
               ['01', 'Make it yours', 'Add your name, logo, description, products or services. Takes 5 minutes.'],
-              ['02', 'Share one link', 'Put qriblo.com/yourbrand in your bio, status, or anywhere your customers find you.'],
+              ['02', 'Share your brand link', 'Put qriblo.com/yourbrand (or your personal yourbrand.qriblo.com on Pro) in your bio, status, and flyers.'],
               ['03', 'Turn visits into orders', 'Customers browse, book, or chat with your virtual assistant — you close the sale.'],
             ].map(([num, title, text]) => (
               <div key={num} className="flex flex-col">

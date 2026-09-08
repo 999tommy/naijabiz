@@ -250,8 +250,9 @@ export default function SignupPage() {
                         />
                     </Link>
                     <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Claim Your Brand</h1>
-                    <p className="text-gray-600 mt-2 text-lg">
-                        <span className="font-mono bg-orange-100 text-orange-800 px-2 py-0.5 rounded-md">qriblo.com/{businessName ? businessName.toLowerCase().replace(/[\s\W-]+/g, '-') : 'your-brand'}</span> is waiting for you.
+                    <p className="text-gray-600 mt-2 text-sm sm:text-base">
+                        Claim <span className="font-mono font-bold bg-orange-100 text-orange-800 px-2 py-0.5 rounded-md">qriblo.com/{businessName ? businessName.toLowerCase().replace(/[\s\W-]+/g, '-') : 'your-brand'}</span>
+                        <span className="block text-xs text-gray-500 mt-1">Pro members also get their own personal subdomain: <span className="font-mono font-semibold text-orange-600">{businessName ? businessName.toLowerCase().replace(/[\s\W-]+/g, '-') : 'your-brand'}.qriblo.com</span></span>
                     </p>
                 </div>
 
@@ -436,6 +437,12 @@ export default function SignupPage() {
                                         className="h-11"
                                         required
                                     />
+                                    {businessName && (
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            Link: <span className="font-mono text-gray-700">qriblo.com/{businessName.toLowerCase().replace(/[^a-z0-9]/g, '-')}</span>
+                                            {' · '}<span className="text-orange-600 font-medium">Pro: {businessName.toLowerCase().replace(/[^a-z0-9]/g, '-')}.qriblo.com</span>
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">

@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -25,7 +25,7 @@ const freeFeatures = [
     section: 'Your Brand Page',
     color: '#7c5cbf',
     items: [
-      'Your own branded business link (qriblo.com/yourbrand)',
+      'Standard business link (qriblo.com/yourbrand)',
       'Logo, description, and category',
       'Location display',
       'Listed in the Qriblo public directory',
@@ -58,9 +58,10 @@ const freeFeatures = [
 const proFeatures = [
   {
     icon: Globe2,
-    section: 'Full Brand Website',
+    section: 'Brand Subdomain & Website',
     color: '#7c5cbf',
     items: [
+      'Personal brand subdomain (yourbrand.qriblo.com)',
       'Everything in Free',
       'Full themed brand website (color themes per category)',
       'Custom hero header with background',
@@ -174,6 +175,10 @@ function FeatureAccordion({
 
 // ── FAQ ───────────────────────────────────────────────────────────────────────
 const faqs = [
+  {
+    q: 'Do I get my own personal brand subdomain?',
+    a: 'Yes! Pro subscribers get their own dedicated brand subdomain (e.g. yourbrand.qriblo.com), giving your business an instant, clean, professional website address. Free accounts use standard qriblo.com/yourbrand link routing. Both work out of the box with zero complex setup.',
+  },
   {
     q: 'What counts as a "catalog item"?',
     a: 'Anything you sell or offer — a product, a service package, a booking slot, a digital download. If it has a name and a price, it counts.',
@@ -340,7 +345,7 @@ export default function PricingPage() {
             {/* Top highlights */}
             <ul className="space-y-3 mb-5">
               {[
-                'Your own branded business link',
+                'Standard brand link (qriblo.com/yourbrand)',
                 'Up to 5 catalog items',
                 'WhatsApp ordering and booking enquiries',
                 'Listed in the directory',
@@ -398,6 +403,7 @@ export default function PricingPage() {
             {/* Top highlights */}
             <ul className="space-y-3 mb-5 relative">
               {[
+                'Personal brand subdomain (yourbrand.qriblo.com)',
                 'Everything in Free',
                 'Unlimited catalog items',
                 'Full themed brand website',
