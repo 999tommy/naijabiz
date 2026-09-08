@@ -179,7 +179,7 @@ function ProductSlide({
                 {/* WhatsApp */}
                 {whatsappNumber && (
                     <a
-                        href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi! I saw *${product.name}* (${formatPrice(product.price)}) on ${business.business_name}'s NaijaBiz store. Is it available? 🛍️`)}`}
+                        href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi! I saw *${product.name}* (${formatPrice(product.price)}) on ${business.business_name}'s Qriblo store. Is it available? 🛍️`)}`}
                         target="_blank" rel="noopener noreferrer"
                         className="flex flex-col items-center gap-1 group"
                         aria-label="Chat on WhatsApp"
@@ -424,7 +424,7 @@ export function ShoppableReels({
             .map(item => `• ${item.quantity}x ${item.name} (${formatPrice(item.price * item.quantity)})`)
             .join('\n')
 
-        return `Hello! I am ordering from your NaijaBiz page: *${business.business_name || ''}*
+        return `Hello! I am ordering from your Qriblo page: *${business.business_name || ''}*
 
 *Customer Details:*
 Name: ${custName || 'Not provided'}

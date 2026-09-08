@@ -14,16 +14,16 @@ interface WhatsAppShareCenterProps {
 export function WhatsAppShareCenter({ user, rank }: WhatsAppShareCenterProps) {
     const { toast } = useToast()
 
-    const businessUrl = `https://naijabiz.org/${user.business_slug}`
+    const businessUrl = `https://qriblo.com/${user.business_slug}`
 
     const templates = [
         {
             title: "Promote Your Page",
-            text: `✨ Check out my business page on NaijaBiz!\n\nSee my products & prices here: ${businessUrl}\n\nMessage me to order! 📲`
+            text: `✨ Check out my business page on Qriblo!\n\nSee my products & prices here: ${businessUrl}\n\nMessage me to order! 📲`
         },
         {
             title: "Ask for Reviews",
-            text: `👋 Hey! Thanks for being a loyal customer.\n\nPlease leave me a 5-star review on NaijaBiz, it helps me get Verified!\n\nReview here: ${businessUrl}/review`
+            text: `👋 Hey! Thanks for being a loyal customer.\n\nPlease leave me a 5-star review on Qriblo, it helps me get Verified!\n\nReview here: ${businessUrl}/review`
         }
     ]
 
@@ -31,7 +31,7 @@ export function WhatsAppShareCenter({ user, rank }: WhatsAppShareCenterProps) {
     if (rank && rank <= 10) {
         templates.unshift({
             title: "🔥 Share Your Rank",
-            text: `🏆 I'm trending as #${rank} Business of the Day on NaijaBiz!\n\nCome support my business: ${businessUrl}`
+            text: `🏆 I'm trending as #${rank} Business of the Day on Qriblo!\n\nCome support my business: ${businessUrl}`
         })
     }
 

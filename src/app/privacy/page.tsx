@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 export const dynamic = 'force-dynamic';
 
@@ -68,7 +68,7 @@ export default function PrivacyPage() {
                     <section className="mb-8">
                         <h2 className="text-xl font-semibold text-gray-900 mb-4">7. Contact</h2>
                         <p>
-                            If you have any questions about this Privacy Policy, please contact us at privacy@naijabiz.org.
+                            If you have any questions about this Privacy Policy, please contact us at privacy@qriblo.com.
                         </p>
                     </section>
                 </div>

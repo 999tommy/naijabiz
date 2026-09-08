@@ -1,4 +1,4 @@
-import Image from 'next/image'
+﻿import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { StorefrontClient } from '@/components/StorefrontClient'
@@ -129,17 +129,17 @@ const MOCK_REVIEWS = [
 ]
 
 export const metadata: Metadata = {
-    title: "Tola's Kitchen – Official Website | NaijaBiz",
+    title: "Tola's Kitchen – Official Website | Qriblo",
     description: "Authentic Nigerian Jollof, Fried Rice, and Soups delivering to all parts of Lagos. Taste the difference today!",
     openGraph: {
-        title: "Tola's Kitchen – Official Website | NaijaBiz",
+        title: "Tola's Kitchen – Official Website | Qriblo",
         description: "Authentic Nigerian Jollof, Fried Rice, and Soups delivering to all parts of Lagos.",
         type: 'website',
         images: ['/tolas-kitchen.png'],
     },
     twitter: {
         card: "summary_large_image",
-        title: "Tola's Kitchen – Official Website | NaijaBiz",
+        title: "Tola's Kitchen – Official Website | Qriblo",
         description: "Authentic Nigerian Jollof, Fried Rice, and Soups delivering to all parts of Lagos.",
         images: ['/tolas-kitchen.png'],
     }
@@ -186,7 +186,7 @@ export default function ExampleBusinessPage() {
                 >
                     <Link href="/" className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 transition-colors">
                         <ArrowLeft className="w-4 h-4" />
-                        <span className="hidden sm:inline text-sm font-medium">NaijaBiz</span>
+                        <span className="hidden sm:inline text-sm font-medium">Qriblo</span>
                     </Link>
 
                     <div className="flex items-center gap-2">
@@ -532,9 +532,9 @@ export default function ExampleBusinessPage() {
                     <p className="text-sm" style={{ color: theme.mutedText }}>
                         © {new Date().getFullYear()} {business.business_name}. Powered by{' '}
                         <Link href="/" className="font-semibold hover:underline" style={{ color: theme.accent }}>
-                            NaijaBiz
+                            Qriblo
                         </Link>
-                        {' '}– The link that proves you are legit
+                        {' '}– The link that puts your brand in the spotlight
                     </p>
                     <div className="flex items-center gap-4">
                         <a href={`https://instagram.com/${business.instagram_handle}`} target="_blank" rel="noopener noreferrer"

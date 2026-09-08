@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
 
-export const alt = 'NaijaBiz - AI Storefront for Nigerian Businesses'
+export const alt = 'Qriblo - AI Storefront for Nigerian Businesses'
 export const size = {
     width: 1200,
     height: 630,
@@ -101,7 +101,7 @@ export default async function Image() {
                         border: '1px solid #e5e7eb',
                     }}
                 >
-                    naijabiz.org
+                    qriblo.com
                 </div>
             </div>
         ),

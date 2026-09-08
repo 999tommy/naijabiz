@@ -44,8 +44,8 @@ export default async function SearchPage({
                             </Button>
                         </Link>
                         <Link href="/" className="flex items-center gap-2">
-                            <Image src="/small-logo.png" alt="NaijaBiz" width={28} height={28} />
-                            <span className="font-bold text-lg text-gray-900 leading-none">NaijaBiz</span>
+                            <Image src="/small-logo.png" alt="Qriblo" width={28} height={28} />
+                            <span className="font-bold text-lg text-gray-900 leading-none">Qriblo</span>
                         </Link>
                     </div>
                 </div>
@@ -56,7 +56,7 @@ export default async function SearchPage({
 
                 <div className="mb-6">
                     <h1 className="text-xl font-bold text-gray-900">
-                        {query ? `Results for "${query}"` : 'Search NaijaBiz'}
+                        {query ? `Results for "${query}"` : 'Search Qriblo'}
                     </h1>
                     <p className="text-sm text-gray-500">
                         {businesses.length} businesses found

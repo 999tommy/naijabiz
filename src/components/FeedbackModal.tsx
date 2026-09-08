@@ -62,7 +62,7 @@ export function FeedbackModal() {
                         <div className="p-6">
                             <h2 className="text-xl font-bold text-gray-900">Send Feedback</h2>
                             <p className="text-sm text-gray-500 mt-1">
-                                Help us improve NaijaBiz. Report a bug or suggest a new feature.
+                                Help us improve Qriblo. Report a bug or suggest a new feature.
                             </p>
 
                             {success ? (
@@ -71,7 +71,7 @@ export function FeedbackModal() {
                                         <CheckCircle2 className="w-8 h-8" />
                                     </div>
                                     <p className="font-bold text-lg text-gray-900">Feedback Sent!</p>
-                                    <p className="text-sm text-gray-500">Thank you for helping us make NaijaBiz better.</p>
+                                    <p className="text-sm text-gray-500">Thank you for helping us make Qriblo better.</p>
                                 </div>
                             ) : (
                                 <form onSubmit={handleSubmit} className="space-y-4 mt-6">

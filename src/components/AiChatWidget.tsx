@@ -324,7 +324,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                             </div>
                         )}
                         <div className="text-[11px] text-center text-[#9a8b7d] mt-4 font-medium">
-                            Powered by NaijaBiz
+                            Powered by Qriblo
                         </div>
                     </div>
 

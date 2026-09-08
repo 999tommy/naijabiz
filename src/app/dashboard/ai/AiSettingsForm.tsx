@@ -155,7 +155,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                     )}
                                 </span>
                                 <span className="font-normal text-sm text-gray-500">
-                                    Displays the interactive chat widget on your business page (`naijabiz.org/{user.business_slug || 'yourbrand'}`) to answer questions, close orders, and collect booking details 24/7.
+                                    Displays the interactive chat widget on your business page (`qriblo.com/{user.business_slug || 'yourbrand'}`) to answer questions, close orders, and collect booking details 24/7.
                                 </span>
                             </Label>
                             {isPro ? (

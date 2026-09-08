@@ -34,8 +34,8 @@ export default async function DirectoryPage() {
                             <ArrowLeft className="w-5 h-5 text-gray-600" />
                         </Link>
                         <Link href="/" className="flex items-center gap-2">
-                            <Image src="/logo.png" alt="NaijaBiz" width={32} height={32} />
-                            <span className="font-bold text-gray-900">NaijaBiz</span>
+                            <Image src="/logo.png" alt="Qriblo" width={32} height={32} />
+                            <span className="font-bold text-gray-900">Qriblo</span>
                         </Link>
                     </div>
                     <div className="flex items-center gap-2">
@@ -70,7 +70,7 @@ export default async function DirectoryPage() {
             <footer className="bg-white border-t border-gray-200 py-6 mt-8">
                 <div className="max-w-7xl mx-auto px-4 text-center">
                     <p className="text-sm text-gray-500">
-                        © {new Date().getFullYear()} NaijaBiz. Made with ❤️ in Nigeria.
+                        © {new Date().getFullYear()} Qriblo. Made with ❤️ in Nigeria.
                     </p>
                 </div>
             </footer>

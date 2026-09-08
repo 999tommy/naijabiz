@@ -4,35 +4,35 @@ import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: {
-    default: "NaijaBiz – Nigerian Business Directory & Online Store Builder",
-    template: "%s | NaijaBiz"
+    default: "Qriblo – Your Brand's Home on the Internet",
+    template: "%s | Qriblo"
   },
-  description: "NaijaBiz helps Nigerian businesses create verified online pages, accept WhatsApp orders, and grow online.",
-  keywords: ["Nigeria Business Directory", "WhatsApp Store", "Instagram Vendor Tool", "Legit Vendor", "NaijaBiz", "Sell on WhatsApp"],
-  authors: [{ name: "NaijaBiz Team" }],
-  creator: "NaijaBiz",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://naijabiz.org'),
+  description: "Qriblo gives product brands, service providers, and artisans a beautiful branded link — with a catalog, virtual assistant, and booking page all in one place.",
+  keywords: ["brand link", "business page", "WhatsApp store", "online storefront", "booking page", "brand identity", "Qriblo", "sell online", "service booking"],
+  authors: [{ name: "Qriblo Team" }],
+  creator: "Qriblo",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://qriblo.com'),
   openGraph: {
     type: "website",
-    locale: "en_NG",
+    locale: "en_US",
     url: "/",
-    siteName: "NaijaBiz",
-    title: "NaijaBiz - Get free Customers and grow your business",
-    description: "Stop losing sales to trust issues. Get your verified green badge and Business Page today.",
+    siteName: "Qriblo",
+    title: "Qriblo – The link that puts your brand in the spotlight",
+    description: "Claim one beautiful link where customers discover your story, browse your catalog, and book your services — with a virtual assistant running your business 24/7.",
     images: [
       {
         url: '/logo.png',
         width: 512,
         height: 512,
-        alt: 'NaijaBiz Logo',
+        alt: 'Qriblo Logo',
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "NaijaBiz - Verified Your Business Page",
-    description: "The link that proves you are legit. Get verified and sell more.",
-    creator: "@naijabiz",
+    title: "Qriblo – The link that puts your brand in the spotlight",
+    description: "Claim your brand link free. Virtual assistant, catalog, and bookings — all in one place.",
+    creator: "@qriblo",
     images: ['/logo.png'],
   },
   icons: {
@@ -45,6 +45,7 @@ export const metadata: Metadata = {
   },
 };
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -53,17 +54,17 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "NaijaBiz",
-    "url": "https://naijabiz.org",
-    "logo": "https://naijabiz.org/logo.png",
+    "name": "Qriblo",
+    "url": "https://qriblo.com",
+    "logo": "https://qriblo.com/logo.png",
     "sameAs": [
-      "https://twitter.com/naijabiz",
-      "https://instagram.com/naijabiz"
+      "https://twitter.com/qriblo",
+      "https://instagram.com/qriblo"
     ],
     "contactPoint": {
       "@type": "ContactPoint",
       "contactType": "customer support",
-      "email": "support@naijabiz.org"
+      "email": "support@qriblo.com"
     }
   }
 

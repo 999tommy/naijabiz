@@ -1,4 +1,4 @@
-import { ImageResponse } from 'next/og'
+﻿import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
 
@@ -56,7 +56,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
                         color: '#333',
                     }}
                 >
-                    NaijaBiz
+                    Qriblo
                 </div>
             ),
             { ...size }
@@ -169,7 +169,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
                         marginBottom: '40px',
                     }}
                 >
-                    {business.description || `Order from ${business.business_name} on NaijaBiz.`}
+                    {business.description || `Order from ${business.business_name} on Qriblo.`}
                 </div>
 
                 {/* Footer with AI Hook */}
@@ -200,13 +200,13 @@ export default async function Image({ params }: { params: { slug: string } }) {
                             alignItems: 'center',
                             marginRight: '12px',
                         }}>
-                            ⚡ Powered by NaijaBiz AI
+                            ⚡ Powered by Qriblo AI
                         </div>
                         <div style={{
                             fontSize: '20px',
                             color: '#6b7280', // Gray-500
                         }}>
-                            Create your own free page at <span style={{ fontWeight: 'bold', color: '#1a1a1a' }}>naijabiz.org</span>
+                            Create your own free page at <span style={{ fontWeight: 'bold', color: '#1a1a1a' }}>qriblo.com</span>
                         </div>
                     </div>
                 </div>

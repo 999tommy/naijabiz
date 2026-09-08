@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Her Excellence | Every elegant woman\'s closet',
     description: 'Her Excellence is a ready-to-wear label for the professional Nigerian woman who commands presence without sacrificing ease.',
-    url: 'https://naijabiz.org/herexcellence',
+    url: 'https://qriblo.com/herexcellence',
     siteName: 'Her Excellence',
     images: [
       {

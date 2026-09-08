@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Image from 'next/image'
@@ -13,7 +13,7 @@ const navLinks = [
 ]
 
 const demoLinks: Array<[string, string, string, string, LucideIcon, string]> = [
-  ['Product demo', "Tola's Kitchen", 'Food menu, reviews, WhatsApp ordering', '/tolas-kitchen', ShoppingBag, '#e8b8aa'],
+  ['Product demo', "Tola's Kitchen", 'Food menu, reviews, WhatsApp ordering', '/tolas-kitchen', ShoppingBag, '#E8A87C'],
   ['Service demo', 'MusaFix Electricals', 'Repair services, appointments, quote requests', '/musafix-electricals', Wrench, '#9bd4bd'],
 ]
 
@@ -70,29 +70,29 @@ export default function HomePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#fffaf5] text-[#2a1d1a] overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-[#FDF8F3] text-[#1E1410] overflow-x-hidden font-sans">
 
       {/* NAV */}
       <nav className="sticky top-0 z-50 px-3 pt-3">
         <div className="max-w-5xl mx-auto h-14 px-4 rounded-2xl flex items-center justify-between border border-white/80 bg-white/80 backdrop-blur shadow-[0_4px_24px_rgba(70,35,25,.08)]">
-          <Link href="/" className="flex items-center gap-2 font-black text-[#2a1d1a]">
-            <Image src="/small-logo.png" alt="NaijaBiz" width={26} height={26} />
-            NaijaBiz
+          <Link href="/" className="flex items-center gap-2 font-black text-[#1E1410]">
+            <Image src="/small-logo.png" alt="Qriblo" width={26} height={26} />
+            Qriblo
           </Link>
-          <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-[#725e57]">
+          <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-[#6B5850]">
             {navLinks.map(link => (
-              <Link key={link.href} href={link.href} className="hover:text-[#a84b35] transition-colors">{link.label}</Link>
+              <Link key={link.href} href={link.href} className="hover:text-[#B84D34] transition-colors">{link.label}</Link>
             ))}
           </div>
           <div className="flex items-center gap-1">
-            <Link href="/login" className="hidden sm:inline-flex px-3 py-2 text-xs sm:text-sm font-bold text-[#725e57] hover:text-[#2a1d1a] transition-colors">Log in</Link>
-            <Link href="/signup" className="rounded-xl bg-[#a84b35] text-white px-3 py-2 text-xs sm:text-sm font-bold hover:bg-[#8f3e2b] transition-colors">
+            <Link href="/login" className="hidden sm:inline-flex px-3 py-2 text-xs sm:text-sm font-bold text-[#6B5850] hover:text-[#1E1410] transition-colors">Log in</Link>
+            <Link href="/signup" className="rounded-xl bg-[#B84D34] text-white px-3 py-2 text-xs sm:text-sm font-bold hover:bg-[#9A3F2A] transition-colors">
               Claim your link
             </Link>
             <button
               type="button"
               onClick={() => setMobileMenuOpen(open => !open)}
-              className="md:hidden w-10 h-10 rounded-xl border border-[#eadfd8] bg-white text-[#2a1d1a] inline-flex items-center justify-center"
+              className="md:hidden w-10 h-10 rounded-xl border border-[#eadfd8] bg-white text-[#1E1410] inline-flex items-center justify-center"
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -101,7 +101,7 @@ export default function HomePage() {
         </div>
         {mobileMenuOpen && (
           <div className="md:hidden max-w-5xl mx-auto mt-2 rounded-2xl border border-[#eadfd8] bg-white p-3 shadow-[0_18px_40px_rgba(70,35,25,.12)]">
-            <p className="px-3 py-2 text-[11px] font-black uppercase tracking-[.16em] text-[#a84b35]">Catalog</p>
+            <p className="px-3 py-2 text-[11px] font-black uppercase tracking-[.16em] text-[#B84D34]">Catalog</p>
             <div className="grid gap-1">
               {[
                 ...navLinks,
@@ -113,10 +113,10 @@ export default function HomePage() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between rounded-xl px-3 py-3 text-sm font-bold text-[#2a1d1a] hover:bg-[#fffaf5]"
+                  className="flex items-center justify-between rounded-xl px-3 py-3 text-sm font-bold text-[#1E1410] hover:bg-[#FDF8F3]"
                 >
                   {link.label}
-                  <ArrowRight className="w-4 h-4 text-[#a84b35]" />
+                  <ArrowRight className="w-4 h-4 text-[#B84D34]" />
                 </Link>
               ))}
             </div>
@@ -140,34 +140,34 @@ export default function HomePage() {
           {/* Headline */}
           <h1 className="relative text-[2.6rem] sm:text-6xl md:text-7xl font-black tracking-[-0.04em] leading-[1.0] mb-5 micro-reveal micro-delay-1">
             Growing your brand<br />
-            <em className="font-serif font-bold not-italic text-[#a84b35]">has never been easier.</em>
+            <em className="font-serif font-bold not-italic text-[#B84D34]">has never been easier.</em>
           </h1>
 
           {/* Subtext */}
-          <p className="relative mx-auto max-w-lg text-base sm:text-lg leading-relaxed text-[#725e57] mb-8 micro-reveal micro-delay-2">
+          <p className="relative mx-auto max-w-lg text-base sm:text-lg leading-relaxed text-[#6B5850] mb-8 micro-reveal micro-delay-2">
             Claim one beautiful link where customers discover your story, browse your catalog,
             and book your services. A highly trained <span className="font-bold">virtual assistant</span> runs your business for you when you&apos;re asleep or busy.
           </p>
 
           {/* Slug input */}
           <form action="/signup" method="GET" className="relative mx-auto max-w-md p-2 rounded-2xl bg-white border border-[#eadfd8] shadow-[0_18px_40px_rgba(70,35,25,.10)] flex gap-2 micro-reveal micro-delay-3 micro-lift">
-            <span className="hidden sm:flex pl-3 py-3 font-mono text-sm text-[#a98f84] items-center whitespace-nowrap">naijabiz.org/</span>
+            <span className="hidden sm:flex pl-3 py-3 font-mono text-sm text-[#a98f84] items-center whitespace-nowrap">qriblo.com/</span>
             <input
               required
               name="brand"
               placeholder="your-brand"
               className="min-w-0 flex-1 px-3 py-3 sm:px-2 bg-transparent font-bold outline-none text-sm placeholder-[#c4aea6]"
             />
-            <button className="shrink-0 rounded-xl px-4 sm:px-5 py-3 bg-[#a84b35] text-white font-bold text-sm hover:bg-[#8f3e2b] transition-colors flex items-center gap-1">
+            <button className="shrink-0 rounded-xl px-4 sm:px-5 py-3 bg-[#B84D34] text-white font-bold text-sm hover:bg-[#9A3F2A] transition-colors flex items-center gap-1">
               Claim <ArrowRight className="w-4 h-4" />
             </button>
           </form>
 
           {/* Trust pills */}
-          <div className="relative mt-5 flex justify-center gap-4 flex-wrap text-xs font-semibold text-[#725e57]">
+          <div className="relative mt-5 flex justify-center gap-4 flex-wrap text-xs font-semibold text-[#6B5850]">
             <span className="flex gap-1.5 items-center"><CheckCircle2 className="w-4 h-4 text-[#62ba82]" />Free to start</span>
             <span className="flex gap-1.5 items-center"><ShieldCheck className="w-4 h-4 text-[#62ba82]" />No card required</span>
-            <span className="flex gap-1.5 items-center"><Bot className="w-4 h-4 text-[#a84b35]" />Virtual Assistant included on Pro</span>
+            <span className="flex gap-1.5 items-center"><Bot className="w-4 h-4 text-[#B84D34]" />Virtual Assistant included on Pro</span>
           </div>
         </section>
 
@@ -178,9 +178,9 @@ export default function HomePage() {
               ['24/7', 'Virtual Assistant', 'to answer questions, negotiate with customers and capture intent after hours.'],
             ].map(([value, label, text]) => (
               <div key={label} className="rounded-2xl bg-white border border-[#eadfd8] p-5 shadow-[0_10px_28px_rgba(70,35,25,.05)] micro-lift">
-                <p className="text-3xl font-black text-[#a84b35]">{value}</p>
-                <p className="text-sm font-black text-[#2a1d1a] mt-1">{label}</p>
-                <p className="text-xs text-[#725e57] leading-relaxed mt-2">{text}</p>
+                <p className="text-3xl font-black text-[#B84D34]">{value}</p>
+                <p className="text-sm font-black text-[#1E1410] mt-1">{label}</p>
+                <p className="text-xs text-[#6B5850] leading-relaxed mt-2">{text}</p>
               </div>
             ))}
           </div>
@@ -189,10 +189,10 @@ export default function HomePage() {
         {/* MOCKUP PREVIEW */}
         <section className="max-w-5xl mx-auto px-4 py-8">
           <div className="rounded-[2rem] p-5 sm:p-8 bg-[#211816] text-white shadow-[0_28px_70px_rgba(50,24,18,.24)] overflow-hidden relative">
-            <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#a84b35]/25 to-transparent pointer-events-none" />
+            <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#B84D34]/25 to-transparent pointer-events-none" />
             <div className="relative grid lg:grid-cols-[0.85fr_1.15fr] gap-8 items-center">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[.16em] text-[#e8b8aa] mb-3">Live demo links</p>
+                <p className="text-xs font-bold uppercase tracking-[.16em] text-[#E8A87C] mb-3">Live demo links</p>
                 <h2 className="text-3xl sm:text-4xl font-black leading-tight mb-4">
                   See how real brand links feel before you create yours.
                 </h2>
@@ -219,10 +219,10 @@ export default function HomePage() {
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4 items-stretch">
-                <div className="rounded-[1.6rem] bg-[#fffaf5] p-4 text-[#2a1d1a] rotate-[-1.5deg] shadow-2xl animate-soft-float">
+                <div className="rounded-[1.6rem] bg-[#FDF8F3] p-4 text-[#1E1410] rotate-[-1.5deg] shadow-2xl animate-soft-float">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#a84b35] flex items-center justify-center text-white font-black">T</div>
+                      <div className="w-10 h-10 rounded-xl bg-[#B84D34] flex items-center justify-center text-white font-black">T</div>
                       <div>
                         <p className="font-black text-sm">Tola&apos;s Kitchen</p>
                         <p className="text-xs text-[#806b63]">Verified food brand</p>
@@ -236,9 +236,9 @@ export default function HomePage() {
                         <div className="w-12 h-12 rounded-xl" style={{ background: bg }} />
                         <div className="min-w-0 flex-1">
                           <p className="text-xs font-black truncate">{name}</p>
-                          <p className="text-xs text-[#a84b35] font-black">{price}</p>
+                          <p className="text-xs text-[#B84D34] font-black">{price}</p>
                         </div>
-                        <ShoppingBag className="w-4 h-4 text-[#a84b35]" />
+                        <ShoppingBag className="w-4 h-4 text-[#B84D34]" />
                       </div>
                     ))}
                   </div>
@@ -281,17 +281,17 @@ export default function HomePage() {
           <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center rounded-3xl bg-white border border-[#eadfd8] p-6 sm:p-8 shadow-[0_14px_35px_rgba(70,35,25,.06)] micro-lift">
             <div className="flex gap-4">
               <div className="w-12 h-12 rounded-2xl bg-[#f9f0ee] flex items-center justify-center shrink-0">
-                <BadgePercent className="w-6 h-6 text-[#a84b35]" />
+                <BadgePercent className="w-6 h-6 text-[#B84D34]" />
               </div>
               <div>
-                <p className="text-xs font-black uppercase tracking-[.16em] text-[#a84b35] mb-2">Earn with NaijaBiz</p>
+                <p className="text-xs font-black uppercase tracking-[.16em] text-[#B84D34] mb-2">Earn with Qriblo</p>
                 <h2 className="text-2xl font-black mb-2">Know business owners? Join the Agent Program.</h2>
-                <p className="text-sm text-[#725e57] leading-relaxed">
+                <p className="text-sm text-[#6B5850] leading-relaxed">
                   Refer vendors and service brands, earn a 15% first-month commission when they upgrade, and track active clients from your agent dashboard.
                 </p>
               </div>
             </div>
-            <Link href="/agents" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2a1d1a] text-white px-5 py-3 text-sm font-bold hover:bg-[#3a2925] transition-colors">
+            <Link href="/agents" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1E1410] text-white px-5 py-3 text-sm font-bold hover:bg-[#3a2925] transition-colors">
               Become an agent <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -300,7 +300,7 @@ export default function HomePage() {
         {/* BEFORE VS AFTER */}
         <section className="max-w-5xl mx-auto px-4 py-16">
           <div className="text-center mb-10">
-            <p className="text-xs uppercase tracking-[.16em] font-bold text-[#a84b35] mb-3">The difference</p>
+            <p className="text-xs uppercase tracking-[.16em] font-bold text-[#B84D34] mb-3">The difference</p>
             <h2 className="text-3xl sm:text-4xl font-black leading-tight">
               From scattered to sorted.
             </h2>
@@ -308,21 +308,21 @@ export default function HomePage() {
           <div className="grid sm:grid-cols-2 gap-4">
             {/* Before */}
             <div className="rounded-3xl p-6 sm:p-8 bg-[#f9f0ee] border border-[#e8d5cf] micro-lift">
-              <p className="text-xs font-bold uppercase tracking-widest text-[#a84b35] mb-5">Without NaijaBiz</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-[#B84D34] mb-5">Without Qriblo</p>
               <ul className="space-y-4">
                 {beforeItems.map(item => (
                   <li key={item} className="flex items-start gap-3">
                     <span className="w-5 h-5 rounded-full bg-[#f5cdc3] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <X className="w-3 h-3 text-[#a84b35]" />
+                      <X className="w-3 h-3 text-[#B84D34]" />
                     </span>
-                    <span className="text-sm text-[#725e57] leading-snug">{item}</span>
+                    <span className="text-sm text-[#6B5850] leading-snug">{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
             {/* After */}
-            <div className="rounded-3xl p-6 sm:p-8 bg-[#2a1d1a] text-white micro-lift">
-              <p className="text-xs font-bold uppercase tracking-widest text-[#e8b8aa] mb-5">With NaijaBiz</p>
+            <div className="rounded-3xl p-6 sm:p-8 bg-[#1E1410] text-white micro-lift">
+              <p className="text-xs font-bold uppercase tracking-widest text-[#E8A87C] mb-5">With Qriblo</p>
               <ul className="space-y-4">
                 {afterItems.map(item => (
                   <li key={item} className="flex items-start gap-3">
@@ -340,7 +340,7 @@ export default function HomePage() {
         {/* FEATURE BENTO */}
         <section className="max-w-5xl mx-auto px-4 pb-16">
           <div className="text-center mb-10">
-            <p className="text-xs uppercase tracking-[.16em] font-bold text-[#a84b35] mb-3">What you get</p>
+            <p className="text-xs uppercase tracking-[.16em] font-bold text-[#B84D34] mb-3">What you get</p>
             <h2 className="text-3xl sm:text-4xl font-black">More than a storefront. Easier than a website.</h2>
           </div>
 
@@ -405,7 +405,7 @@ export default function HomePage() {
         {/* BUSINESS TYPE COMPARISON */}
         <section className="max-w-5xl mx-auto px-4 py-14">
           <div className="text-center mb-10">
-            <p className="text-xs uppercase tracking-[.16em] font-bold text-[#a84b35] mb-3">For products, services, and hybrid brands</p>
+            <p className="text-xs uppercase tracking-[.16em] font-bold text-[#B84D34] mb-3">For products, services, and hybrid brands</p>
             <h2 className="text-3xl sm:text-4xl font-black">One trusted link, shaped around what you sell.</h2>
           </div>
           <div className="grid lg:grid-cols-3 gap-4">
@@ -414,11 +414,11 @@ export default function HomePage() {
                 <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-5" style={{ background: `${color}22` }}>
                   <Icon className="w-5 h-5" style={{ color }} />
                 </div>
-                <p className="text-xs font-black uppercase tracking-[.14em] text-[#a84b35] mb-2">{proof}</p>
+                <p className="text-xs font-black uppercase tracking-[.14em] text-[#B84D34] mb-2">{proof}</p>
                 <h3 className="text-xl font-black mb-1">{title}</h3>
-                <p className="text-sm font-bold text-[#725e57] mb-3">{example}</p>
-                <p className="text-sm text-[#725e57] leading-relaxed flex-1">{description}</p>
-                <Link href={href} className="mt-6 inline-flex items-center justify-between rounded-xl border border-[#eadfd8] px-4 py-3 text-sm font-bold text-[#2a1d1a] hover:bg-[#fffaf5]">
+                <p className="text-sm font-bold text-[#6B5850] mb-3">{example}</p>
+                <p className="text-sm text-[#6B5850] leading-relaxed flex-1">{description}</p>
+                <Link href={href} className="mt-6 inline-flex items-center justify-between rounded-xl border border-[#eadfd8] px-4 py-3 text-sm font-bold text-[#1E1410] hover:bg-[#FDF8F3]">
                   {cta}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -430,19 +430,19 @@ export default function HomePage() {
         {/* HOW IT WORKS */}
         <section className="max-w-5xl mx-auto px-4 py-16">
           <div className="text-center mb-12">
-            <p className="text-xs uppercase tracking-[.16em] font-bold text-[#a84b35] mb-3">Simple setup</p>
+            <p className="text-xs uppercase tracking-[.16em] font-bold text-[#B84D34] mb-3">Simple setup</p>
             <h2 className="text-3xl sm:text-4xl font-black">Up and running in minutes.</h2>
           </div>
           <div className="grid sm:grid-cols-3 gap-6 sm:gap-8">
             {[
               ['01', 'Make it yours', 'Add your name, logo, description, products or services. Takes 5 minutes.'],
-              ['02', 'Share one link', 'Put naijabiz.org/yourbrand in your bio, status, or anywhere your customers find you.'],
+              ['02', 'Share one link', 'Put qriblo.com/yourbrand in your bio, status, or anywhere your customers find you.'],
               ['03', 'Turn visits into orders', 'Customers browse, book, or chat with your virtual assistant — you close the sale.'],
             ].map(([num, title, text]) => (
               <div key={num} className="flex flex-col">
                 <span className="text-6xl font-black text-[#dec8be] leading-none mb-4">{num}</span>
                 <h3 className="font-black text-xl mb-2">{title}</h3>
-                <p className="text-sm text-[#725e57] leading-relaxed">{text}</p>
+                <p className="text-sm text-[#6B5850] leading-relaxed">{text}</p>
               </div>
             ))}
           </div>
@@ -451,7 +451,7 @@ export default function HomePage() {
         {/* TESTIMONIALS */}
         <section className="max-w-5xl mx-auto px-4 pb-16">
           <div className="text-center mb-12">
-            <p className="text-xs uppercase tracking-[.16em] font-bold text-[#a84b35] mb-3">Trusted by creators</p>
+            <p className="text-xs uppercase tracking-[.16em] font-bold text-[#B84D34] mb-3">Trusted by creators</p>
             <h2 className="text-3xl sm:text-4xl font-black">Don&apos;t just take our word for it.</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
@@ -476,13 +476,13 @@ export default function HomePage() {
               }
             ].map((t, i) => (
               <div key={i} className="p-6 rounded-3xl border border-[#eadfd8] flex flex-col micro-lift" style={{ backgroundColor: t.bg }}>
-                <div className="flex gap-1 mb-4 text-[#a84b35]">
+                <div className="flex gap-1 mb-4 text-[#B84D34]">
                   {[...Array(5)].map((_, idx) => <Star key={idx} className="w-4 h-4 fill-current" />)}
                 </div>
-                <p className="text-sm font-medium leading-relaxed text-[#2a1d1a] flex-1 mb-6">&ldquo;{t.quote}&rdquo;</p>
+                <p className="text-sm font-medium leading-relaxed text-[#1E1410] flex-1 mb-6">&ldquo;{t.quote}&rdquo;</p>
                 <div>
-                  <p className="font-bold text-sm text-[#2a1d1a]">{t.name}</p>
-                  <p className="text-xs text-[#725e57]">{t.business}</p>
+                  <p className="font-bold text-sm text-[#1E1410]">{t.name}</p>
+                  <p className="text-xs text-[#6B5850]">{t.business}</p>
                 </div>
               </div>
             ))}
@@ -491,7 +491,7 @@ export default function HomePage() {
 
         {/* FINAL CTA */}
         <section className="max-w-5xl mx-auto px-4 pb-24">
-          <div className="rounded-[2rem] bg-[#a84b35] text-white p-8 sm:p-14 text-center relative overflow-hidden animate-gentle-scale">
+          <div className="rounded-[2rem] bg-[#B84D34] text-white p-8 sm:p-14 text-center relative overflow-hidden animate-gentle-scale">
             <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-white/5 pointer-events-none transform translate-x-1/3 -translate-y-1/3" />
             <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-white/5 pointer-events-none transform -translate-x-1/3 translate-y-1/3" />
             <div className="relative z-10">
@@ -503,7 +503,7 @@ export default function HomePage() {
                 Claim your brand link free, then grow into the complete Pro experience when you&apos;re ready.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Link href="/signup" className="inline-flex items-center gap-2 rounded-xl bg-white text-[#a84b35] px-6 py-3.5 font-bold hover:bg-[#fffaf5] transition-colors w-full sm:w-auto justify-center">
+                <Link href="/signup" className="inline-flex items-center gap-2 rounded-xl bg-white text-[#B84D34] px-6 py-3.5 font-bold hover:bg-[#FDF8F3] transition-colors w-full sm:w-auto justify-center">
                   Claim your free link <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link href="/pricing" className="inline-flex items-center gap-2 rounded-xl bg-white/10 border border-white/20 text-white px-6 py-3.5 font-bold hover:bg-white/20 transition-colors w-full sm:w-auto justify-center">
@@ -518,12 +518,12 @@ export default function HomePage() {
       {/* FOOTER */}
       <footer className="border-t border-[#eadfd8] py-8 text-center text-sm text-[#806b63]">
         <div className="flex justify-center gap-5 mb-3 flex-wrap">
-          <Link href="/directory" className="hover:text-[#a84b35] transition-colors">Directory</Link>
-          <Link href="/pricing" className="hover:text-[#a84b35] transition-colors">Pricing</Link>
-          <Link href="/terms" className="hover:text-[#a84b35] transition-colors">Terms</Link>
-          <Link href="/privacy" className="hover:text-[#a84b35] transition-colors">Privacy</Link>
+          <Link href="/directory" className="hover:text-[#B84D34] transition-colors">Directory</Link>
+          <Link href="/pricing" className="hover:text-[#B84D34] transition-colors">Pricing</Link>
+          <Link href="/terms" className="hover:text-[#B84D34] transition-colors">Terms</Link>
+          <Link href="/privacy" className="hover:text-[#B84D34] transition-colors">Privacy</Link>
         </div>
-        © {new Date().getFullYear()} NaijaBiz
+        © {new Date().getFullYear()} Qriblo
       </footer>
     </div>
   )

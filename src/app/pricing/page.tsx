@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -25,10 +25,10 @@ const freeFeatures = [
     section: 'Your Brand Page',
     color: '#7c5cbf',
     items: [
-      'Your own branded business link (naijabiz.org/yourbrand)',
+      'Your own branded business link (qriblo.com/yourbrand)',
       'Logo, description, and category',
       'Location display',
-      'Listed in the NaijaBiz public directory',
+      'Listed in the Qriblo public directory',
       'Automated SEO (search engine visible)',
     ],
   },
@@ -195,8 +195,8 @@ const faqs = [
     a: 'Products beyond your free plan limit will be hidden (not deleted). You can re-upgrade at any time to restore them instantly.',
   },
   {
-    q: 'Can I accept payments through NaijaBiz?',
-    a: 'NaijaBiz is WhatsApp-first today. Customers contact you to order or book, then you handle payment in your own way such as transfer, cash, or POS. In-platform customer payments are not live yet.',
+    q: 'Can I accept payments through Qriblo?',
+    a: 'Qriblo is WhatsApp-first today. Customers contact you to order or book, then you handle payment in your own way such as transfer, cash, or POS. In-platform customer payments are not live yet.',
   },
 ]
 
@@ -247,21 +247,21 @@ export default function PricingPage() {
   const currentPrice = getPrice()
 
   return (
-    <div className="min-h-screen bg-[#fffaf5] text-[#2a1d1a]">
+    <div className="min-h-screen bg-[#FDF8F3] text-[#1E1410]">
 
       {/* Header */}
       <header className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-[#eadfd8]">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-black text-[#2a1d1a]">
-            <Image src="/logo.png" alt="NaijaBiz" width={32} height={32} />
-            NaijaBiz
+          <Link href="/" className="flex items-center gap-2 font-black text-[#1E1410]">
+            <Image src="/logo.png" alt="Qriblo" width={32} height={32} />
+            Qriblo
           </Link>
           <div className="flex items-center gap-2">
             <Link href="/login">
-              <Button variant="outline" size="sm" className="border-[#eadfd8] text-[#725e57] hover:bg-[#f9f0ee]">Sign In</Button>
+              <Button variant="outline" size="sm" className="border-[#eadfd8] text-[#6B5850] hover:bg-[#f9f0ee]">Sign In</Button>
             </Link>
             <Link href="/signup">
-              <Button size="sm" className="bg-[#a84b35] hover:bg-[#8f3e2b] text-white">Get Started</Button>
+              <Button size="sm" className="bg-[#B84D34] hover:bg-[#9A3F2A] text-white">Get Started</Button>
             </Link>
           </div>
         </div>
@@ -271,11 +271,11 @@ export default function PricingPage() {
 
         {/* Hero copy */}
         <div className="text-center mb-12 max-w-2xl mx-auto">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#a84b35] mb-4">Pricing</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-[#B84D34] mb-4">Pricing</p>
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight mb-4">
             Simple, honest pricing.
           </h1>
-          <p className="text-lg text-[#725e57] leading-relaxed">
+          <p className="text-lg text-[#6B5850] leading-relaxed">
             Start free. Upgrade when you&apos;re ready for the full brand experience.
           </p>
 
@@ -290,17 +290,17 @@ export default function PricingPage() {
                     type="button"
                     onClick={() => setBillingCycle(option.cycle)}
                     aria-pressed={active}
-                    className={`min-h-[74px] rounded-2xl px-3 py-3 text-left transition-all focus-visible:ring-2 focus-visible:ring-[#a84b35]/40 ${
+                    className={`min-h-[74px] rounded-2xl px-3 py-3 text-left transition-all focus-visible:ring-2 focus-visible:ring-[#B84D34]/40 ${
                       active
-                        ? 'bg-[#2a1d1a] text-white shadow-[0_10px_24px_rgba(42,29,26,.18)]'
-                        : 'text-[#725e57] hover:bg-[#fff6f0]'
+                        ? 'bg-[#1E1410] text-white shadow-[0_10px_24px_rgba(42,29,26,.18)]'
+                        : 'text-[#6B5850] hover:bg-[#fff6f0]'
                     }`}
                   >
                     <span className="flex items-center justify-between gap-2">
                       <span className="text-sm font-black">{option.label}</span>
                       {option.save && (
                         <span className={`whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-black ${
-                          active ? 'bg-white/15 text-[#ffe0d2]' : 'bg-[#f5e5de] text-[#a84b35]'
+                          active ? 'bg-white/15 text-[#ffe0d2]' : 'bg-[#f5e5de] text-[#B84D34]'
                         }`}>
                           {option.save}
                         </span>
@@ -332,7 +332,7 @@ export default function PricingPage() {
             </div>
 
             <Link href="/signup" className="block mb-6">
-              <Button variant="outline" className="w-full h-12 font-bold rounded-2xl border-[#eadfd8] hover:bg-[#f9f0ee] text-[#2a1d1a]" size="lg">
+              <Button variant="outline" className="w-full h-12 font-bold rounded-2xl border-[#eadfd8] hover:bg-[#f9f0ee] text-[#1E1410]" size="lg">
                 Start for free
               </Button>
             </Link>
@@ -360,12 +360,12 @@ export default function PricingPage() {
           </div>
 
           {/* Pro Plan */}
-          <div className="rounded-3xl border-2 border-[#a84b35] p-7 bg-[#2a1d1a] text-white flex flex-col relative overflow-hidden">
+          <div className="rounded-3xl border-2 border-[#B84D34] p-7 bg-[#1E1410] text-white flex flex-col relative overflow-hidden">
             {/* Glow */}
-            <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-[#a84b35]/10 pointer-events-none transform translate-x-1/3 -translate-y-1/3" />
+            <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-[#B84D34]/10 pointer-events-none transform translate-x-1/3 -translate-y-1/3" />
 
             {/* Badge */}
-            <div className="absolute top-5 right-5 bg-[#a84b35] text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
+            <div className="absolute top-5 right-5 bg-[#B84D34] text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
               <Zap className="w-2.5 h-2.5 fill-white" /> Most Popular
             </div>
 
@@ -388,7 +388,7 @@ export default function PricingPage() {
 
             <Link href={`/signup?plan=pro&billing=${billingCycle}`} className="block mb-6 relative">
               <Button
-                className="w-full h-12 font-bold rounded-2xl bg-[#a84b35] hover:bg-[#8f3e2b] text-white border-0 shadow-lg shadow-[#a84b35]/30"
+                className="w-full h-12 font-bold rounded-2xl bg-[#B84D34] hover:bg-[#9A3F2A] text-white border-0 shadow-lg shadow-[#B84D34]/30"
                 size="lg"
               >
                 Upgrade to Pro <ArrowRight className="w-4 h-4 ml-1" />
@@ -406,7 +406,7 @@ export default function PricingPage() {
                 'Pro Verified badge',
               ].map(item => (
                 <li key={item} className="flex items-center gap-2.5 text-sm text-white/85">
-                  <CheckCircle2 className="w-4 h-4 text-[#e8b8aa] flex-shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-[#E8A87C] flex-shrink-0" />
                   {item}
                 </li>
               ))}
@@ -445,7 +445,7 @@ export default function PricingPage() {
                     <ul className="space-y-1.5 pl-8">
                       {items.map(item => (
                         <li key={item} className="flex items-start gap-2">
-                          <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-[#e8b8aa]" />
+                          <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-[#E8A87C]" />
                           <span className="text-sm text-white/70 leading-snug">{item}</span>
                         </li>
                       ))}
@@ -459,7 +459,7 @@ export default function PricingPage() {
 
         {/* Feature Comparison Highlight */}
         <div className="mt-12 max-w-4xl mx-auto rounded-3xl bg-[#f9f0ee] border border-[#e8d5cf] p-8">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#a84b35] mb-2">The key difference</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-[#B84D34] mb-2">The key difference</p>
           <h3 className="text-2xl font-black mb-6">Free gives you presence. Pro gives you power.</h3>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
@@ -471,10 +471,10 @@ export default function PricingPage() {
               </ul>
             </div>
             <div>
-              <p className="font-bold text-sm text-[#a84b35] mb-3">Pro</p>
+              <p className="font-bold text-sm text-[#B84D34] mb-3">Pro</p>
               <ul className="space-y-2">
                 {['Priority service booking display', 'AI assistant collects order and appointment details', 'Reviews, analytics, and badge build trust automatically'].map(i => (
-                  <li key={i} className="flex gap-2 text-sm text-gray-800 font-medium"><CheckCircle2 className="w-4 h-4 text-[#a84b35] flex-shrink-0 mt-0.5" />{i}</li>
+                  <li key={i} className="flex gap-2 text-sm text-gray-800 font-medium"><CheckCircle2 className="w-4 h-4 text-[#B84D34] flex-shrink-0 mt-0.5" />{i}</li>
                 ))}
               </ul>
             </div>
@@ -490,13 +490,13 @@ export default function PricingPage() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="mt-20 rounded-3xl bg-[#2a1d1a] text-white p-10 text-center max-w-3xl mx-auto">
+        <div className="mt-20 rounded-3xl bg-[#1E1410] text-white p-10 text-center max-w-3xl mx-auto">
           <h3 className="text-3xl font-black mb-3">Ready to own your space online?</h3>
           <p className="text-white/60 mb-8 leading-relaxed">
             Start free today. No credit card. No commitment. Upgrade when you&apos;re ready.
           </p>
           <Link href="/signup">
-            <Button className="bg-[#a84b35] hover:bg-[#8f3e2b] text-white font-bold h-12 px-8 rounded-2xl shadow-lg">
+            <Button className="bg-[#B84D34] hover:bg-[#9A3F2A] text-white font-bold h-12 px-8 rounded-2xl shadow-lg">
               Claim your link — it&apos;s free <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           </Link>
@@ -506,12 +506,12 @@ export default function PricingPage() {
       {/* Footer */}
       <footer className="border-t border-[#eadfd8] py-8 text-center text-sm text-[#806b63] mt-16">
         <div className="flex justify-center gap-5 mb-3 flex-wrap">
-          <Link href="/" className="hover:text-[#a84b35] transition-colors">Home</Link>
-          <Link href="/directory" className="hover:text-[#a84b35] transition-colors">Directory</Link>
-          <Link href="/terms" className="hover:text-[#a84b35] transition-colors">Terms</Link>
-          <Link href="/privacy" className="hover:text-[#a84b35] transition-colors">Privacy</Link>
+          <Link href="/" className="hover:text-[#B84D34] transition-colors">Home</Link>
+          <Link href="/directory" className="hover:text-[#B84D34] transition-colors">Directory</Link>
+          <Link href="/terms" className="hover:text-[#B84D34] transition-colors">Terms</Link>
+          <Link href="/privacy" className="hover:text-[#B84D34] transition-colors">Privacy</Link>
         </div>
-        © {new Date().getFullYear()} NaijaBiz
+        © {new Date().getFullYear()} Qriblo
       </footer>
     </div>
   )

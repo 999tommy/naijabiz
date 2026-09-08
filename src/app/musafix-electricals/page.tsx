@@ -136,8 +136,8 @@ const reviews = [
 ]
 
 export const metadata: Metadata = {
-    title: 'MusaFix Electricals - Service Brand Demo | NaijaBiz',
-    description: 'A NaijaBiz Pro service brand demo for an artisan electrician accepting bookings through a branded business link.',
+    title: 'MusaFix Electricals - Service Brand Demo | Qriblo',
+    description: 'A Qriblo Pro service brand demo for an artisan electrician accepting bookings through a branded business link.',
 }
 
 export default function MusaFixElectricalsPage() {
@@ -146,7 +146,7 @@ export default function MusaFixElectricalsPage() {
     return (
         <>
             <div className="text-center py-2 text-xs font-bold uppercase tracking-widest bg-[#15382b] text-white">
-                This is an example Pro service website - create yours free on NaijaBiz
+                This is an example Pro service website - create yours free on Qriblo
             </div>
             <ServiceProfileClient
                 business={business as any}

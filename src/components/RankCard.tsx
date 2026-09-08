@@ -29,7 +29,7 @@ export const RankCard = forwardRef<HTMLDivElement, RankCardProps>(({ businessNam
             <div className="z-10 flex flex-col items-center w-full mt-20">
                 <div className="bg-white/20 backdrop-blur-md rounded-full px-8 py-3 mb-8 border border-white/30 flex items-center gap-3">
                     <Trophy className="w-8 h-8 text-yellow-300 fill-yellow-300" />
-                    <span className="text-3xl font-bold uppercase tracking-widest text-white">NaijaBiz Awards</span>
+                    <span className="text-3xl font-bold uppercase tracking-widest text-white">Qriblo Awards</span>
                 </div>
 
                 <h1 className="text-[80px] font-black leading-none text-center drop-shadow-lg mb-4">
@@ -66,14 +66,14 @@ export const RankCard = forwardRef<HTMLDivElement, RankCardProps>(({ businessNam
                 <p className="text-3xl font-medium text-white/90 mb-4">Order from us at:</p>
                 <div className="inline-block bg-black/30 backdrop-blur-sm rounded-xl px-10 py-4 border border-white/20">
                     <p className="text-4xl font-bold text-white tracking-wide font-mono">
-                        naijabiz.org/{slug}
+                        qriblo.com/{slug}
                     </p>
                 </div>
             </div>
 
             {/* Watermark in corner */}
             <div className="absolute bottom-6 right-8 opacity-50 flex items-center gap-2">
-                <span className="text-xl font-bold">NaijaBiz</span>
+                <span className="text-xl font-bold">Qriblo</span>
             </div>
         </div>
     )

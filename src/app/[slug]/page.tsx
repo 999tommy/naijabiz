@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -98,8 +98,8 @@ export async function generateMetadata({ params }: BusinessPageProps): Promise<M
     const business = await getBusiness(slug)
     if (!business?.business_name) return { title: 'Business Not Found' }
     const isPro = business.plan === 'pro'
-    const title = `${business.business_name}${isPro ? ' – Official Store' : ''} | NaijaBiz`
-    const description = business.description || `Shop ${business.business_name} on NaijaBiz. View products, prices, and order via WhatsApp.`
+    const title = `${business.business_name}${isPro ? ' – Official Store' : ''} | Qriblo`
+    const description = business.description || `Shop ${business.business_name} on Qriblo. View products, prices, and order via WhatsApp.`
     const imageUrl = business.logo_url || '/logo.png'
     return {
         title, description,
@@ -131,8 +131,8 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
     const jsonLd = {
         '@context': 'https://schema.org', '@type': 'Store',
         name: business.business_name, description: business.description,
-        image: business.logo_url || 'https://naijabiz.org/logo.png',
-        url: `https://naijabiz.org/${business.business_slug}`,
+        image: business.logo_url || 'https://qriblo.com/logo.png',
+        url: `https://qriblo.com/${business.business_slug}`,
         telephone: business.whatsapp_number ? `+${business.whatsapp_number}` : undefined,
         address: { '@type': 'PostalAddress', addressCountry: 'NG', addressLocality: business.location || 'Nigeria' },
         ...(isPro ? { priceRange: '$$', aggregateRating: reviews.length > 0 ? { '@type': 'AggregateRating', ratingValue: averageRating, reviewCount: reviews.length, bestRating: '5', worstRating: '1' } : undefined } : {})
@@ -160,8 +160,8 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                 <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
                     <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
                         <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-                            <Image src="/logo.png" alt="NaijaBiz" width={24} height={24} className="opacity-80" />
-                            <span className="font-bold text-gray-900 hidden sm:inline">NaijaBiz</span>
+                            <Image src="/logo.png" alt="Qriblo" width={24} height={24} className="opacity-80" />
+                            <span className="font-bold text-gray-900 hidden sm:inline">Qriblo</span>
                         </Link>
                         <div className="flex items-center gap-3">
                             {isOwner && (
@@ -242,7 +242,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
 
                 <footer className="bg-white border-t border-gray-200 py-6 relative z-30">
                     <div className="max-w-4xl mx-auto px-4 text-center">
-                        <p className="text-sm text-gray-500">Powered by{' '}<Link href="/" className="text-orange-600 hover:underline font-medium">NaijaBiz</Link>{' '}– The link that proves you are legit</p>
+                        <p className="text-sm text-gray-500">Powered by{' '}<Link href="/" className="text-orange-600 hover:underline font-medium">Qriblo</Link>{' '}– The link that puts your brand in the spotlight</p>
                     </div>
                 </footer>
             </div>
@@ -261,8 +261,8 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                 <div className="max-w-5xl mx-auto flex justify-between items-center h-14 px-4 rounded-2xl"
                     style={{ backdropFilter: 'blur(20px) saturate(180%)', background: theme.navBg, border: '1px solid rgba(255,255,255,0.85)', boxShadow: '0 2px 24px rgba(0,0,0,0.07)' }}>
                     <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                        <Image src="/logo.png" alt="NaijaBiz" width={24} height={24} className="opacity-80" />
-                        <span className="font-bold text-gray-900 hidden sm:inline">NaijaBiz</span>
+                        <Image src="/logo.png" alt="Qriblo" width={24} height={24} className="opacity-80" />
+                        <span className="font-bold text-gray-900 hidden sm:inline">Qriblo</span>
                     </Link>
                     <div className="flex items-center gap-2">
                         {isOwner && (
@@ -483,7 +483,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
             {/* FOOTER */}
             <footer className="py-8 px-4" style={{ borderTop: `1px solid ${theme.divider}` }}>
                 <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-                    <p className="text-sm" style={{ color: theme.mutedText }}>© {new Date().getFullYear()} {business.business_name}. Powered by{' '}<Link href="/" className="font-semibold hover:underline" style={{ color: theme.accent }}>NaijaBiz</Link>{' '}– The link that proves you are legit</p>
+                    <p className="text-sm" style={{ color: theme.mutedText }}>© {new Date().getFullYear()} {business.business_name}. Powered by{' '}<Link href="/" className="font-semibold hover:underline" style={{ color: theme.accent }}>Qriblo</Link>{' '}– The link that puts your brand in the spotlight</p>
                     <div className="flex items-center gap-4">
                         {business.instagram_handle && <a href={`https://instagram.com/${business.instagram_handle}`} target="_blank" rel="noopener noreferrer" className="hover:opacity-70 transition-opacity" style={{ color: theme.mutedText }}><Instagram className="w-5 h-5" /></a>}
                         {business.whatsapp_number && <a href={`https://wa.me/${business.whatsapp_number}`} target="_blank" rel="noopener noreferrer" className="hover:opacity-70 transition-opacity" style={{ color: theme.mutedText }}><MessageCircle className="w-5 h-5" /></a>}

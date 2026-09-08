@@ -1,5 +1,5 @@
 /**
- * NaijaBiz Website Theme System
+ * Qriblo Website Theme System
  * Category-weighted, deterministic per slug — no DB storage needed.
  */
 

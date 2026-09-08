@@ -81,8 +81,8 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                     {/* Logo */}
                     <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
                         <Link href="/" className="flex items-center gap-2">
-                            <Image src="/logo.png" alt="NaijaBiz" width={32} height={32} />
-                            <span className="font-bold text-gray-900">NaijaBiz</span>
+                            <Image src="/logo.png" alt="Qriblo" width={32} height={32} />
+                            <span className="font-bold text-gray-900">Qriblo</span>
                         </Link>
                         <button
                             onClick={() => setSidebarOpen(false)}

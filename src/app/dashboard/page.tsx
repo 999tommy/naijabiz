@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+﻿import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { DashboardLayout } from '@/components/DashboardLayout'
@@ -18,15 +18,16 @@ import {
     Check,
 } from 'lucide-react'
 import { OnboardingAssistant } from '@/components/OnboardingAssistant'
+import { ReferralCard } from '@/components/ReferralCard'
 import { WhatsAppShareCenter } from '@/components/WhatsAppShareCenter'
 import { ShareRankCard } from '@/components/ShareRankCard'
+import { SubdomainLinkCard } from '@/components/SubdomainLinkCard'
 import { checkAndDowngradeUser } from '@/lib/subscription'
 
 export const dynamic = 'force-dynamic'
 
 async function getDashboardData(userId: string) {
     const supabase = await createClient()
-
     const serviceSupabase = await createServiceClient()
 
     // Fetch basic stats
@@ -42,9 +43,7 @@ async function getDashboardData(userId: string) {
         supabase.from('orders').select('*', { count: 'exact', head: true }).eq('user_id', userId)
     ])
 
-    // Calculate Rank (Simplified for Dashboard performance)
-    // In a real app, this should be a materialized view or cached value.
-    // We will just fetch top 10 scores and see if user matches.
+    // Calculate Rank
     const { data: allStats } = await serviceSupabase
         .from('users')
         .select('id, upvotes, plan')
@@ -60,7 +59,6 @@ async function getDashboardData(userId: string) {
     const now = new Date()
     const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000)
 
-    // Compute Daily Scores
     const rankedUsers = (allStats || []).map((u: any) => {
         const recentReviews = allReviews?.filter((r: any) => r.business_id === u.id && new Date(r.created_at) > last24h).length || 0
         const recentViews = allPageViews?.filter((v: any) => v.business_id === u.id && new Date(v.created_at) > last24h).length || 0
@@ -121,6 +119,15 @@ export default async function DashboardPage() {
     return (
         <DashboardLayout user={user}>
             <div className="max-w-6xl mx-auto">
+
+                {/* Subdomain Link — Pro users get slug.qriblo.com, free get regular link */}
+                {user.business_slug && (
+                    <SubdomainLinkCard
+                        businessSlug={user.business_slug}
+                        isPro={isPro}
+                    />
+                )}
+
                 {/* Welcome section */}
                 <div className="mb-8">
                     <ShareRankCard user={user} rank={rank} />
@@ -134,8 +141,6 @@ export default async function DashboardPage() {
                 </div>
 
                 <OnboardingAssistant user={user} productCount={stats.products} />
-
-
 
                 {/* Stats cards */}
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -207,7 +212,6 @@ export default async function DashboardPage() {
                     </Card>
                 </div>
 
-
                 {/* Quick actions */}
                 <div className="grid md:grid-cols-2 gap-6 pb-8">
                     <div className="min-w-0">
@@ -252,7 +256,6 @@ export default async function DashboardPage() {
                     </div>
 
                     <div className="min-w-0">
-                        {/* Pro upsell or tips */}
                         {!isPro ? (
                             <div className="md:col-span-1 space-y-8">
                                 <Card className="bg-gradient-to-br from-orange-50 to-white border-orange-200">
@@ -265,6 +268,10 @@ export default async function DashboardPage() {
                                         <ul className="space-y-2 text-sm text-gray-600 mb-4">
                                             <li className="flex items-center gap-2">
                                                 <Check className="w-4 h-4 text-green-500" />
+                                                Your own subdomain: {user.business_slug}.qriblo.com
+                                            </li>
+                                            <li className="flex items-center gap-2">
+                                                <Check className="w-4 h-4 text-green-500" />
                                                 Green verified badge for trust
                                             </li>
                                             <li className="flex items-center gap-2">
@@ -273,15 +280,11 @@ export default async function DashboardPage() {
                                             </li>
                                             <li className="flex items-center gap-2">
                                                 <Check className="w-4 h-4 text-green-500" />
-                                                Customer reviews & ratings
+                                                Customer reviews &amp; ratings
                                             </li>
                                             <li className="flex items-center gap-2">
                                                 <Check className="w-4 h-4 text-green-500" />
-                                                Featured in search results
-                                            </li>
-                                            <li className="flex items-center gap-2">
-                                                <Check className="w-4 h-4 text-green-500" />
-                                                View who visited your page
+                                                Virtual Assistant runs 24/7
                                             </li>
                                         </ul>
                                         <Link href="/dashboard/settings#upgrade">

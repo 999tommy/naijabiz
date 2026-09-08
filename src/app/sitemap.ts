@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { createServiceClient } from '@/lib/supabase/server'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://naijabiz.org'
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://qriblo.com'
     const supabase = await createServiceClient()
 
     // 1. Static Routes

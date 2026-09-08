@@ -243,7 +243,7 @@ export default function SignupPage() {
                     <Link href="/" className="inline-block hover:opacity-80 transition-opacity">
                         <Image
                             src="/logo.png"
-                            alt="NaijaBiz"
+                            alt="Qriblo"
                             width={48}
                             height={48}
                             className="mx-auto mb-4"
@@ -251,7 +251,7 @@ export default function SignupPage() {
                     </Link>
                     <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Claim Your Brand</h1>
                     <p className="text-gray-600 mt-2 text-lg">
-                        <span className="font-mono bg-orange-100 text-orange-800 px-2 py-0.5 rounded-md">naijabiz.org/{businessName ? businessName.toLowerCase().replace(/[\s\W-]+/g, '-') : 'your-brand'}</span> is waiting for you.
+                        <span className="font-mono bg-orange-100 text-orange-800 px-2 py-0.5 rounded-md">qriblo.com/{businessName ? businessName.toLowerCase().replace(/[\s\W-]+/g, '-') : 'your-brand'}</span> is waiting for you.
                     </p>
                 </div>
 

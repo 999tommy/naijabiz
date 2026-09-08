@@ -1,4 +1,4 @@
-import Image from 'next/image'
+﻿import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { StorefrontClient } from '@/components/StorefrontClient'
@@ -124,10 +124,10 @@ const MOCK_REVIEWS = [
 ]
 
 export const metadata: Metadata = {
-    title: "Tola's Kitchen – Store | NaijaBiz",
+    title: "Tola's Kitchen – Store | Qriblo",
     description: "Order Nigerian food from Tola's Kitchen. Party Jollof, Egusi Soup, Fried Rice and more. Order via WhatsApp.",
     openGraph: {
-        title: "Tola's Kitchen – Store | NaijaBiz",
+        title: "Tola's Kitchen – Store | Qriblo",
         description: "Order Nigerian food from Tola's Kitchen. Party Jollof, Egusi Soup, Fried Rice and more.",
         type: 'website',
         images: ['/tolas-kitchen.png'],
@@ -261,9 +261,9 @@ export default function ExampleStorePage() {
                     <p className="text-sm" style={{ color: theme.mutedText }}>
                         Powered by{' '}
                         <Link href="/" className="font-medium hover:underline" style={{ color: theme.accent }}>
-                            NaijaBiz
+                            Qriblo
                         </Link>
-                        {' '}– The link that proves you are legit
+                        {' '}– The link that puts your brand in the spotlight
                     </p>
                 </div>
             </footer>

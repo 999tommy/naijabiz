@@ -101,7 +101,7 @@ export default function LoginPage() {
                     <Link href="/" className="inline-block">
                         <Image
                             src="/logo.png"
-                            alt="NaijaBiz"
+                            alt="Qriblo"
                             width={60}
                             height={60}
                             className="mx-auto mb-4"

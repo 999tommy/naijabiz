@@ -74,8 +74,8 @@ export function ServiceProfileClient({
             <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200">
                 <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                        <Image src="/logo.png" alt="NaijaBiz" width={24} height={24} className="opacity-80" />
-                        <span className="font-bold text-gray-900 hidden sm:inline">NaijaBiz</span>
+                        <Image src="/logo.png" alt="Qriblo" width={24} height={24} className="opacity-80" />
+                        <span className="font-bold text-gray-900 hidden sm:inline">Qriblo</span>
                     </Link>
                     <div className="flex items-center gap-3">
                         {isOwner && (
@@ -230,7 +230,7 @@ export function ServiceProfileClient({
                                 <p className="text-xs font-bold uppercase tracking-widest text-green-700 mb-2">Request an appointment</p>
                                 <h2 className="text-2xl font-black text-gray-900">Send a complete booking request</h2>
                                 <p className="text-sm text-gray-500 mt-2 max-w-xl">
-                                    Pick the service, date, and time. NaijaBiz prepares a structured WhatsApp message so the business gets the details clearly.
+                                    Pick the service, date, and time. Qriblo prepares a structured WhatsApp message so the business gets the details clearly.
                                 </p>
                             </div>
                             {isPro && (

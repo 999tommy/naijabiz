@@ -57,7 +57,7 @@ export function ShareRankCard({ user, rank }: ShareRankCardProps) {
                     </div>
                     <h3 className="text-2xl font-bold mb-1">You are #{rank} today!</h3>
                     <p className="text-orange-100 max-w-md text-sm leading-relaxed">
-                        Congratulations! Your business is trending on NaijaBiz. Download your victory badge and share it on Instagram/WhatsApp to get even more customers.
+                        Congratulations! Your business is trending on Qriblo. Download your victory badge and share it on Instagram/WhatsApp to get even more customers.
                     </p>
                 </div>
 

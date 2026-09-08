@@ -108,7 +108,7 @@ export function OrderCart({
             `• ${item.quantity}x ${item.name} (${formatPrice(item.price * item.quantity)})`
         ).join('\n')
 
-        return `Hello! I am ordering from your NaijaBiz page: *${businessName}*
+        return `Hello! I am ordering from your Qriblo page: *${businessName}*
 
 *Customer Details:*
 Name: ${customerName}

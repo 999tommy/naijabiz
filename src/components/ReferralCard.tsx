@@ -54,8 +54,8 @@ export function ReferralCard({ user, referralStats }: ReferralCardProps) {
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: 'Join me on NaijaBiz',
-                    text: 'Create a free business page on NaijaBiz!',
+                    title: 'Join me on Qriblo',
+                    text: 'Create a free business page on Qriblo!',
                     url: referralLink,
                 })
             } catch (err) {
@@ -109,13 +109,13 @@ export function ReferralCard({ user, referralStats }: ReferralCardProps) {
                 <CardHeader className="pb-2">
                     <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
                         <Banknote className="w-5 h-5 text-indigo-600" />
-                        {isEditingBank ? 'Update Bank Details' : 'Join the NaijaBiz Agent Program'}
+                        {isEditingBank ? 'Update Bank Details' : 'Join the Qriblo Agent Program'}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     {!isEditingBank && (
                         <p className="text-sm text-indigo-700 mb-6">
-                            Register as an agent, refer businesses to NaijaBiz, and earn from the clients you bring in.
+                            Register as an agent, refer businesses to Qriblo, and earn from the clients you bring in.
                             Agents earn 15% of the first month when a referred business upgrades, plus recurring retention bonuses as those clients stay active.
                         </p>
                     )}

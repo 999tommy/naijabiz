@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,14 +13,14 @@ export default function TermsPage() {
                     <section className="mb-8">
                         <h2 className="text-xl font-semibold text-gray-900 mb-4">1. Acceptance of Terms</h2>
                         <p className="mb-4">
-                            By accessing or using NaijaBiz ("the Platform"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.
+                            By accessing or using Qriblo ("the Platform"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.
                         </p>
                     </section>
 
                     <section className="mb-8">
                         <h2 className="text-xl font-semibold text-gray-900 mb-4">2. Description of Service</h2>
                         <p className="mb-4">
-                            NaijaBiz provides a platform for Nigerian businesses to create verified profiles, list products, and receive orders via WhatsApp. We act as an intermediary for information display and do not guarantee the quality of goods sold by vendors.
+                            Qriblo provides a platform for Nigerian businesses to create verified profiles, list products, and receive orders via WhatsApp. We act as an intermediary for information display and do not guarantee the quality of goods sold by vendors.
                         </p>
                     </section>
 
@@ -58,14 +58,14 @@ export default function TermsPage() {
                     <section className="mb-8">
                         <h2 className="text-xl font-semibold text-gray-900 mb-4">6. Limitation of Liability</h2>
                         <p className="mb-4">
-                            NaijaBiz is provided "as is". We are not liable for any direct, indirect, incidental, or consequential damages arising from your use of the Platform or any interactions with other users.
+                            Qriblo is provided "as is". We are not liable for any direct, indirect, incidental, or consequential damages arising from your use of the Platform or any interactions with other users.
                         </p>
                     </section>
 
                     <section className="mb-8">
                         <h2 className="text-xl font-semibold text-gray-900 mb-4">7. Contact</h2>
                         <p>
-                            For any questions regarding these terms, please contact us at support@naijabiz.org.
+                            For any questions regarding these terms, please contact us at support@qriblo.com.
                         </p>
                     </section>
                 </div>

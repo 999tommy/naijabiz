@@ -4,8 +4,8 @@ import { createServiceClient } from '@/lib/supabase/server'
 export const maxDuration = 30 // Allow longer timeout for AI
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY
-const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://naijabiz.org'
-const SITE_NAME = 'NaijaBiz'
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://qriblo.com'
+const SITE_NAME = 'Qriblo'
 
 export async function POST(req: Request) {
     try {

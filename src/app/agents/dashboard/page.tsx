@@ -1,4 +1,4 @@
-import Image from 'next/image'
+﻿import Image from 'next/image'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { Banknote, Copy, ExternalLink, Gift, Repeat, Target, TrendingUp, Users } from 'lucide-react'
@@ -65,17 +65,17 @@ export default async function AgentDashboardPage() {
         return daysActive >= 60
     }).length
     const totalEarnings = ((payouts || []) as ReferralPayout[]).reduce((sum, payout) => sum + (Number(payout.amount) || 0), 0)
-    const referralLink = `${process.env.NEXT_PUBLIC_BASE_URL || 'https://naijabiz.org'}/signup?ref=${user.business_slug || ''}`
+    const referralLink = `${process.env.NEXT_PUBLIC_BASE_URL || 'https://qriblo.com'}/signup?ref=${user.business_slug || ''}`
     const payoutRounds = payouts?.length || 0
     const monthThreeProgress = Math.min(activeClients, 10)
 
     return (
-        <div className="min-h-screen bg-[#fffaf5] text-[#2a1d1a]">
+        <div className="min-h-screen bg-[#FDF8F3] text-[#1E1410]">
             <header className="bg-white border-b border-[#eadfd8]">
                 <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2 font-black">
-                        <Image src="/logo.png" alt="NaijaBiz" width={32} height={32} />
-                        NaijaBiz Agents
+                        <Image src="/logo.png" alt="Qriblo" width={32} height={32} />
+                        Qriblo Agents
                     </Link>
                     <div className="flex items-center gap-2">
                         <Link href="/dashboard">
@@ -84,7 +84,7 @@ export default async function AgentDashboardPage() {
                             </Button>
                         </Link>
                         <Link href="/agents">
-                            <Button size="sm" className="bg-[#a84b35] hover:bg-[#8f3e2b] text-white">
+                            <Button size="sm" className="bg-[#B84D34] hover:bg-[#9A3F2A] text-white">
                                 Program Page
                             </Button>
                         </Link>
@@ -94,9 +94,9 @@ export default async function AgentDashboardPage() {
 
             <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
                 <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-[#a84b35] mb-2">Agent Dashboard</p>
+                    <p className="text-xs font-bold uppercase tracking-widest text-[#B84D34] mb-2">Agent Dashboard</p>
                     <h1 className="text-3xl font-black tracking-tight">Welcome, {user.business_name || 'Agent'}</h1>
-                    <p className="text-[#725e57] mt-2">Track referrals, active Pro clients, retention progress, payouts, and your agent link.</p>
+                    <p className="text-[#6B5850] mt-2">Track referrals, active Pro clients, retention progress, payouts, and your agent link.</p>
                 </div>
 
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -106,7 +106,7 @@ export default async function AgentDashboardPage() {
                                 <p className="text-sm text-gray-500">Total Referrals</p>
                                 <p className="text-3xl font-black">{referredBusinesses.length}</p>
                             </div>
-                            <Users className="w-8 h-8 text-[#a84b35]" />
+                            <Users className="w-8 h-8 text-[#B84D34]" />
                         </CardContent>
                     </Card>
                     <Card>
@@ -142,7 +142,7 @@ export default async function AgentDashboardPage() {
                     <Card className="border-[#eadfd8]">
                         <CardHeader>
                             <CardTitle className="text-lg flex items-center gap-2">
-                                <Target className="w-5 h-5 text-[#a84b35]" />
+                                <Target className="w-5 h-5 text-[#B84D34]" />
                                 Month 3 milestone
                             </CardTitle>
                         </CardHeader>
@@ -150,13 +150,13 @@ export default async function AgentDashboardPage() {
                             <div className="flex items-end justify-between gap-4 mb-3">
                                 <div>
                                     <p className="text-3xl font-black">{monthThreeProgress}/10</p>
-                                    <p className="text-sm text-[#725e57]">Active Pro clients toward the first milestone bonus.</p>
+                                    <p className="text-sm text-[#6B5850]">Active Pro clients toward the first milestone bonus.</p>
                                 </div>
-                                <span className="text-sm font-black text-[#a84b35]">₦15,000 target</span>
+                                <span className="text-sm font-black text-[#B84D34]">₦15,000 target</span>
                             </div>
                             <div className="h-3 rounded-full bg-[#f1e5de] overflow-hidden">
                                 <div
-                                    className="h-full rounded-full bg-[#a84b35] transition-all duration-500"
+                                    className="h-full rounded-full bg-[#B84D34] transition-all duration-500"
                                     style={{ width: `${Math.min((monthThreeProgress / 10) * 100, 100)}%` }}
                                 />
                             </div>
@@ -166,7 +166,7 @@ export default async function AgentDashboardPage() {
                     <Card className="border-[#eadfd8]">
                         <CardHeader>
                             <CardTitle className="text-lg flex items-center gap-2">
-                                <Gift className="w-5 h-5 text-[#a84b35]" />
+                                <Gift className="w-5 h-5 text-[#B84D34]" />
                                 Retention rewards
                             </CardTitle>
                         </CardHeader>
@@ -178,9 +178,9 @@ export default async function AgentDashboardPage() {
                                     ['Month 7-12', '₦500/mo'],
                                     ['Month 13+', '₦750/mo'],
                                 ].map(([label, value]) => (
-                                    <div key={label} className="rounded-xl border border-[#f1e5de] bg-[#fffaf5] p-3">
+                                    <div key={label} className="rounded-xl border border-[#f1e5de] bg-[#FDF8F3] p-3">
                                         <p className="text-xs font-bold text-[#806b63]">{label}</p>
-                                        <p className="font-black text-[#2a1d1a]">{value}</p>
+                                        <p className="font-black text-[#1E1410]">{value}</p>
                                     </div>
                                 ))}
                             </div>
