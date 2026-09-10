@@ -124,14 +124,19 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                         </div>
 
                         {user.business_slug && (
-                            <Link
-                                href={`/${user.business_slug}`}
-                                target="_blank"
-                                className="mt-3 flex items-center gap-2 text-sm text-orange-600 hover:underline"
-                            >
-                                View your page
-                                <ExternalLink className="w-3 h-3" />
-                            </Link>
+                            <div className="mt-3 pt-3 border-t border-gray-100">
+                                <p className="text-[11px] font-mono text-gray-400 truncate mb-1">
+                                    {isPro ? `${user.business_slug}.qriblo.com` : `qriblo.com/${user.business_slug}`}
+                                </p>
+                                <Link
+                                    href={`/${user.business_slug}`}
+                                    target="_blank"
+                                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-orange-600 hover:text-orange-700"
+                                >
+                                    <span>View your page</span>
+                                    <ExternalLink className="w-3 h-3" />
+                                </Link>
+                            </div>
                         )}
                     </div>
 
@@ -171,7 +176,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                             <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg p-4 text-white">
                                 <p className="font-semibold mb-1">Upgrade to Pro</p>
                                 <p className="text-xs text-orange-100 mb-3">
-                                    Get verified badge, unlimited {user.business_type === 'services' ? 'services' : 'catalog items'} & more!
+                                    Get your personal brand subdomain ({user.business_slug || 'brand'}.qriblo.com), verified badge & more!
                                 </p>
                                 <Link
                                     href="/dashboard/settings#upgrade"

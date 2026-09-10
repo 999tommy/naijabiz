@@ -249,7 +249,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                             {products.length >= 5 ? 'Catalog limit reached!' : 'Almost at limit!'}
                         </p>
                         <p className="text-sm text-orange-700 mt-1">
-                            Free accounts can add up to 5 items. Upgrade to Pro for unlimited products, services & AI Sales Assistant.
+                            Free accounts can add up to 5 items. Upgrade to Pro for unlimited items, your personal brand subdomain ({user.business_slug ? `${user.business_slug}.qriblo.com` : 'yourbrand.qriblo.com'}), and 24/7 AI Sales Assistant.
                         </p>
                     </div>
                 </div>

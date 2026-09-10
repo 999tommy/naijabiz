@@ -14,7 +14,10 @@ interface WhatsAppShareCenterProps {
 export function WhatsAppShareCenter({ user, rank }: WhatsAppShareCenterProps) {
     const { toast } = useToast()
 
-    const businessUrl = `https://qriblo.com/${user.business_slug}`
+    const isPro = user.plan === 'pro' || (user as any).is_pro
+    const businessUrl = isPro
+        ? `https://${user.business_slug}.qriblo.com`
+        : `https://qriblo.com/${user.business_slug}`
 
     const templates = [
         {

@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { CategorySelect } from '@/components/CategorySelect'
 import { compressImage } from '@/lib/image-compression'
+import { SubdomainLinkCard } from '@/components/SubdomainLinkCard'
 
 type BillingCycle = 'monthly' | 'quarterly' | 'biannual' | 'yearly'
 
@@ -349,6 +350,14 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                 </div>
             )}
 
+            {/* Merchant Subdomain & Link Card */}
+            {user.business_slug && (
+                <SubdomainLinkCard
+                    businessSlug={user.business_slug}
+                    isPro={isPro}
+                />
+            )}
+
             {/* Business Profile */}
             <Card>
                 <CardHeader>
@@ -559,6 +568,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                 <div className="space-y-2">
                                     <h4 className="font-medium">Free Plan includes:</h4>
                                     <ul className="text-sm text-gray-500 space-y-1">
+                                        <li>• Standard link (qriblo.com/{user.business_slug || 'yourbrand'})</li>
                                         <li>• Basic business page</li>
                                         <li>• Up to 5 products or services</li>
                                         <li>• WhatsApp order and booking links</li>
@@ -568,6 +578,10 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                 <div className="space-y-2">
                                     <h4 className="font-medium text-orange-600">Pro Plan includes:</h4>
                                     <ul className="text-sm text-gray-600 space-y-1">
+                                        <li className="flex items-center gap-1 font-bold text-orange-700">
+                                            <CheckCircle2 className="w-4 h-4 text-orange-600" />
+                                            Personal brand subdomain ({user.business_slug || 'yourbrand'}.qriblo.com)
+                                        </li>
                                         <li className="flex items-center gap-1">
                                             <CheckCircle2 className="w-4 h-4 text-green-500" />
                                             Green verified badge

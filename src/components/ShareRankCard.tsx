@@ -85,6 +85,7 @@ export function ShareRankCard({ user, rank }: ShareRankCardProps) {
                     slug={user.business_slug || ''}
                     rank={rank}
                     isVerified={user.plan === 'pro'} // Use Pro status for green badge in graphic
+                    isPro={user.plan === 'pro'}
                 />
             </div>
         </Card>

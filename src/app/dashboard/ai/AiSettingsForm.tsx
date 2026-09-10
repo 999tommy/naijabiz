@@ -155,7 +155,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                     )}
                                 </span>
                                 <span className="font-normal text-sm text-gray-500">
-                                    Displays the interactive chat widget on your business page (`qriblo.com/{user.business_slug || 'yourbrand'}`) to answer questions, close orders, and collect booking details 24/7.
+                                    Displays the interactive chat widget on your business page ({isPro ? `${user.business_slug}.qriblo.com` : `qriblo.com/${user.business_slug || 'yourbrand'}`}) to answer questions, close orders, and collect booking details 24/7.
                                 </span>
                             </Label>
                             {isPro ? (
@@ -343,11 +343,10 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                     <div className="h-[360px] overflow-y-auto p-4 space-y-3 bg-gray-50" ref={sandboxScrollRef}>
                         {sandboxMessages.map((m, i) => (
                             <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${
-                                    m.role === 'user' 
-                                        ? 'bg-orange-600 text-white rounded-br-none' 
+                                <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${m.role === 'user'
+                                        ? 'bg-orange-600 text-white rounded-br-none'
                                         : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none'
-                                }`}>
+                                    }`}>
                                     {m.content}
                                 </div>
                             </div>

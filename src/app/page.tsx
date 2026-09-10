@@ -165,13 +165,13 @@ export default function HomePage() {
 
           {/* Subdomain hint */}
           <p className="relative mt-2 text-xs text-[#806b63]">
-            Free link: <span className="font-mono font-bold text-[#1E1410]">qriblo.com/yourbrand</span> &bull; Pro gets <span className="font-mono font-bold text-[#B84D34]">yourbrand.qriblo.com</span>
+            Free link: <span className="font-mono font-bold text-[#1E1410]">yourbrand.qriblo.com</span> &bull;
           </p>
 
           {/* Trust pills */}
           <div className="relative mt-5 flex justify-center gap-4 flex-wrap text-xs font-semibold text-[#6B5850]">
             <span className="flex gap-1.5 items-center"><CheckCircle2 className="w-4 h-4 text-[#62ba82]" />Free to start</span>
-            <span className="flex gap-1.5 items-center"><Globe2 className="w-4 h-4 text-[#7c5cbf]" />Personal Subdomain on Pro</span>
+            <span className="flex gap-1.5 items-center"><Globe2 className="w-4 h-4 text-[#7c5cbf]" />Personal Subdomain</span>
             <span className="flex gap-1.5 items-center"><ShieldCheck className="w-4 h-4 text-[#62ba82]" />No card required</span>
             <span className="flex gap-1.5 items-center"><Bot className="w-4 h-4 text-[#B84D34]" />Virtual Assistant included on Pro</span>
           </div>

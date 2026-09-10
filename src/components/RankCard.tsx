@@ -11,9 +11,10 @@ interface RankCardProps {
     slug: string
     rank: number
     isVerified: boolean
+    isPro?: boolean
 }
 
-export const RankCard = forwardRef<HTMLDivElement, RankCardProps>(({ businessName, logoUrl, slug, rank, isVerified }, ref) => {
+export const RankCard = forwardRef<HTMLDivElement, RankCardProps>(({ businessName, logoUrl, slug, rank, isVerified, isPro }, ref) => {
     return (
         <div
             ref={ref}
@@ -66,7 +67,7 @@ export const RankCard = forwardRef<HTMLDivElement, RankCardProps>(({ businessNam
                 <p className="text-3xl font-medium text-white/90 mb-4">Order from us at:</p>
                 <div className="inline-block bg-black/30 backdrop-blur-sm rounded-xl px-10 py-4 border border-white/20">
                     <p className="text-4xl font-bold text-white tracking-wide font-mono">
-                        qriblo.com/{slug}
+                        {isPro ? `${slug}.qriblo.com` : `qriblo.com/${slug}`}
                     </p>
                 </div>
             </div>
