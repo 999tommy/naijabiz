@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -16,7 +16,6 @@ import {
     ArrowRight,
     Phone,
     ShoppingBag,
-    Sparkles,
 } from 'lucide-react'
 import type { Review } from '@/lib/types'
 import { getCategoryIcon } from '@/lib/category-icons'
@@ -123,6 +122,10 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
     ])
     recordPageView(business.id)
 
+    const whatsappLink = (business.plan === 'pro' && business.wa_whatsapp_enabled)
+        ? `https://wa.me/15551234567?text=hi%20${business.business_slug}`
+        : business.whatsapp_number ? `https://wa.me/${business.whatsapp_number}` : null;
+
     const isVerified = isPro
     const averageRating = reviews.length > 0
         ? (reviews.reduce((sum: number, review: Review) => sum + review.rating, 0) / reviews.length).toFixed(1)
@@ -148,6 +151,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                 reviews={reviews}
                 averageRating={averageRating}
                 isOwner={isOwner}
+                waWhatsappEnabled={business.plan === 'pro' && business.wa_whatsapp_enabled}
             />
         )
     }
@@ -202,8 +206,8 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                     {business.location && <span className="flex items-center gap-1 text-sm text-gray-500"><MapPin className="w-4 h-4" />{business.location}</span>}
                                 </div>
                                 <div className="flex flex-wrap gap-3 mt-4">
-                                    {business.whatsapp_number && (
-                                        <a href={`https://wa.me/${business.whatsapp_number}`} target="_blank" rel="noopener noreferrer">
+                                    {whatsappLink && (
+                                        <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
                                             <Button size="sm" className="bg-green-600 hover:bg-green-700 font-semibold shadow-sm"><MessageCircle className="w-4 h-4 mr-2" />WhatsApp</Button>
                                         </a>
                                     )}
@@ -238,6 +242,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                     averageRating={averageRating}
                     whatsappNumber={business.whatsapp_number || ''}
                     instagramHandle={business.instagram_handle}
+                    waWhatsappEnabled={business.plan === 'pro' && business.wa_whatsapp_enabled}
                 />
 
                 <footer className="bg-white border-t border-gray-200 py-6 relative z-30">
@@ -315,8 +320,8 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                         <ShoppingBag className="w-5 h-5" />Shop Now<ArrowRight className="w-4 h-4" />
                                     </button>
                                 </a>
-                                {business.whatsapp_number && (
-                                    <a href={`https://wa.me/${business.whatsapp_number}`} target="_blank" rel="noopener noreferrer">
+                                {whatsappLink && (
+                                    <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
                                         <button className="h-13 px-6 py-3.5 rounded-2xl text-base font-bold flex items-center gap-2 transition-all hover:opacity-80" style={{ background: 'rgba(255,255,255,0.15)', color: theme.heroText, border: '1px solid rgba(255,255,255,0.25)' }}>
                                             <MessageCircle className="w-5 h-5" />WhatsApp
                                         </button>
@@ -331,7 +336,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                         className="h-13 px-6 py-3.5 rounded-2xl text-base font-bold flex items-center gap-2 transition-all hover:opacity-80"
                                         style={{ background: 'rgba(255,255,255,0.15)', color: theme.heroText, border: '1px solid rgba(255,255,255,0.25)' }}
                                     >
-                                        <Sparkles className="w-5 h-5" />Chat with AI
+                                        <MessageCircle className="w-5 h-5" />Chat with AI
                                     </button>
                                 )}
                             </div>
@@ -356,10 +361,10 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                             <span className="text-sm font-medium" style={{ color: theme.bodyText }}>{business.location}</span>
                                         </div>
                                     )}
-                                    {business.whatsapp_number && (
+                                    {whatsappLink && (
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#dcfce7' }}><Phone className="w-4 h-4 text-green-600" /></div>
-                                            <a href={`https://wa.me/${business.whatsapp_number}`} target="_blank" rel="noopener noreferrer" className="text-sm font-medium hover:underline" style={{ color: theme.bodyText }}>+{business.whatsapp_number}</a>
+                                            <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="text-sm font-medium hover:underline" style={{ color: theme.bodyText }}>WhatsApp Us</a>
                                         </div>
                                     )}
                                     {business.instagram_handle && (
@@ -408,6 +413,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                     averageRating={averageRating}
                     whatsappNumber={business.whatsapp_number || ''}
                     instagramHandle={business.instagram_handle}
+                    waWhatsappEnabled={business.plan === 'pro' && business.ai_enabled && business.wa_whatsapp_enabled}
                 />
             </section>
 
@@ -467,8 +473,8 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                         <ShoppingBag className="w-5 h-5" />View All Products<ArrowRight className="w-4 h-4" />
                                     </button>
                                 </a>
-                                {business.whatsapp_number && (
-                                    <a href={`https://wa.me/${business.whatsapp_number}`} target="_blank" rel="noopener noreferrer">
+                                {whatsappLink && (
+                                    <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
                                         <button className="h-13 px-6 py-3.5 rounded-2xl font-bold text-base flex items-center gap-2 transition-all hover:opacity-80" style={{ background: 'rgba(255,255,255,0.15)', color: theme.heroText, border: '1px solid rgba(255,255,255,0.25)' }}>
                                             <MessageCircle className="w-5 h-5" />WhatsApp Us
                                         </button>
@@ -486,7 +492,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                     <p className="text-sm" style={{ color: theme.mutedText }}>© {new Date().getFullYear()} {business.business_name}. Powered by{' '}<Link href="/" className="font-semibold hover:underline" style={{ color: theme.accent }}>Qriblo</Link>{' '}– The link that puts your brand in the spotlight</p>
                     <div className="flex items-center gap-4">
                         {business.instagram_handle && <a href={`https://instagram.com/${business.instagram_handle}`} target="_blank" rel="noopener noreferrer" className="hover:opacity-70 transition-opacity" style={{ color: theme.mutedText }}><Instagram className="w-5 h-5" /></a>}
-                        {business.whatsapp_number && <a href={`https://wa.me/${business.whatsapp_number}`} target="_blank" rel="noopener noreferrer" className="hover:opacity-70 transition-opacity" style={{ color: theme.mutedText }}><MessageCircle className="w-5 h-5" /></a>}
+                        {whatsappLink && <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="hover:opacity-70 transition-opacity" style={{ color: theme.mutedText }}><MessageCircle className="w-5 h-5" /></a>}
                     </div>
                 </div>
             </footer>

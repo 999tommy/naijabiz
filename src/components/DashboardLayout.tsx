@@ -16,7 +16,8 @@ import {
     Menu,
     X,
     Crown,
-    Bot
+    Bot,
+    Users
 } from 'lucide-react'
 import type { User } from '@/lib/types'
 import { FeedbackModal } from './FeedbackModal'
@@ -58,6 +59,12 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
             icon: BarChart2,
             proOnly: true
         },
+        {
+            name: 'Customers & CRM',
+            href: '/dashboard/customers',
+            icon: Users,
+            proOnly: true
+        }
     ]
 
     const isPro = user.plan === 'pro'

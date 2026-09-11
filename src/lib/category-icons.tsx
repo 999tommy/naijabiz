@@ -3,7 +3,7 @@ import {
     UtensilsCrossed,
     Shirt,
     Smartphone,
-    Sparkles,
+    Paintbrush,
     Home,
     Car,
     GraduationCap,
@@ -33,7 +33,7 @@ export const getCategoryIcon = (categoryName: string) => {
     if (normalized.includes('food') || normalized.includes('restaurant') || normalized.includes('kitchen') || normalized.includes('catering')) return <UtensilsCrossed className="w-4 h-4" />
     if (normalized.includes('fashion') || normalized.includes('clothing') || normalized.includes('wear') || normalized.includes('boutique') || normalized.includes('tailor')) return <Shirt className="w-4 h-4" />
     if (normalized.includes('phone') || normalized.includes('gadget') || normalized.includes('electronic') || normalized.includes('tech')) return <Smartphone className="w-4 h-4" />
-    if (normalized.includes('beauty') || normalized.includes('hair') || normalized.includes('makeup') || normalized.includes('salon') || normalized.includes('cosmetic')) return <Sparkles className="w-4 h-4" />
+    if (normalized.includes('beauty') || normalized.includes('hair') || normalized.includes('makeup') || normalized.includes('salon') || normalized.includes('cosmetic')) return <Paintbrush className="w-4 h-4" />
     if (normalized.includes('real estate') || normalized.includes('housing') || normalized.includes('property')) return <Home className="w-4 h-4" />
     if (normalized.includes('auto') || normalized.includes('car') || normalized.includes('motor') || normalized.includes('mechanic')) return <Car className="w-4 h-4" />
     if (normalized.includes('education') || normalized.includes('school') || normalized.includes('training')) return <GraduationCap className="w-4 h-4" />

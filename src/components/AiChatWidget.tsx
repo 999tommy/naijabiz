@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Send, ChevronDown, ShoppingBag, Calendar, MessageSquare, Sparkles } from 'lucide-react'
+import { SendHorizontal, ChevronDown, ShoppingBag, Calendar, MessageSquare, MessageCircle, LoaderCircle } from 'lucide-react'
 import { User as BusinessType } from '@/lib/types'
 
 interface AiChatWidgetProps {
@@ -69,7 +69,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                     className="h-14 px-5 rounded-2xl bg-[#fbf7f0] border border-[#ded4c8] text-[#3d332b] shadow-[0_18px_45px_rgba(61,51,43,.16)] flex items-center gap-3 transition-all hover:-translate-y-0.5 active:translate-y-0 group"
                 >
                     <div className="relative">
-                        <Sparkles className="w-5 h-5 text-[#8a5a44] transition-colors" />
+                        <MessageCircle className="w-5 h-5 text-[#8a5a44] transition-colors" />
                         <span className="absolute -top-1 -right-1 flex h-3 w-3">
                             <span className="relative inline-flex rounded-full h-3 w-3 bg-[#c7b7a6]"></span>
                         </span>
@@ -83,7 +83,6 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
         )
     }
 
-    if (!business.ai_enabled) return null
 
     const handleSend = async (e?: React.FormEvent) => {
         e?.preventDefault()
@@ -226,7 +225,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                     <div className="p-4 bg-[#f3eee7] text-[#2f2721] flex justify-between items-center border-b border-[#ded4c8]">
                         <div className="flex items-center gap-3">
                             <div className="bg-[#e7ddd2] p-2 rounded-xl border border-[#d8cfc4]">
-                                <Sparkles className="w-4 h-4 text-[#8a5a44]" />
+                                <MessageCircle className="w-4 h-4 text-[#8a5a44]" />
                             </div>
                             <div className="min-w-0">
                                 <h3 className="font-semibold text-sm truncate">{business.business_name} assistant</h3>
@@ -316,7 +315,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                         {loading && (
                             <div className="flex justify-start">
                                 <div className="bg-[#fffdf8] rounded-2xl px-4 py-3 border border-[#e5dcd1] shadow-sm flex gap-1 items-center">
-                                    <Sparkles className="w-4 h-4 text-[#8a5a44] mr-1" />
+                                    <LoaderCircle className="w-4 h-4 text-[#8a5a44] mr-1 animate-spin" />
                                     <span className="w-1.5 h-1.5 bg-[#9a8b7d] rounded-full animate-bounce [animation-delay:-0.3s]"></span>
                                     <span className="w-1.5 h-1.5 bg-[#9a8b7d] rounded-full animate-bounce [animation-delay:-0.15s]"></span>
                                     <span className="w-1.5 h-1.5 bg-[#9a8b7d] rounded-full animate-bounce"></span>
@@ -339,7 +338,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                                 disabled={loading}
                             />
                             <Button type="submit" size="icon" disabled={!input.trim() || loading} className="rounded-2xl bg-[#2f2721] hover:bg-[#463a31] w-11 h-11 shadow-md shrink-0">
-                                <Send className="w-4 h-4 text-[#fffaf4]" />
+                                <SendHorizontal className="w-4 h-4 text-[#fffaf4] ml-0.5" />
                             </Button>
                         </form>
                     </div>
@@ -353,7 +352,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                     className="h-14 px-5 rounded-2xl bg-[#2f2721] hover:bg-[#463a31] text-[#fffaf4] shadow-[0_18px_45px_rgba(47,39,33,.24)] flex items-center gap-3 transition-all hover:-translate-y-0.5 active:translate-y-0 border border-[#5b4c41]"
                 >
                     <div className="relative">
-                        <Sparkles className="w-5 h-5" />
+                        <MessageCircle className="w-5 h-5" />
                         <span className="absolute -top-1 -right-1 flex h-3 w-3">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#8bc99d] opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-3 w-3 bg-[#4f9d69]"></span>

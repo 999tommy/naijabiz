@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { updateAiSettings } from './actions'
-import { Bot, Save, Loader2, Lock, Sparkles, Briefcase, MessageSquareText, Play, Send, Zap, CheckCircle2, ArrowRight } from 'lucide-react'
+import { Bot, Save, Loader2, Lock, Briefcase, MessageSquareText, Play, Send, Zap, CheckCircle2, ArrowRight, MessageCircle, Copy } from 'lucide-react'
 import { User } from '@/lib/types'
 import Link from 'next/link'
 
@@ -99,7 +99,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                 <div className="p-6 rounded-2xl bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="space-y-2 text-center md:text-left">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold uppercase tracking-wider backdrop-blur-sm">
-                            <Sparkles className="w-3.5 h-3.5" /> AI Sales Engine Preview
+                            <Play className="w-3.5 h-3.5" /> AI Sales Engine Preview
                         </div>
                         <h2 className="text-2xl font-bold font-display">Test Your 24/7 AI Sales Assistant Below</h2>
                         <p className="text-orange-100 text-sm max-w-xl">
@@ -145,32 +145,8 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                     </CardHeader>
 
                     <CardContent className="space-y-6 pt-6">
-                        {/* Enable Toggle */}
-                        <div className="flex items-center justify-between space-x-2 border border-orange-100 p-4 rounded-xl bg-orange-50/40">
-                            <Label htmlFor="ai_enabled" className="flex flex-col space-y-1 cursor-pointer">
-                                <span className="font-semibold text-base text-gray-900 flex items-center gap-2">
-                                    Enable Assistant on Public Link
-                                    {isPro && user.ai_enabled && (
-                                        <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse" />
-                                    )}
-                                </span>
-                                <span className="font-normal text-sm text-gray-500">
-                                    Displays the interactive chat widget on your business page ({isPro ? `${user.business_slug}.qriblo.com` : `qriblo.com/${user.business_slug || 'yourbrand'}`}) to answer questions, close orders, and collect booking details 24/7.
-                                </span>
-                            </Label>
-                            {isPro ? (
-                                <Switch
-                                    id="ai_enabled"
-                                    name="ai_enabled"
-                                    defaultChecked={user.ai_enabled}
-                                />
-                            ) : (
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xs font-semibold text-orange-600 bg-orange-100 px-2.5 py-1 rounded-md">Pro Feature</span>
-                                    <Switch id="ai_enabled" disabled defaultChecked={false} />
-                                </div>
-                            )}
-                        </div>
+                        {/* Hidden input to ensure ai_enabled is always treated as true when submitting form */}
+                        <input type="hidden" name="ai_enabled" value="on" />
 
                         {/* Business Type */}
                         <div className="space-y-2">
@@ -224,7 +200,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                         {/* AI Persona Selection */}
                         <div className="space-y-2">
                             <Label className="flex items-center gap-2 font-bold text-gray-800">
-                                <Sparkles className="w-4 h-4 text-orange-600" />
+                                <MessageSquareText className="w-4 h-4 text-orange-600" />
                                 AI Assistant Speaking Style (Tone)
                             </Label>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -269,6 +245,48 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                         <p className="text-xs text-gray-500">Strict corporate English, structured and direct.</p>
                                     </div>
                                 </label>
+                                
+                                <label className="flex items-start gap-3 p-3 border rounded-xl cursor-pointer hover:border-orange-500 transition-colors bg-white">
+                                    <input
+                                        type="radio"
+                                        name="ai_persona"
+                                        value="yoruba"
+                                        defaultChecked={user.ai_persona === 'yoruba'}
+                                        className="mt-1 text-orange-600 focus:ring-orange-500"
+                                    />
+                                    <div>
+                                        <p className="font-semibold text-sm text-gray-900">Yoruba 🟠</p>
+                                        <p className="text-xs text-gray-500">Fluent Yoruba with local expressions.</p>
+                                    </div>
+                                </label>
+
+                                <label className="flex items-start gap-3 p-3 border rounded-xl cursor-pointer hover:border-orange-500 transition-colors bg-white">
+                                    <input
+                                        type="radio"
+                                        name="ai_persona"
+                                        value="igbo"
+                                        defaultChecked={user.ai_persona === 'igbo'}
+                                        className="mt-1 text-orange-600 focus:ring-orange-500"
+                                    />
+                                    <div>
+                                        <p className="font-semibold text-sm text-gray-900">Igbo 🔴</p>
+                                        <p className="text-xs text-gray-500">Fluent Igbo suitable for business.</p>
+                                    </div>
+                                </label>
+
+                                <label className="flex items-start gap-3 p-3 border rounded-xl cursor-pointer hover:border-orange-500 transition-colors bg-white">
+                                    <input
+                                        type="radio"
+                                        name="ai_persona"
+                                        value="hausa"
+                                        defaultChecked={user.ai_persona === 'hausa'}
+                                        className="mt-1 text-orange-600 focus:ring-orange-500"
+                                    />
+                                    <div>
+                                        <p className="font-semibold text-sm text-gray-900">Hausa 🟢</p>
+                                        <p className="text-xs text-gray-500">Fluent Hausa for commerce.</p>
+                                    </div>
+                                </label>
                             </div>
                         </div>
 
@@ -299,6 +317,92 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                             <p className="text-xs text-gray-500">
                                 Add your product catalog or service list rules: delivery costs, physical location, booking policies, appointment hours, or discounts. The AI automatically knows your product/service prices.
                             </p>
+                        </div>
+
+                        {/* Payment Details */}
+                        <div className="space-y-4 pt-4 border-t border-gray-100">
+                            <div>
+                                <Label className="flex items-center gap-2 font-bold text-gray-800 mb-2">
+                                    <Briefcase className="w-4 h-4 text-orange-600" />
+                                    Payment Details
+                                </Label>
+                                <p className="text-xs text-gray-500 mb-3">Provide your bank account details. The AI will use this to collect payments when finalizing an order.</p>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="bank_name">Bank Name</Label>
+                                    <Input
+                                        id="bank_name"
+                                        name="bank_name"
+                                        defaultValue={user.bank_name || ""}
+                                        placeholder="e.g. GTBank"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="account_number">Account Number</Label>
+                                    <Input
+                                        id="account_number"
+                                        name="account_number"
+                                        defaultValue={user.account_number || ""}
+                                        placeholder="e.g. 0123456789"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* WhatsApp AI Routing (Central Model) */}
+                        <div className="space-y-4 pt-6 border-t border-gray-100">
+                            <div className="flex items-center justify-between border border-green-100 p-4 rounded-xl bg-green-50/40">
+                                <Label htmlFor="wa_whatsapp_enabled" className="flex flex-col space-y-1 cursor-pointer">
+                                    <span className="font-semibold text-base text-gray-900 flex items-center gap-2">
+                                        <MessageCircle className="w-5 h-5 text-green-600" />
+                                        Enable AI on WhatsApp
+                                        {isPro && user.wa_whatsapp_enabled && (
+                                            <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
+                                        )}
+                                    </span>
+                                    <span className="font-normal text-sm text-gray-500 max-w-xl">
+                                        Allow customers to order from you directly via Qriblo's central WhatsApp AI. We provide you with a custom WhatsApp link to share on your Instagram or link-in-bio.
+                                    </span>
+                                </Label>
+                                {isPro ? (
+                                    <Switch
+                                        id="wa_whatsapp_enabled"
+                                        name="wa_whatsapp_enabled"
+                                        defaultChecked={user.wa_whatsapp_enabled}
+                                    />
+                                ) : (
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs font-semibold text-orange-600 bg-orange-100 px-2.5 py-1 rounded-md shrink-0">Pro Feature</span>
+                                        <Switch id="wa_whatsapp_enabled" disabled defaultChecked={false} />
+                                    </div>
+                                )}
+                            </div>
+
+                            {user.wa_whatsapp_enabled && isPro && (
+                                <div className="bg-white border border-green-200 p-4 rounded-xl space-y-3 shadow-sm">
+                                    <h4 className="font-bold text-green-900 text-sm">Your Custom WhatsApp Link</h4>
+                                    <p className="text-xs text-gray-600">
+                                        Share this link with your customers. When they click it, it opens WhatsApp with a pre-filled message that routes them directly to your AI assistant.
+                                    </p>
+                                    <div className="flex gap-2 items-center">
+                                        <div className="flex-1 bg-gray-50 p-3 text-sm font-mono border border-gray-200 rounded-lg text-gray-800 truncate">
+                                            https://wa.me/15551234567?text=hi%20{user.business_slug}
+                                        </div>
+                                        <Button 
+                                            type="button" 
+                                            variant="outline"
+                                            className="shrink-0 text-green-700 border-green-200 hover:bg-green-50"
+                                            onClick={() => {
+                                                navigator.clipboard.writeText(`https://wa.me/15551234567?text=hi%20${user.business_slug}`)
+                                                toast('Link copied!')
+                                            }}
+                                        >
+                                            <Copy className="w-4 h-4 mr-2" /> Copy Link
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <Button type="submit" disabled={loading} className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 font-bold px-8 h-11 shadow-md">

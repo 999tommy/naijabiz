@@ -27,6 +27,7 @@ interface ServiceProfileClientProps {
     reviews: Review[]
     averageRating: string | null
     isOwner: boolean
+    waWhatsappEnabled?: boolean
 }
 
 export function ServiceProfileClient({
@@ -35,7 +36,8 @@ export function ServiceProfileClient({
     isPro,
     reviews,
     averageRating,
-    isOwner
+    isOwner,
+    waWhatsappEnabled
 }: ServiceProfileClientProps) {
     const formatPrice = (amount: number) => {
         return new Intl.NumberFormat('en-NG', {
@@ -45,7 +47,8 @@ export function ServiceProfileClient({
         }).format(amount)
     }
 
-    const whatsappNumber = business.whatsapp_number
+    const isVaEnabled = waWhatsappEnabled || false
+    const whatsappNumber = isVaEnabled ? '15551234567' : business.whatsapp_number
     const slug = business.business_slug
     const [selectedService, setSelectedService] = useState(products[0]?.name || '')
     const [preferredDate, setPreferredDate] = useState('')
@@ -53,8 +56,9 @@ export function ServiceProfileClient({
     const [bookingNotes, setBookingNotes] = useState('')
 
     const bookingMessage = useMemo(() => {
+        const prefix = isVaEnabled ? `hi ${slug}\n` : ''
         const lines = [
-            `Hi ${business.business_name}, I want to book a service.`,
+            `${prefix}Hi, I want to book a service with ${business.business_name}.`,
             selectedService ? `Service: ${selectedService}` : '',
             preferredDate ? `Preferred date: ${preferredDate}` : '',
             preferredTime ? `Preferred time: ${preferredTime}` : '',
@@ -62,7 +66,7 @@ export function ServiceProfileClient({
         ].filter(Boolean)
 
         return lines.join('\n')
-    }, [bookingNotes, business.business_name, preferredDate, preferredTime, selectedService])
+    }, [bookingNotes, business.business_name, preferredDate, preferredTime, selectedService, isVaEnabled, slug])
 
     const bookingUrl = whatsappNumber
         ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(bookingMessage)}`

@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Mail, Key, Loader2, Sparkles, CheckCircle } from 'lucide-react'
+import { Mail, Key, Loader2, CheckCircle } from 'lucide-react'
 
 type AuthMethod = 'password' | 'magic-link'
 
@@ -133,7 +133,7 @@ export default function LoginPage() {
                                 className={`h-12 ${authMethod === 'magic-link' ? 'bg-gray-900 hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900'}`}
                                 onClick={() => setAuthMethod('magic-link')}
                             >
-                                <Sparkles className="w-4 h-4 mr-2" />
+                                <Mail className="w-4 h-4 mr-2" />
                                 Magic Link
                             </Button>
                         </div>

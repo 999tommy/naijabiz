@@ -7,7 +7,7 @@ import {
     CheckCircle2,
     Circle,
     ArrowRight,
-    Sparkles,
+    Target,
     ShoppingBag,
     UserCircle,
     Share2
@@ -81,7 +81,7 @@ export function OnboardingAssistant({ user, productCount }: OnboardingAssistantP
         <div className="mb-8 bg-white rounded-xl border border-orange-100 shadow-sm overflow-hidden">
             <div className="bg-gradient-to-r from-orange-50 to-white p-6 border-b border-orange-100">
                 <div className="flex items-center gap-2 mb-2">
-                    <Sparkles className="w-5 h-5 text-orange-500 fill-orange-500" />
+                    <Target className="w-5 h-5 text-orange-500" />
                     <h2 className="font-bold text-gray-900 text-lg">Let&apos;s get you your first customer</h2>
                 </div>
                 <p className="text-gray-600 text-sm">

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
-import { ArrowRight, Bot, CheckCircle2, Globe2, Menu, ShoppingBag, Star, ShieldCheck, X, Users, BarChart2, Wrench, BadgePercent } from 'lucide-react'
+import { ArrowRight, Bot, CheckCircle2, Globe2, ShoppingBag, Star, ShieldCheck, X, Users, BarChart2, Wrench, BadgePercent } from 'lucide-react'
 
 const navLinks = [
   { href: '/directory', label: 'Discover brands' },
@@ -16,6 +16,8 @@ const demoLinks: Array<[string, string, string, string, LucideIcon, string]> = [
   ['Product demo', "Tola's Kitchen", 'Food menu, reviews, WhatsApp ordering', '/tolas-kitchen', ShoppingBag, '#E8A87C'],
   ['Service demo', 'MusaFix Electricals', 'Repair services, appointments, quote requests', '/musafix-electricals', Wrench, '#9bd4bd'],
 ]
+
+import { MasterChatWidget } from '@/components/MasterChatWidget'
 
 export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -76,7 +78,7 @@ export default function HomePage() {
       <nav className="sticky top-0 z-50 px-3 pt-3">
         <div className="max-w-5xl mx-auto h-14 px-4 rounded-2xl flex items-center justify-between border border-white/80 bg-white/80 backdrop-blur shadow-[0_4px_24px_rgba(70,35,25,.08)]">
           <Link href="/" className="flex items-center gap-2 font-black text-[#1E1410]">
-            <Image src="/small-logo.png" alt="Qriblo" width={26} height={26} />
+            <Image src="/smal-logo.png" alt="Qriblo" width={26} height={26} />
             Qriblo
           </Link>
           <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-[#6B5850]">
@@ -95,7 +97,14 @@ export default function HomePage() {
               className="md:hidden w-10 h-10 rounded-xl border border-[#eadfd8] bg-white text-[#1E1410] inline-flex items-center justify-center"
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <span aria-hidden="true" className="flex h-4 w-5 flex-col justify-between py-0.5">
+                  <span className="h-0.5 w-full rounded-full bg-current" />
+                  <span className="h-0.5 w-full rounded-full bg-current" />
+                </span>
+              )}
             </button>
           </div>
         </div>
@@ -533,6 +542,7 @@ export default function HomePage() {
         </div>
         © {new Date().getFullYear()} Qriblo
       </footer>
+      <MasterChatWidget />
     </div>
   )
 }

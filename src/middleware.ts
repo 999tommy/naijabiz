@@ -36,6 +36,17 @@ function getSubdomain(hostname: string): string | null {
 
 export async function middleware(request: NextRequest) {
     const hostname = request.headers.get('host') || ''
+
+    // ── REDIRECT DOMAIN ──────────────────────────────────────────────────────
+    if (hostname.includes('naijabiz.org')) {
+        const url = request.nextUrl.clone()
+        url.hostname = 'qriblo.com'
+        // If they hit naijabiz.org:3000, ensure it redirects to https://qriblo.com standard port in prod
+        url.port = ''
+        url.protocol = 'https:'
+        return NextResponse.redirect(url, 301)
+    }
+
     const subdomain = getSubdomain(hostname)
 
     // ── SUBDOMAIN ROUTING ────────────────────────────────────────────────────

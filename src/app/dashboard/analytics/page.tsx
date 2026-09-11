@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { DashboardLayout } from '@/components/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Eye, TrendingUp, Calendar, Users } from 'lucide-react'
+import { Eye, TrendingUp, Calendar, Users, ShoppingBag, DollarSign, Package } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,7 +17,8 @@ async function getAnalytics(userId: string) {
         { count: totalViews },
         { count: weekViews },
         { count: monthViews },
-        { data: recentViews }
+        { data: recentViews },
+        { data: orders }
     ] = await Promise.all([
         supabase.from('page_views').select('*', { count: 'exact', head: true }).eq('business_id', userId),
         supabase.from('page_views').select('*', { count: 'exact', head: true })
@@ -29,14 +30,45 @@ async function getAnalytics(userId: string) {
         supabase.from('page_views').select('*')
             .eq('business_id', userId)
             .order('created_at', { ascending: false })
-            .limit(20)
+            .limit(20),
+        supabase.from('orders').select('*').eq('user_id', userId)
     ])
+
+    const totalOrders = orders?.length || 0
+    const totalRevenue = orders?.reduce((acc: number, o: any) => acc + Number(o.total_amount || 0), 0) || 0
+    
+    // Top 5 Products
+    const productsMap = new Map<string, {name: string, sales: number, revenue: number}>()
+    if (orders) {
+        orders.forEach((order: any) => {
+            const items = order.items || []
+            items.forEach((item: any) => {
+                const name = item.name || 'Unknown'
+                const qty = item.quantity || 1
+                const rev = (item.price || 0) * qty
+                
+                if (!productsMap.has(name)) {
+                    productsMap.set(name, { name, sales: 0, revenue: 0 })
+                }
+                
+                const p = productsMap.get(name)!
+                p.sales += qty
+                p.revenue += rev
+            })
+        })
+    }
+    const topProducts = Array.from(productsMap.values())
+        .sort((a, b) => b.revenue - a.revenue)
+        .slice(0, 5)
 
     return {
         total: totalViews || 0,
         week: weekViews || 0,
         month: monthViews || 0,
-        recent: recentViews || []
+        recent: recentViews || [],
+        totalOrders,
+        totalRevenue,
+        topProducts
     }
 }
 
@@ -118,58 +150,144 @@ export default async function AnalyticsPage() {
                     </Card>
                 </div>
 
-                {/* Recent views */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Users className="w-5 h-5" />
-                            Recent Visitors
-                        </CardTitle>
-                        <CardDescription>
-                            People who visited your business page
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        {analytics.recent.length === 0 ? (
-                            <div className="text-center py-8 text-gray-500">
-                                <Eye className="w-12 h-12 mx-auto text-gray-300 mb-4" />
-                                <p>No page views yet</p>
-                                <p className="text-sm mt-1">Share your business link to get visitors</p>
+                <div className="grid sm:grid-cols-3 gap-4 mb-8">
+                    <Card>
+                        <CardContent className="pt-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-gray-500">Total Orders</p>
+                                    <p className="text-3xl font-bold text-gray-900">{analytics.totalOrders}</p>
+                                </div>
+                                <div className="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
+                                    <ShoppingBag className="w-6 h-6 text-purple-600" />
+                                </div>
                             </div>
-                        ) : (
-                            <div className="space-y-3">
-                                {analytics.recent.map((view) => (
-                                    <div
-                                        key={view.id}
-                                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                                    >
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                                                <Eye className="w-5 h-5 text-gray-500" />
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardContent className="pt-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-gray-500">Total Revenue</p>
+                                    <p className="text-3xl font-bold text-gray-900">₦{analytics.totalRevenue.toLocaleString()}</p>
+                                </div>
+                                <div className="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center">
+                                    <DollarSign className="w-6 h-6 text-emerald-600" />
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardContent className="pt-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-gray-500">Conversion Rate</p>
+                                    <p className="text-3xl font-bold text-gray-900">
+                                        {analytics.total > 0 ? ((analytics.totalOrders / analytics.total) * 100).toFixed(1) : 0}%
+                                    </p>
+                                </div>
+                                <div className="w-12 h-12 rounded-lg bg-pink-100 flex items-center justify-center">
+                                    <TrendingUp className="w-6 h-6 text-pink-600" />
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                    {/* Top Products */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Package className="w-5 h-5" />
+                                Top Products
+                            </CardTitle>
+                            <CardDescription>
+                                Your best selling items
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {analytics.topProducts.length === 0 ? (
+                                <div className="text-center py-8 text-gray-500">
+                                    <ShoppingBag className="w-12 h-12 mx-auto text-gray-300 mb-4" />
+                                    <p>No sales yet</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {analytics.topProducts.map((product, i) => (
+                                        <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold text-sm">
+                                                    #{i + 1}
+                                                </div>
+                                                <div>
+                                                    <p className="font-medium text-gray-900">{product.name}</p>
+                                                    <p className="text-xs text-gray-500">{product.sales} sold</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p className="text-sm font-medium text-gray-700">
-                                                    Visitor
+                                            <p className="font-bold text-gray-900">
+                                                ₦{product.revenue.toLocaleString()}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    {/* Recent views */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Users className="w-5 h-5" />
+                                Recent Visitors
+                            </CardTitle>
+                            <CardDescription>
+                                People who visited your business page
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {analytics.recent.length === 0 ? (
+                                <div className="text-center py-8 text-gray-500">
+                                    <Eye className="w-12 h-12 mx-auto text-gray-300 mb-4" />
+                                    <p>No page views yet</p>
+                                    <p className="text-sm mt-1">Share your business link to get visitors</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    {analytics.recent.map((view) => (
+                                        <div
+                                            key={view.id}
+                                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                                                    <Eye className="w-5 h-5 text-gray-500" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-medium text-gray-700">
+                                                        Visitor
+                                                    </p>
+                                                    <p className="text-xs text-gray-500">
+                                                        {view.referrer ? `From: ${new URL(view.referrer).hostname}` : 'Direct visit'}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-sm text-gray-500">
+                                                    {new Date(view.created_at).toLocaleDateString()}
                                                 </p>
-                                                <p className="text-xs text-gray-500">
-                                                    {view.referrer ? `From: ${new URL(view.referrer).hostname}` : 'Direct visit'}
+                                                <p className="text-xs text-gray-400">
+                                                    {new Date(view.created_at).toLocaleTimeString()}
                                                 </p>
                                             </div>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-sm text-gray-500">
-                                                {new Date(view.created_at).toLocaleDateString()}
-                                            </p>
-                                            <p className="text-xs text-gray-400">
-                                                {new Date(view.created_at).toLocaleTimeString()}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
+                                    ))}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
         </DashboardLayout>
     )

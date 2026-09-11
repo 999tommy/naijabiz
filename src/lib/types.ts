@@ -40,8 +40,13 @@ export interface User {
     ai_welcome_msg: string
     ai_usage_limit: number
     ai_usage_count: number
-    ai_persona?: 'friendly' | 'formal' | 'pidgin'
+    ai_persona?: 'friendly' | 'formal' | 'pidgin' | 'yoruba' | 'igbo' | 'hausa'
     business_type?: 'products' | 'services' | 'both'
+    // WhatsApp VA (Central Number Model)
+    wa_whatsapp_enabled?: boolean
+    // Bank details
+    bank_name?: string | null
+    account_number?: string | null
 }
 
 export interface Product {
@@ -67,6 +72,8 @@ export interface Order {
     total_amount: number
     order_method: 'whatsapp' | 'instagram'
     status: 'pending' | 'confirmed' | 'completed' | 'cancelled'
+    preferred_date?: string | null
+    preferred_time?: string | null
     created_at: string
 }
 
@@ -100,4 +107,13 @@ export interface PageView {
 
 export interface CartItem extends Product {
     quantity: number
+}
+
+export interface ChatSession {
+    id: string
+    business_id: string
+    customer_phone: string
+    messages: { role: 'user' | 'assistant', content: string }[]
+    created_at: string
+    updated_at: string
 }

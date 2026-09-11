@@ -23,6 +23,8 @@ interface OrderCartProps {
     businessName: string
     whatsappNumber: string
     instagramHandle?: string | null
+    waWhatsappEnabled?: boolean
+    businessSlug?: string
     extraBottomSpacing?: boolean
     // Shared cart props
     cart?: CartItem[]
@@ -39,6 +41,8 @@ export function OrderCart({
     businessName,
     whatsappNumber,
     instagramHandle,
+    waWhatsappEnabled,
+    businessSlug,
     extraBottomSpacing = false,
     ...props
 }: OrderCartProps) {
@@ -108,7 +112,8 @@ export function OrderCart({
             `• ${item.quantity}x ${item.name} (${formatPrice(item.price * item.quantity)})`
         ).join('\n')
 
-        return `Hello! I am ordering from your Qriblo page: *${businessName}*
+        const prefix = waWhatsappEnabled ? `hi ${businessSlug}\n` : ''
+        return `${prefix}Hello! I am ordering from your Qriblo page: *${businessName}*
 
 *Customer Details:*
 Name: ${customerName}
@@ -128,7 +133,8 @@ Please confirm my order. Thank you!`
         const message = generateOrderMessage()
 
         if (orderMethod === 'whatsapp') {
-            const whatsappUrl = generateWhatsAppLink(whatsappNumber, message)
+            const finalWaNumber = waWhatsappEnabled ? '15551234567' : whatsappNumber
+            const whatsappUrl = generateWhatsAppLink(finalWaNumber, message)
             window.open(whatsappUrl, '_blank')
         } else if (instagramHandle) {
             // For Instagram, copy message and open DM
@@ -376,7 +382,9 @@ Please confirm my order. Thank you!`
                                         disabled={!customerName.trim()}
                                     >
                                         <Send className="w-5 h-5 mr-2" />
-                                        Send Order via {orderMethod === 'whatsapp' ? 'WhatsApp' : 'Instagram'}
+                                        {orderMethod === 'whatsapp' 
+                                            ? (waWhatsappEnabled ? 'Send Order to Assistant' : 'Send Order via WhatsApp') 
+                                            : 'Send Order via Instagram'}
                                     </Button>
                                     <p className="text-xs text-gray-500 text-center mt-2">
                                         Your order will be sent directly to the seller

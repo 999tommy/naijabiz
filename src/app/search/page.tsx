@@ -12,19 +12,37 @@ export const dynamic = 'force-dynamic'
 export default async function SearchPage({
     searchParams,
 }: {
-    searchParams: Promise<{ q: string }>
+    searchParams: Promise<{ q: string, c: string }>
 }) {
     const params = await searchParams
     const query = params.q || ''
+    const categoryQuery = params.c || ''
     const supabase = await createClient()
 
     let businesses: any[] = []
+    
+    // Fetch categories
+    const { data: categoriesData } = await supabase.from('categories').select('*').order('name')
+    const categories = categoriesData || []
+
+    let queryBuilder = supabase
+        .from('users')
+        .select('id, business_name, business_slug, description, logo_url, upvotes, is_verified, plan, location, category_id, category:categories(name, slug)')
 
     if (query) {
-        const { data } = await supabase
-            .from('users')
-            .select('id, business_name, business_slug, description, logo_url, upvotes, is_verified, plan, location')
-            .or(`business_name.ilike.%${query}%,description.ilike.%${query}%,location.ilike.%${query}%`)
+        queryBuilder = queryBuilder.or(`business_name.ilike.%${query}%,description.ilike.%${query}%,location.ilike.%${query}%`)
+    }
+    
+    if (categoryQuery) {
+        // Find category by slug
+        const targetCat = categories.find((c: any) => c.slug === categoryQuery)
+        if (targetCat) {
+            queryBuilder = queryBuilder.eq('category_id', targetCat.id)
+        }
+    }
+
+    if (query || categoryQuery) {
+        const { data } = await queryBuilder
             .order('plan', { ascending: false })
             .order('upvotes', { ascending: false, nullsFirst: false })
             .limit(50)
@@ -44,7 +62,7 @@ export default async function SearchPage({
                             </Button>
                         </Link>
                         <Link href="/" className="flex items-center gap-2">
-                            <Image src="/small-logo.png" alt="Qriblo" width={28} height={28} />
+                            <Image src="/smal-logo.png" alt="Qriblo" width={28} height={28} />
                             <span className="font-bold text-lg text-gray-900 leading-none">Qriblo</span>
                         </Link>
                     </div>
@@ -54,9 +72,29 @@ export default async function SearchPage({
             <div className="max-w-3xl mx-auto px-4 py-8">
                 <SearchSection />
 
+                {/* Categories */}
+                <div className="flex overflow-x-auto py-4 gap-2 no-scrollbar mb-4 border-b border-gray-100">
+                    <Link href={`/search${query ? `?q=${query}` : ''}`}>
+                        <div className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${!categoryQuery ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                            All
+                        </div>
+                    </Link>
+                    {categories.map((cat: any) => (
+                        <Link key={cat.id} href={`/search?${query ? `q=${query}&` : ''}c=${cat.slug}`}>
+                            <div className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${categoryQuery === cat.slug ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                                {cat.name}
+                            </div>
+                        </Link>
+                    ))}
+                </div>
+
                 <div className="mb-6">
                     <h1 className="text-xl font-bold text-gray-900">
-                        {query ? `Results for "${query}"` : 'Search Qriblo'}
+                        {categoryQuery 
+                            ? `Category: ${categories.find((c: any) => c.slug === categoryQuery)?.name || categoryQuery}`
+                            : query 
+                                ? `Results for "${query}"` 
+                                : 'Search Qriblo'}
                     </h1>
                     <p className="text-sm text-gray-500">
                         {businesses.length} businesses found

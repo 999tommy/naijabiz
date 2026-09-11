@@ -18,6 +18,7 @@ interface StorefrontClientProps {
     averageRating: string | null
     whatsappNumber: string
     instagramHandle?: string | null
+    waWhatsappEnabled?: boolean
 }
 
 export function StorefrontClient({
@@ -29,9 +30,10 @@ export function StorefrontClient({
     averageRating,
     whatsappNumber,
     instagramHandle,
+    waWhatsappEnabled,
 }: StorefrontClientProps) {
-    // Default to Reels for Pro businesses, Grid for free
-    const [viewMode, setViewMode] = useState<'grid' | 'reels'>(isPro ? 'reels' : 'grid')
+    // Default to Grid for all businesses
+    const [viewMode, setViewMode] = useState<'grid' | 'reels'>('grid')
     const cartHelper = useCart(business.business_name || '')
 
     // Restore saved preference on mount
@@ -107,6 +109,8 @@ export function StorefrontClient({
                                 businessName={business.business_name || ''}
                                 whatsappNumber={whatsappNumber}
                                 instagramHandle={instagramHandle}
+                                waWhatsappEnabled={waWhatsappEnabled}
+                                businessSlug={slug}
                                 cart={cartHelper.cart}
                                 addToCart={cartHelper.addToCart}
                                 updateQuantity={cartHelper.updateQuantity}
