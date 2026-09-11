@@ -3,7 +3,19 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { SendHorizontal, X, ShoppingBag, Calendar, MessageSquare, MessageCircle, LoaderCircle } from 'lucide-react'
+import { 
+    SendHorizontal, 
+    X, 
+    ShoppingBag, 
+    Calendar, 
+    MessageSquare, 
+    MessageCircle, 
+    Smile, 
+    Paperclip, 
+    Mic, 
+    CheckCheck,
+    Store 
+} from 'lucide-react'
 import { User as BusinessType } from '@/lib/types'
 
 interface AiChatWidgetProps {
@@ -15,6 +27,7 @@ interface AiChatWidgetProps {
 interface Message {
     role: 'user' | 'assistant'
     content: string
+    timestamp?: string
 }
 
 interface OrderSummary {
@@ -23,6 +36,10 @@ interface OrderSummary {
     delivery_address?: string
     total: number
     type?: 'product' | 'service'
+}
+
+function getFormattedTime() {
+    return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
 export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: AiChatWidgetProps) {
@@ -56,39 +73,42 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
     // Initialization
     useEffect(() => {
         if (actualOpen && messages.length === 0) {
-            setMessages([{ role: 'assistant', content: business.ai_welcome_msg || "Hello! How can I help you today?" }])
+            setMessages([{ 
+                role: 'assistant', 
+                content: business.ai_welcome_msg || `Hello! Welcome to ${business.business_name}. How can I help you today?`,
+                timestamp: getFormattedTime()
+            }])
         }
-    }, [actualOpen, messages.length, business.ai_welcome_msg])
+    }, [actualOpen, messages.length, business.ai_welcome_msg, business.business_name])
 
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight
         }
-    }, [messages])
+    }, [messages, loading])
 
     // Free Tier Teaser
     if (business.plan !== 'pro') {
         return (
-            <div className="fixed bottom-4 left-4 z-50 flex flex-col items-start opacity-95">
+            <div className="fixed bottom-3 left-3 sm:bottom-5 sm:left-5 z-50 flex flex-col items-start opacity-95">
                 <Button
                     onClick={() => window.location.href = '/pricing'}
-                    className="h-14 px-5 rounded-2xl bg-[#211a16] border border-[#3c2e27] text-[#fffaf4] shadow-[0_18px_45px_rgba(33,26,22,.30)] flex items-center gap-3 transition-all hover:-translate-y-0.5 active:translate-y-0 group"
+                    className="h-14 px-5 rounded-2xl bg-gradient-to-r from-[#66351f] to-[#7d4126] border border-[#f4c7a1]/30 text-white shadow-[0_18px_45px_rgba(102,53,31,0.35)] flex items-center gap-3 transition-all hover:-translate-y-0.5 active:translate-y-0 group cursor-pointer"
                 >
                     <div className="relative">
-                        <MessageCircle className="w-5 h-5 text-[#f0c4a4] transition-colors" />
+                        <MessageCircle className="w-5 h-5 text-[#f4c7a1] transition-colors" />
                         <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-[#c7b7a6]"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-[#c65a24] border border-white"></span>
                         </span>
                     </div>
                     <div className="flex flex-col items-start text-left">
-                        <span className="font-semibold text-sm leading-tight text-[#fffaf4]">Virtual Assistant</span>
-                        <span className="text-[10px] uppercase tracking-[.14em] text-[#f0c4a4] font-bold">Pro feature</span>
+                        <span className="font-bold text-sm leading-tight text-white">Virtual Assistant</span>
+                        <span className="text-[10px] uppercase tracking-[.14em] text-[#f4c7a1] font-bold">Pro feature</span>
                     </div>
                 </Button>
             </div>
         )
     }
-
 
     const handleSend = async (e?: React.FormEvent) => {
         e?.preventDefault()
@@ -97,14 +117,16 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
         if (replyCount >= 12) {
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: "I've reached my message limit for this chat. Please click the WhatsApp button to message the business directly! 📲"
+                content: "I've reached my message limit for this chat session. Please click the WhatsApp button below to chat with us directly! 📲",
+                timestamp: getFormattedTime()
             }])
             return
         }
 
         const userMsg = input.trim()
         setInput('')
-        setMessages(prev => [...prev, { role: 'user', content: userMsg }])
+        const userTime = getFormattedTime()
+        setMessages(prev => [...prev, { role: 'user', content: userMsg, timestamp: userTime }])
         setLoading(true)
 
         try {
@@ -121,7 +143,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                 try {
                     const errData = await response.json()
                     if (errData.error === 'LIMIT_REACHED') {
-                        throw new Error("Monthly AI chat limit reached for this business. Please contact the owner directly via WhatsApp.");
+                        throw new Error("Monthly message limit reached for this business. Please contact the owner directly via WhatsApp.");
                     }
                 } catch {
                     // ignore JSON parse error
@@ -130,11 +152,11 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
             }
 
             const data = await response.json()
-            setMessages(prev => [...prev, { role: 'assistant', content: data.reply }])
+            setMessages(prev => [...prev, { role: 'assistant', content: data.reply, timestamp: getFormattedTime() }])
             setReplyCount(prev => prev + 1)
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : "Sorry, I'm having trouble connecting. Please WhatsApp the owner."
-            setMessages(prev => [...prev, { role: 'assistant', content: message }])
+            setMessages(prev => [...prev, { role: 'assistant', content: message, timestamp: getFormattedTime() }])
         } finally {
             setLoading(false)
         }
@@ -147,7 +169,6 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
         try {
             const parsed = JSON.parse(match[1])
             
-            // Validate the parsed object matches OrderSummary structure
             if (
                 typeof parsed === 'object' &&
                 parsed !== null &&
@@ -188,8 +209,8 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     business_id: business.id,
-                    customer_name: summary.customer_name || 'AI Chat Buyer',
-                    customer_contact: summary.delivery_address || 'Provided via AI Chat',
+                    customer_name: summary.customer_name || 'Customer',
+                    customer_contact: summary.delivery_address || 'Provided via Chat',
                     items: summary.items,
                     total_amount: summary.total,
                     order_method: 'whatsapp'
@@ -200,7 +221,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
         }
 
         // 2. Format WhatsApp Message
-        let waText = `Hi ${business.business_name}! I placed a ${summary.type === 'service' ? 'booking' : 'order'} via your website AI assistant:\n\n`
+        let waText = `Hi ${business.business_name}! I placed a ${summary.type === 'service' ? 'booking' : 'order'} via your website assistant:\n\n`
         
         summary.items.forEach(item => {
             waText += `• ${item.name} (${item.quantity || 1}x) - ₦${(item.price * (item.quantity || 1)).toLocaleString()}\n`
@@ -223,36 +244,92 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
     }
 
     return (
-        <div className="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-50 flex flex-col items-start">
+        <div className="fixed bottom-3 left-3 sm:bottom-5 sm:left-5 z-50 flex flex-col items-start">
             {/* Chat Window */}
             {actualOpen && (
-                <Card className="w-[calc(100vw-1.5rem)] sm:w-[410px] h-[min(620px,calc(100vh-6.5rem))] mb-3 rounded-[1.35rem] shadow-[0_26px_70px_rgba(61,51,43,.24)] border-[#d8cfc4] bg-[#fbf7f0] flex flex-col overflow-hidden animate-in slide-in-from-bottom-8 fade-in duration-200">
-                    {/* Header */}
-                    <div className="p-4 bg-[#f3eee7] text-[#2f2721] flex justify-between items-center border-b border-[#ded4c8]">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-[#e7ddd2] p-2 rounded-xl border border-[#d8cfc4]">
-                                <MessageCircle className="w-4 h-4 text-[#8a5a44]" />
+                <Card className="w-[calc(100vw-1.5rem)] sm:w-[395px] h-[min(620px,calc(100vh-5.5rem))] mb-3 rounded-[28px] shadow-[0_26px_70px_rgba(102,53,31,0.28)] border border-[#f4c7a1]/40 flex flex-col overflow-hidden animate-in slide-in-from-bottom-6 fade-in duration-200">
+                    {/* WhatsApp App-Bar Header */}
+                    <div className="p-3.5 bg-gradient-to-r from-[#66351f] via-[#753c23] to-[#c65a24] text-white flex justify-between items-center shrink-0 shadow-sm relative z-10">
+                        <div className="flex items-center gap-3 min-w-0">
+                            <div className="relative shrink-0">
+                                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center p-1 shadow-md border border-[#f4c7a1]/40">
+                                    <Store className="w-5 h-5 text-[#c65a24]" />
+                                </div>
+                                <span className="absolute bottom-0 right-0 w-3 h-3 bg-[#22c55e] border-2 border-[#66351f] rounded-full" />
                             </div>
                             <div className="min-w-0">
-                                <h3 className="font-semibold text-sm truncate">{business.business_name} assistant</h3>
-                                <p className="text-xs text-[#78695f] flex items-center gap-1">
-                                    <span className="w-2 h-2 bg-[#4f9d69] rounded-full animate-pulse" /> Online now
+                                <h3 className="font-bold text-[14.5px] leading-tight truncate text-white">
+                                    {business.business_name}
+                                </h3>
+                                <p className="text-[11.5px] leading-tight mt-0.5 flex items-center gap-1 text-[#fff4e6]/90 font-medium">
+                                    {loading ? (
+                                        <span className="text-[#f4c7a1] font-semibold flex items-center gap-1 animate-pulse">
+                                            typing...
+                                        </span>
+                                    ) : (
+                                        <>
+                                            <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] inline-block animate-pulse" />
+                                            online
+                                        </>
+                                    )}
                                 </p>
                             </div>
                         </div>
-                        <Button type="button" size="icon" variant="ghost" className="text-[#6f6258] hover:bg-[#e7ddd2] h-8 w-8 rounded-xl" onClick={() => setActualOpen(false)} aria-label="Close chat">
+                        <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            className="text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 h-8 w-8 rounded-full transition-colors cursor-pointer"
+                            onClick={() => setActualOpen(false)}
+                            aria-label="Close chat"
+                        >
                             <X className="w-5 h-5" />
                         </Button>
                     </div>
 
-                    {/* Messages */}
-                    <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-[radial-gradient(circle_at_top_left,rgba(231,221,210,.55),transparent_34%),#fbf7f0]" ref={scrollRef}>
+                    {/* WhatsApp Doodle Wallpaper Chat Canvas */}
+                    <div
+                        ref={scrollRef}
+                        style={{
+                            backgroundColor: '#fff4e6',
+                            backgroundImage: `radial-gradient(circle at 50% 50%, rgba(244, 199, 161, 0.22) 0%, rgba(255, 244, 230, 0.95) 100%), url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 16a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm24 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm24 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4zM20 32a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm24 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm-36 16a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm24 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm24 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4zM32 4a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm-16 28a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm32 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM32 54a3 3 0 1 0 0 6 3 3 0 0 0 0-6z' fill='%2366351f' fill-opacity='0.04' fill-rule='evenodd'/%3E%3C/svg%3E")`,
+                        }}
+                        className="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3.5 scroll-smooth"
+                    >
+                        {/* WhatsApp Encryption Notice */}
+                        <div className="flex justify-center my-1">
+                            <div className="bg-[#f4c7a1]/40 backdrop-blur-xs text-[#66351f] text-[11px] font-medium px-3 py-1 rounded-lg shadow-[0_1px_1px_rgba(0,0,0,0.05)] flex items-center gap-1.5 max-w-[92%] text-center">
+                                <span>🔒</span>
+                                <span>Messages are end-to-end encrypted with {business.business_name}.</span>
+                            </div>
+                        </div>
+                        <div className="flex justify-center mb-1">
+                            <span className="bg-white/90 text-[#66351f]/80 text-[10px] font-bold px-2.5 py-0.5 rounded-md shadow-[0_1px_1px_rgba(0,0,0,0.04)] uppercase tracking-wider">
+                                Today
+                            </span>
+                        </div>
+
+                        {/* Messages */}
                         {messages.map((m, i) => {
                             if (m.role === 'user') {
                                 return (
-                                    <div key={i} className="flex justify-end">
-                                        <div className="max-w-[86%] rounded-2xl px-4 py-3 text-sm leading-relaxed bg-[#2f2721] text-[#fffaf4] rounded-br-md shadow-[0_8px_24px_rgba(47,39,33,.12)]">
-                                            {m.content}
+                                    <div key={i} className="flex justify-end relative group animate-in fade-in slide-in-from-bottom-2 duration-200">
+                                        <div className="relative max-w-[85%] sm:max-w-[80%] bg-[#f4c7a1] text-[#222222] rounded-2xl rounded-tr-xs px-3.5 py-2.5 shadow-[0_1px_2px_rgba(34,34,34,0.08)]">
+                                            {/* Bubble Tail */}
+                                            <svg className="absolute -right-1.5 top-0 w-2 h-3 text-[#f4c7a1] fill-current" viewBox="0 0 8 13">
+                                                <path d="M5.188 0H0v12.18l6.467-8.612C7.526 2.156 6.958 0 5.188 0z" />
+                                            </svg>
+
+                                            <p className="text-[13.5px] leading-relaxed whitespace-pre-wrap break-words select-text font-normal">
+                                                {m.content}
+                                            </p>
+
+                                            <div className="flex justify-end items-center gap-1 mt-1 -mb-0.5 select-none">
+                                                <span className="text-[10px] text-[#66351f]/75 font-medium">
+                                                    {m.timestamp || 'Just now'}
+                                                </span>
+                                                <CheckCheck className="w-3.5 h-3.5 text-[#c65a24]" />
+                                            </div>
                                         </div>
                                     </div>
                                 )
@@ -261,111 +338,174 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                             const { cleanText, summary } = parseOrderSummary(m.content)
 
                             return (
-                                <div key={i} className="flex flex-col gap-2 justify-start">
+                                <div key={i} className="flex flex-col gap-2.5 justify-start relative group animate-in fade-in slide-in-from-bottom-2 duration-200">
                                     {cleanText && (
-                                        <div className="max-w-[90%] rounded-2xl px-4 py-3 text-sm leading-relaxed bg-[#fffdf8] text-[#3d332b] border border-[#e5dcd1] rounded-bl-md shadow-[0_8px_24px_rgba(61,51,43,.06)]">
-                                            {cleanText}
+                                        <div className="relative max-w-[88%] sm:max-w-[82%] bg-white text-[#222222] rounded-2xl rounded-tl-xs px-3.5 py-2.5 shadow-[0_1px_2px_rgba(34,34,34,0.08)] border border-[#f4c7a1]/30">
+                                            {/* Bubble Tail */}
+                                            <svg className="absolute -left-1.5 top-0 w-2 h-3 text-white fill-current" viewBox="0 0 8 13">
+                                                <path d="M1.533 3.568L8 12.18V0H2.812C1.042 0 .474 2.156 1.533 3.568z" />
+                                            </svg>
+
+                                            <p className="text-[13.5px] leading-relaxed whitespace-pre-wrap break-words select-text">
+                                                {cleanText}
+                                            </p>
+
+                                            <div className="flex justify-end items-center gap-1 mt-1 -mb-0.5">
+                                                <span className="text-[10px] text-[#66351f]/60 font-medium select-none">
+                                                    {m.timestamp || 'Just now'}
+                                                </span>
+                                            </div>
                                         </div>
                                     )}
 
-                                    {/* Order / Booking Card Summary */}
+                                    {/* WhatsApp Business Style Order / Booking Summary Card */}
                                     {summary && (
-                                        <div className="max-w-[92%] rounded-2xl p-4 bg-[#fffdf8] border border-[#d8cfc4] shadow-[0_12px_30px_rgba(61,51,43,.08)] space-y-3">
-                                            <div className="flex items-center justify-between border-b border-[#ece2d8] pb-2">
-                                                <span className="text-xs font-bold uppercase tracking-[.14em] text-[#6d594b] flex items-center gap-1.5">
+                                        <div className="max-w-[92%] sm:max-w-[88%] rounded-2xl bg-white border border-[#f4c7a1]/70 shadow-[0_4px_16px_rgba(102,53,31,0.08)] overflow-hidden space-y-0">
+                                            {/* WhatsApp Card Header */}
+                                            <div className="bg-[#fff4e6] px-3.5 py-2.5 border-b border-[#f4c7a1]/40 flex items-center justify-between">
+                                                <span className="text-[11.5px] font-bold uppercase tracking-wider text-[#66351f] flex items-center gap-1.5">
                                                     {summary.type === 'service' ? (
-                                                        <><Calendar className="w-4 h-4 text-[#8a5a44]" /> Service Booking</>
+                                                        <><Calendar className="w-4 h-4 text-[#c65a24]" /> Service Booking</>
                                                     ) : (
-                                                        <><ShoppingBag className="w-4 h-4 text-[#8a5a44]" /> Ready Order Summary</>
+                                                        <><ShoppingBag className="w-4 h-4 text-[#c65a24]" /> Order Summary</>
                                                     )}
                                                 </span>
-                                                <span className="text-xs bg-[#efe8df] text-[#6d594b] font-bold px-2 py-0.5 rounded-full">
-                                                    Draft
+                                                <span className="text-[10px] bg-[#f4c7a1] text-[#66351f] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                                    Ready
                                                 </span>
                                             </div>
 
-                                            <div className="space-y-1.5 text-xs text-[#4b4038]">
-                                                {summary.items.map((item, idx) => (
-                                                    <div key={idx} className="flex justify-between font-medium">
-                                                        <span>{item.name} x{item.quantity || 1}</span>
-                                                        <span className="font-bold">₦{(item.price * (item.quantity || 1)).toLocaleString()}</span>
-                                                    </div>
-                                                ))}
+                                            {/* Card Content */}
+                                            <div className="p-3.5 space-y-2.5 text-xs text-[#222222]">
+                                                <div className="space-y-1.5">
+                                                    {summary.items.map((item, idx) => (
+                                                        <div key={idx} className="flex justify-between items-center py-0.5 border-b border-[#fff4e6] last:border-0">
+                                                            <span className="font-medium text-[#222222]">
+                                                                {item.name} <span className="text-[#66351f] font-bold">x{item.quantity || 1}</span>
+                                                            </span>
+                                                            <span className="font-bold text-[#222222]">
+                                                                ₦{(item.price * (item.quantity || 1)).toLocaleString()}
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                                </div>
 
                                                 {summary.delivery_address && (
-                                                    <p className="text-[11px] text-[#76675d] pt-1 border-t border-[#ece2d8]">
-                                                        <span className="font-semibold">Details:</span> {summary.delivery_address}
+                                                    <p className="text-[11.5px] text-[#66351f] pt-1.5 border-t border-[#f4c7a1]/30">
+                                                        <span className="font-bold text-[#222222]">Note / Address:</span> {summary.delivery_address}
                                                     </p>
                                                 )}
 
-                                                <div className="flex justify-between items-center text-sm font-extrabold text-[#2f2721] pt-2 border-t border-[#ded4c8]">
-                                                    <span>Total:</span>
-                                                    <span className="text-[#8a5a44] text-base">₦{Number(summary.total).toLocaleString()}</span>
+                                                <div className="flex justify-between items-center pt-2 border-t border-[#f4c7a1]/40">
+                                                    <span className="font-bold text-sm text-[#222222]">Total</span>
+                                                    <span className="text-base font-extrabold text-[#c65a24]">
+                                                        ₦{Number(summary.total).toLocaleString()}
+                                                    </span>
                                                 </div>
-                                            </div>
 
-                                            <Button
-                                                onClick={() => handleHandoffToWhatsApp(summary, i)}
-                                                disabled={processingOrder === i}
-                                                className="w-full bg-[#2f2721] hover:bg-[#463a31] text-[#fffaf4] font-bold text-xs py-2.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition-transform hover:-translate-y-0.5"
-                                            >
-                                                <MessageSquare className="w-4 h-4 fill-current" />
-                                                {processingOrder === i ? 'Preparing order...' : 'Send order via WhatsApp'}
-                                            </Button>
+                                                {/* WhatsApp Handoff CTA Button */}
+                                                <button
+                                                    onClick={() => handleHandoffToWhatsApp(summary, i)}
+                                                    disabled={processingOrder === i}
+                                                    className="w-full mt-1 bg-[#25D366] hover:bg-[#20ba59] active:scale-[0.98] text-white font-bold text-xs py-3 rounded-xl shadow-[0_4px_14px_rgba(37,211,102,0.30)] flex items-center justify-center gap-2 transition-all cursor-pointer"
+                                                >
+                                                    <MessageSquare className="w-4 h-4 fill-current" />
+                                                    {processingOrder === i ? 'Opening WhatsApp...' : 'Send Order via WhatsApp'}
+                                                </button>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
                             )
                         })}
 
+                        {/* WhatsApp Typing Bubble Indicator */}
                         {loading && (
-                            <div className="flex justify-start">
-                                <div className="bg-[#fffdf8] rounded-2xl px-4 py-3 border border-[#e5dcd1] shadow-sm flex gap-1 items-center">
-                                    <LoaderCircle className="w-4 h-4 text-[#8a5a44] mr-1 animate-spin" />
-                                    <span className="w-1.5 h-1.5 bg-[#9a8b7d] rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                                    <span className="w-1.5 h-1.5 bg-[#9a8b7d] rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                                    <span className="w-1.5 h-1.5 bg-[#9a8b7d] rounded-full animate-bounce"></span>
+                            <div className="flex justify-start relative animate-in fade-in duration-200">
+                                <div className="relative bg-white rounded-2xl rounded-tl-xs px-4 py-3 shadow-[0_1px_2px_rgba(34,34,34,0.08)] border border-[#f4c7a1]/30 flex items-center gap-1.5 h-9">
+                                    <svg className="absolute -left-1.5 top-0 w-2 h-3 text-white fill-current" viewBox="0 0 8 13">
+                                        <path d="M1.533 3.568L8 12.18V0H2.812C1.042 0 .474 2.156 1.533 3.568z" />
+                                    </svg>
+                                    <span className="w-2 h-2 rounded-full bg-[#c65a24] animate-bounce [animation-delay:-0.3s]" />
+                                    <span className="w-2 h-2 rounded-full bg-[#c65a24] animate-bounce [animation-delay:-0.15s]" />
+                                    <span className="w-2 h-2 rounded-full bg-[#c65a24] animate-bounce" />
                                 </div>
                             </div>
                         )}
-                        <div className="text-[11px] text-center text-[#9a8b7d] mt-4 font-medium">
+
+                        <div className="text-[10.5px] text-center text-[#66351f]/60 mt-3 font-medium select-none">
                             Powered by Qriblo
                         </div>
                     </div>
 
-                    {/* Input Form */}
-                    <div className="p-3 bg-[#f3eee7] border-t border-[#ded4c8]">
-                        <form onSubmit={handleSend} className="flex gap-2">
-                            <input
-                                className="flex-1 min-w-0 bg-[#fffdf8] border border-[#ded4c8] rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#8a5a44]/20 focus:bg-white transition-all text-[#2f2721] placeholder-[#9a8b7d]"
-                                placeholder="Ask price, stock, or place an order..."
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                disabled={loading}
-                            />
-                            <Button type="submit" size="icon" disabled={!input.trim() || loading} className="rounded-2xl bg-[#2f2721] hover:bg-[#463a31] w-11 h-11 shadow-md shrink-0">
-                                <SendHorizontal className="w-4 h-4 text-[#fffaf4] ml-0.5" />
-                            </Button>
+                    {/* WhatsApp Input Shelf */}
+                    <div className="p-2.5 bg-[#fff4e6] border-t border-[#f4c7a1]/40 shrink-0">
+                        <form onSubmit={handleSend} className="flex items-center gap-2">
+                            {/* White Pill Input */}
+                            <div className="flex-1 bg-white rounded-full px-3 py-2 flex items-center gap-2 shadow-[0_1px_3px_rgba(34,34,34,0.06)] border border-[#f4c7a1]/50 focus-within:border-[#c65a24] focus-within:ring-1 focus-within:ring-[#c65a24]/20 transition-all">
+                                <button
+                                    type="button"
+                                    className="text-[#66351f]/50 hover:text-[#c65a24] transition-colors p-0.5 shrink-0"
+                                    aria-label="Emoji"
+                                >
+                                    <Smile className="w-5 h-5" />
+                                </button>
+                                <input
+                                    type="text"
+                                    placeholder="Ask price, stock, or place an order..."
+                                    className="flex-1 bg-transparent text-[13.5px] text-[#222222] placeholder:text-[#222222]/45 outline-none min-w-0"
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    disabled={loading}
+                                />
+                                <button
+                                    type="button"
+                                    className="text-[#66351f]/50 hover:text-[#c65a24] transition-colors p-0.5 shrink-0"
+                                    aria-label="Attach"
+                                >
+                                    <Paperclip className="w-4 h-4 rotate-45" />
+                                </button>
+                            </div>
+
+                            {/* Circular Standalone Send/Mic Button */}
+                            <button
+                                type="submit"
+                                disabled={!input.trim() || loading}
+                                className={`w-10 h-10 rounded-full flex items-center justify-center text-white shrink-0 shadow-[0_3px_10px_rgba(198,90,36,0.3)] transition-all duration-200 cursor-pointer ${
+                                    input.trim()
+                                        ? 'bg-[#c65a24] hover:bg-[#b04d1c] active:scale-95 scale-100'
+                                        : 'bg-[#66351f] hover:bg-[#c65a24] opacity-85 active:scale-95'
+                                }`}
+                                aria-label="Send message"
+                            >
+                                {input.trim() ? (
+                                    <SendHorizontal className="w-4 h-4 ml-0.5 transition-transform" />
+                                ) : (
+                                    <Mic className="w-4 h-4" />
+                                )}
+                            </button>
                         </form>
                     </div>
                 </Card>
             )}
 
-            {/* Floating Toggle Button */}
+            {/* Floating FAB Trigger Button */}
             {!actualOpen && (
-                <Button
+                <button
                     onClick={() => setActualOpen(true)}
-                    className="h-14 w-14 rounded-full bg-[#211a16] hover:bg-[#120e0c] text-[#fffaf4] shadow-[0_18px_45px_rgba(33,26,22,.30)] flex items-center justify-center transition-all hover:-translate-y-0.5 active:translate-y-0 border border-[#3c2e27]"
+                    className="h-14 w-14 rounded-full bg-gradient-to-r from-[#66351f] to-[#c65a24] hover:from-[#7a3f25] hover:to-[#b04d1c] text-white shadow-[0_12px_32px_rgba(102,53,31,0.35)] flex items-center justify-center transition-all hover:scale-105 active:scale-95 border border-[#f4c7a1]/30 cursor-pointer"
+                    aria-label="Chat with Assistant"
                 >
                     <div className="relative">
-                        <MessageCircle className="w-5 h-5" />
+                        <MessageCircle className="w-6 h-6 text-white" />
                         <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#8bc99d] opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-[#4f9d69]"></span>
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22c55e] opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-[#22c55e] border-2 border-[#66351f]"></span>
                         </span>
                     </div>
-                </Button>
+                </button>
             )}
         </div>
     )
 }
+

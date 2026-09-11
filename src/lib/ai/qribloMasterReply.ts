@@ -78,7 +78,7 @@ Remember: Be smooth, natural, recommend products intelligently, and route users 
         return res
     }
 
-    let res = await callOpenRouter('groq/llama-3.1-8b-instruct')
+    let res = await callOpenRouter('meta-llama/llama-3.1-8b-instruct')
     if (!res.ok) {
         console.warn('[AI] Primary model failed, trying fallback...')
         res = await callOpenRouter('google/gemini-2.0-flash-001')

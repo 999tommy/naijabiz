@@ -92,7 +92,7 @@ YOUR PERSONALITY & RULES:
     }
 
     // Primary: Groq LLaMA 3.1 8B for extreme sub-second latency; Fallback: Gemini Flash
-    let res = await callOpenRouter('groq/llama-3.1-8b-instruct')
+    let res = await callOpenRouter('meta-llama/llama-3.1-8b-instruct')
     if (!res.ok) {
         console.warn('[AI] Primary model failed, trying fallback...')
         res = await callOpenRouter('google/gemini-2.0-flash-001')
