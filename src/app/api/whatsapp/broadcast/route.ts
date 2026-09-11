@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-const QRIBLO_WA_TOKEN = process.env.QRIBLO_WA_ACCESS_TOKEN
-const QRIBLO_WA_PHONE_ID = process.env.QRIBLO_WA_PHONE_NUMBER_ID
+const QRIBLO_WA_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN
+const QRIBLO_WA_PHONE_ID = process.env.WHATSAPP_PHONE_NUMBER_ID
 
 export async function POST(req: Request) {
     try {

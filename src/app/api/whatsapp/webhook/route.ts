@@ -21,9 +21,9 @@ import { qribloMasterReply } from '@/lib/ai/qribloMasterReply'
 
 export const maxDuration = 30
 
-const QRIBLO_WA_TOKEN = process.env.QRIBLO_WA_ACCESS_TOKEN
-const QRIBLO_WA_PHONE_ID = process.env.QRIBLO_WA_PHONE_NUMBER_ID
-const QRIBLO_WA_VERIFY_TOKEN = process.env.QRIBLO_WA_VERIFY_TOKEN
+const QRIBLO_WA_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN
+const QRIBLO_WA_PHONE_ID = process.env.WHATSAPP_PHONE_NUMBER_ID
+const QRIBLO_WA_VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN
 
 // ─── GET: Webhook verification by Meta ──────────────────────────────────────
 export async function GET(req: Request) {
@@ -285,7 +285,7 @@ function extractSlug(text: string): string | null {
  */
 async function sendWhatsAppMessage(to: string, text: string): Promise<void> {
     if (!QRIBLO_WA_TOKEN || !QRIBLO_WA_PHONE_ID) {
-        console.error('[WhatsApp] Missing QRIBLO_WA_ACCESS_TOKEN or QRIBLO_WA_PHONE_NUMBER_ID env vars')
+        console.error('[WhatsApp] Missing WHATSAPP_ACCESS_TOKEN or WHATSAPP_PHONE_NUMBER_ID env vars')
         return
     }
 
