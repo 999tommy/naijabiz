@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { SendHorizontal, ChevronDown, ShoppingBag, Calendar, MessageSquare, MessageCircle, LoaderCircle } from 'lucide-react'
+import { SendHorizontal, X, ShoppingBag, Calendar, MessageSquare, MessageCircle, LoaderCircle } from 'lucide-react'
 import { User as BusinessType } from '@/lib/types'
 
 interface AiChatWidgetProps {
@@ -27,9 +27,15 @@ interface OrderSummary {
 
 export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: AiChatWidgetProps) {
     const [isOpen, setIsOpen] = useState(false)
-    const isControlled = externalOpen !== undefined
+    const isControlled = externalOpen !== undefined && onExternalOpenChange !== undefined
     const actualOpen = isControlled ? externalOpen : isOpen
-    const setActualOpen = isControlled ? onExternalOpenChange : setIsOpen
+    const setActualOpen = (nextOpen: boolean) => {
+        if (isControlled) {
+            onExternalOpenChange(nextOpen)
+        } else {
+            setIsOpen(nextOpen)
+        }
+    }
     const [messages, setMessages] = useState<Message[]>([])
     const [input, setInput] = useState('')
     const [loading, setLoading] = useState(false)
@@ -66,17 +72,17 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
             <div className="fixed bottom-4 left-4 z-50 flex flex-col items-start opacity-95">
                 <Button
                     onClick={() => window.location.href = '/pricing'}
-                    className="h-14 px-5 rounded-2xl bg-[#fbf7f0] border border-[#ded4c8] text-[#3d332b] shadow-[0_18px_45px_rgba(61,51,43,.16)] flex items-center gap-3 transition-all hover:-translate-y-0.5 active:translate-y-0 group"
+                    className="h-14 px-5 rounded-2xl bg-[#211a16] border border-[#3c2e27] text-[#fffaf4] shadow-[0_18px_45px_rgba(33,26,22,.30)] flex items-center gap-3 transition-all hover:-translate-y-0.5 active:translate-y-0 group"
                 >
                     <div className="relative">
-                        <MessageCircle className="w-5 h-5 text-[#8a5a44] transition-colors" />
+                        <MessageCircle className="w-5 h-5 text-[#f0c4a4] transition-colors" />
                         <span className="absolute -top-1 -right-1 flex h-3 w-3">
                             <span className="relative inline-flex rounded-full h-3 w-3 bg-[#c7b7a6]"></span>
                         </span>
                     </div>
                     <div className="flex flex-col items-start text-left">
-                        <span className="font-semibold text-sm leading-tight text-[#2f2721]">Virtual Assistant</span>
-                        <span className="text-[10px] uppercase tracking-[.14em] text-[#8a5a44] font-bold">Pro feature</span>
+                        <span className="font-semibold text-sm leading-tight text-[#fffaf4]">Virtual Assistant</span>
+                        <span className="text-[10px] uppercase tracking-[.14em] text-[#f0c4a4] font-bold">Pro feature</span>
                     </div>
                 </Button>
             </div>
@@ -234,8 +240,8 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                                 </p>
                             </div>
                         </div>
-                        <Button size="icon" variant="ghost" className="text-[#6f6258] hover:bg-[#e7ddd2] h-8 w-8 rounded-xl" onClick={() => setActualOpen && setActualOpen(false)}>
-                            <ChevronDown className="w-5 h-5" />
+                        <Button type="button" size="icon" variant="ghost" className="text-[#6f6258] hover:bg-[#e7ddd2] h-8 w-8 rounded-xl" onClick={() => setActualOpen(false)} aria-label="Close chat">
+                            <X className="w-5 h-5" />
                         </Button>
                     </div>
 
@@ -348,8 +354,8 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
             {/* Floating Toggle Button */}
             {!actualOpen && (
                 <Button
-                    onClick={() => setActualOpen && setActualOpen(true)}
-                    className="h-14 px-5 rounded-2xl bg-[#2f2721] hover:bg-[#463a31] text-[#fffaf4] shadow-[0_18px_45px_rgba(47,39,33,.24)] flex items-center gap-3 transition-all hover:-translate-y-0.5 active:translate-y-0 border border-[#5b4c41]"
+                    onClick={() => setActualOpen(true)}
+                    className="h-14 px-5 rounded-2xl bg-[#211a16] hover:bg-[#120e0c] text-[#fffaf4] shadow-[0_18px_45px_rgba(33,26,22,.30)] flex items-center gap-3 transition-all hover:-translate-y-0.5 active:translate-y-0 border border-[#3c2e27]"
                 >
                     <div className="relative">
                         <MessageCircle className="w-5 h-5" />

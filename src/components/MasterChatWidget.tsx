@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { SendHorizontal, ChevronDown, LoaderCircle, Sparkles } from 'lucide-react'
+import { SendHorizontal, X, LoaderCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 
@@ -19,11 +19,26 @@ export function MasterChatWidget() {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const scrollRef = useRef<HTMLDivElement>(null)
+    const touchStartY = useRef<number | null>(null)
+
+    const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+        touchStartY.current = event.touches[0]?.clientY ?? null
+    }
+
+    const handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+        if (touchStartY.current === null) return
+
+        const touchEndY = event.changedTouches[0]?.clientY ?? touchStartY.current
+        const swipeDistance = touchEndY - touchStartY.current
+        touchStartY.current = null
+
+        if (swipeDistance > 70) setIsOpen(false)
+    }
 
     // Initialization
     useEffect(() => {
         if (isOpen && messages.length === 0) {
-            setMessages([{ role: 'assistant', content: "Hi! I'm Qriblo's Master Assistant. I can help you discover vendors, answer questions about Qriblo, or take you directly to a shop if you know their name. How can I help you?" }])
+            setMessages([{ role: 'assistant', content: "Hi! I'm Qriblo's Virtual Assistant. I can help you discover vendors, order products, book appointments, or take you directly to a shop if you know their name. How can I help you?" }])
         }
     }, [isOpen, messages.length])
 
@@ -57,7 +72,7 @@ export function MasterChatWidget() {
             }
 
             const data = await response.json()
-            
+
             if (data.routeToVendor) {
                 // LLM wants to route to a vendor
                 setMessages(prev => [...prev, { role: 'assistant', content: data.reply }])
@@ -80,9 +95,8 @@ export function MasterChatWidget() {
             <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end opacity-95">
                 <Button
                     onClick={() => setIsOpen(true)}
-                    className="h-14 px-6 rounded-full bg-gradient-to-r from-[#B84D34] to-[#e06547] text-white shadow-2xl flex items-center gap-2 transition-all hover:scale-105 hover:shadow-[#B84D34]/30 active:scale-95 group font-sans border-0"
+                    className="h-14 px-6 rounded-full bg-[#211a16] hover:bg-[#120e0c] text-white shadow-[0_18px_45px_rgba(33,26,22,.30)] flex items-center gap-2 transition-all hover:scale-105 active:scale-95 group font-sans border border-[#3c2e27]"
                 >
-                    <Sparkles className="w-4 h-4 text-white/90" />
                     <span className="font-bold text-[15px] tracking-wide">Ask Qriblo</span>
                 </Button>
             </div>
@@ -90,10 +104,14 @@ export function MasterChatWidget() {
     }
 
     return (
-        <Card className="fixed bottom-4 right-4 w-[360px] h-[550px] shadow-[0_30px_60px_-15px_rgba(184,77,52,0.15)] flex flex-col overflow-hidden z-50 border border-gray-100 rounded-[32px] animate-in slide-in-from-bottom-5 fade-in duration-300">
+        <Card
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            className="fixed bottom-4 right-4 w-[360px] h-[550px] shadow-[0_30px_60px_-15px_rgba(184,77,52,0.15)] flex flex-col overflow-hidden z-50 border border-gray-100 rounded-[32px] animate-in slide-in-from-bottom-5 fade-in duration-300 touch-pan-y"
+        >
             {/* Header */}
             <div className="bg-gradient-to-r from-[#1E1410] to-[#2c1d18] text-white p-4 pb-5 flex items-center justify-between shrink-0 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl transform translate-x-1/2 -translate-y-1/2"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
                 <div className="flex items-center gap-3 relative z-10">
                     <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-lg p-0.5">
                         <Image src="/smal-logo.png" alt="Qriblo" width={24} height={24} className="rounded-full" />
@@ -107,10 +125,12 @@ export function MasterChatWidget() {
                     </div>
                 </div>
                 <button
+                    type="button"
                     onClick={() => setIsOpen(false)}
-                    className="text-gray-400 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition-colors"
+                    aria-label="Close Qriblo support chat"
+                    className="relative z-10 text-gray-400 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition-colors"
                 >
-                    <ChevronDown className="w-5 h-5" />
+                    <X className="w-5 h-5" />
                 </button>
             </div>
 
