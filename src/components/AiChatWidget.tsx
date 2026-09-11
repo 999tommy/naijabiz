@@ -355,7 +355,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
             {!actualOpen && (
                 <Button
                     onClick={() => setActualOpen(true)}
-                    className="h-14 px-5 rounded-2xl bg-[#211a16] hover:bg-[#120e0c] text-[#fffaf4] shadow-[0_18px_45px_rgba(33,26,22,.30)] flex items-center gap-3 transition-all hover:-translate-y-0.5 active:translate-y-0 border border-[#3c2e27]"
+                    className="h-14 w-14 rounded-full bg-[#211a16] hover:bg-[#120e0c] text-[#fffaf4] shadow-[0_18px_45px_rgba(33,26,22,.30)] flex items-center justify-center transition-all hover:-translate-y-0.5 active:translate-y-0 border border-[#3c2e27]"
                 >
                     <div className="relative">
                         <MessageCircle className="w-5 h-5" />
@@ -364,7 +364,6 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                             <span className="relative inline-flex rounded-full h-3 w-3 bg-[#4f9d69]"></span>
                         </span>
                     </div>
-                    <span className="font-semibold text-sm sm:text-base">Ask assistant</span>
                 </Button>
             )}
         </div>

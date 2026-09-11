@@ -336,7 +336,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                         className="h-13 px-6 py-3.5 rounded-2xl text-base font-bold flex items-center gap-2 transition-all hover:opacity-80"
                                         style={{ background: 'rgba(255,255,255,0.15)', color: theme.heroText, border: '1px solid rgba(255,255,255,0.25)' }}
                                     >
-                                        <MessageCircle className="w-5 h-5" />Chat with AI
+                                        <MessageCircle className="w-5 h-5" />Chat with virtual assistant
                                     </button>
                                 )}
                             </div>
