@@ -17,12 +17,39 @@ export async function POST(req: Request) {
         if (!businessId || businessId === 'qriblo-master') {
             const reply = await qribloMasterReply(messages)
             
-            // Check for routing tag to handle in the frontend
-            const routeMatch = reply.match(/\[ROUTE_TO_VENDOR:\s*(.+?)\]/i)
-            if (routeMatch) {
+            // Check for in-chat vendor takeover tag
+            const vendorTagMatch = reply.match(/\[(?:CONNECT_VENDOR|ROUTE_TO_VENDOR):\s*(.+?)\]/i)
+            if (vendorTagMatch) {
+                const targetVendor = vendorTagMatch[1].trim()
+                const cleanReply = reply.replace(/\[(?:CONNECT_VENDOR|ROUTE_TO_VENDOR):[\s\S]*?\]/gi, '').trim()
+
+                const supabase = await createServiceClient()
+                const { data: vendor } = await supabase
+                    .from('users')
+                    .select('id, business_name, business_slug, plan, ai_welcome_msg')
+                    .or(`business_slug.eq.${targetVendor},business_name.ilike.%${targetVendor}%`)
+                    .limit(1)
+                    .maybeSingle()
+
+                if (vendor) {
+                    return NextResponse.json({ 
+                        reply: cleanReply || `Connecting you to ${vendor.business_name}...`,
+                        vendorTakeover: {
+                            id: vendor.id,
+                            name: vendor.business_name,
+                            slug: vendor.business_slug,
+                            welcomeMsg: vendor.ai_welcome_msg
+                        }
+                    })
+                }
+
                 return NextResponse.json({ 
-                    reply: reply.replace(/\[ROUTE_TO_VENDOR:[\s\S]*?\]/gi, '').trim() || `Routing you to ${routeMatch[1]}...`,
-                    routeToVendor: routeMatch[1].trim() 
+                    reply: cleanReply,
+                    vendorTakeover: {
+                        id: targetVendor,
+                        name: targetVendor,
+                        slug: targetVendor.toLowerCase().replace(/\s+/g, '-')
+                    }
                 })
             }
             return NextResponse.json({ reply })

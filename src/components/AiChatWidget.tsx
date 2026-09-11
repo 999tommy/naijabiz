@@ -61,6 +61,32 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
 
     const scrollRef = useRef<HTMLDivElement>(null)
 
+    // Load persisted chat from localStorage
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem(`qriblo_store_chat_${business.id}_messages_v1`)
+            if (saved) {
+                const parsed = JSON.parse(saved)
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    setMessages(parsed)
+                }
+            }
+        } catch (e) {
+            console.error('Error loading store chat history:', e)
+        }
+    }, [business.id])
+
+    // Persist chat messages to localStorage
+    useEffect(() => {
+        if (messages.length > 0) {
+            try {
+                localStorage.setItem(`qriblo_store_chat_${business.id}_messages_v1`, JSON.stringify(messages))
+            } catch (e) {
+                console.error('Error saving store chat history:', e)
+            }
+        }
+    }, [messages, business.id])
+
     // Listen for custom event to open chat
     useEffect(() => {
         const handleOpenChat = () => {
@@ -87,25 +113,23 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
         }
     }, [messages, loading])
 
-    // Free Tier Teaser
+    // Free Tier Teaser: Minimalist FAB without logos or text
     if (business.plan !== 'pro') {
         return (
-            <div className="fixed bottom-3 left-3 sm:bottom-5 sm:left-5 z-50 flex flex-col items-start opacity-95">
-                <Button
+            <div className="fixed bottom-3 left-3 sm:bottom-5 sm:left-5 z-50 flex flex-col items-start">
+                <button
                     onClick={() => window.location.href = '/pricing'}
-                    className="h-14 px-5 rounded-2xl bg-gradient-to-r from-[#66351f] to-[#7d4126] border border-[#f4c7a1]/30 text-white shadow-[0_18px_45px_rgba(102,53,31,0.35)] flex items-center gap-3 transition-all hover:-translate-y-0.5 active:translate-y-0 group cursor-pointer"
+                    className="h-14 w-14 rounded-full bg-gradient-to-r from-[#66351f] to-[#c65a24] hover:from-[#7a3f25] hover:to-[#b04d1c] text-white shadow-[0_12px_32px_rgba(102,53,31,0.35)] flex items-center justify-center transition-all hover:scale-105 active:scale-95 border border-[#f4c7a1]/30 cursor-pointer"
+                    aria-label="Chat"
+                    title="Chat"
                 >
                     <div className="relative">
-                        <MessageCircle className="w-5 h-5 text-[#f4c7a1] transition-colors" />
+                        <MessageCircle className="w-6 h-6 text-white" />
                         <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-[#c65a24] border border-white"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-[#c65a24] border-2 border-[#66351f]"></span>
                         </span>
                     </div>
-                    <div className="flex flex-col items-start text-left">
-                        <span className="font-bold text-sm leading-tight text-white">Virtual Assistant</span>
-                        <span className="text-[10px] uppercase tracking-[.14em] text-[#f4c7a1] font-bold">Pro feature</span>
-                    </div>
-                </Button>
+                </button>
             </div>
         )
     }
