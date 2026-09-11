@@ -43,8 +43,8 @@ function getFormattedTime() {
     return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
-const MASTER_CHAT_STORAGE_KEY = 'qriblo_master_chat_messages_v1'
-const MASTER_CHAT_VENDOR_KEY = 'qriblo_master_chat_vendor_v1'
+const MASTER_CHAT_STORAGE_KEY = 'qriblo_master_chat_messages'
+const MASTER_CHAT_VENDOR_KEY = 'qriblo_master_chat_vendor'
 
 const QUICK_SUGGESTIONS = [
     { label: '🛍️ Discover Vendors', prompt: 'Show me popular vendors on Qriblo' },
@@ -603,5 +603,4 @@ export function MasterChatWidget() {
         </Card>
     )
 }
-
 

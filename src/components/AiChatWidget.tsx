@@ -10,9 +10,6 @@ import {
     Calendar, 
     MessageSquare, 
     MessageCircle, 
-    Smile, 
-    Paperclip, 
-    Mic, 
     CheckCheck,
     Store 
 } from 'lucide-react'
@@ -64,7 +61,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
     // Load persisted chat from localStorage
     useEffect(() => {
         try {
-            const saved = localStorage.getItem(`qriblo_store_chat_${business.id}_messages_v1`)
+            const saved = localStorage.getItem(`qriblo_store_chat_${business.id}_messages`)
             if (saved) {
                 const parsed = JSON.parse(saved)
                 if (Array.isArray(parsed) && parsed.length > 0) {
@@ -80,7 +77,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
     useEffect(() => {
         if (messages.length > 0) {
             try {
-                localStorage.setItem(`qriblo_store_chat_${business.id}_messages_v1`, JSON.stringify(messages))
+                localStorage.setItem(`qriblo_store_chat_${business.id}_messages`, JSON.stringify(messages))
             } catch (e) {
                 console.error('Error saving store chat history:', e)
             }
@@ -465,15 +462,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                     {/* WhatsApp Input Shelf */}
                     <div className="p-2.5 bg-[#fff4e6] border-t border-[#f4c7a1]/40 shrink-0">
                         <form onSubmit={handleSend} className="flex items-center gap-2">
-                            {/* White Pill Input */}
-                            <div className="flex-1 bg-white rounded-full px-3 py-2 flex items-center gap-2 shadow-[0_1px_3px_rgba(34,34,34,0.06)] border border-[#f4c7a1]/50 focus-within:border-[#c65a24] focus-within:ring-1 focus-within:ring-[#c65a24]/20 transition-all">
-                                <button
-                                    type="button"
-                                    className="text-[#66351f]/50 hover:text-[#c65a24] transition-colors p-0.5 shrink-0"
-                                    aria-label="Emoji"
-                                >
-                                    <Smile className="w-5 h-5" />
-                                </button>
+                            <div className="flex-1 bg-white rounded-full px-4 py-2.5 flex items-center shadow-[0_1px_3px_rgba(34,34,34,0.06)] border border-[#f4c7a1]/50 focus-within:border-[#c65a24] focus-within:ring-1 focus-within:ring-[#c65a24]/20 transition-all">
                                 <input
                                     type="text"
                                     placeholder="Ask price, stock, or place an order..."
@@ -482,32 +471,18 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                                     onChange={(e) => setInput(e.target.value)}
                                     disabled={loading}
                                 />
-                                <button
-                                    type="button"
-                                    className="text-[#66351f]/50 hover:text-[#c65a24] transition-colors p-0.5 shrink-0"
-                                    aria-label="Attach"
-                                >
-                                    <Paperclip className="w-4 h-4 rotate-45" />
-                                </button>
                             </div>
 
-                            {/* Circular Standalone Send/Mic Button */}
-                            <button
-                                type="submit"
-                                disabled={!input.trim() || loading}
-                                className={`w-10 h-10 rounded-full flex items-center justify-center text-white shrink-0 shadow-[0_3px_10px_rgba(198,90,36,0.3)] transition-all duration-200 cursor-pointer ${
-                                    input.trim()
-                                        ? 'bg-[#c65a24] hover:bg-[#b04d1c] active:scale-95 scale-100'
-                                        : 'bg-[#66351f] hover:bg-[#c65a24] opacity-85 active:scale-95'
-                                }`}
-                                aria-label="Send message"
-                            >
-                                {input.trim() ? (
+                            {input.trim().length > 0 && (
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-10 h-10 rounded-full flex items-center justify-center text-white shrink-0 bg-[#c65a24] hover:bg-[#b04d1c] active:scale-95 shadow-[0_3px_10px_rgba(198,90,36,0.3)] transition-all duration-150 animate-in fade-in zoom-in-75 cursor-pointer"
+                                    aria-label="Send message"
+                                >
                                     <SendHorizontal className="w-4 h-4 ml-0.5 transition-transform" />
-                                ) : (
-                                    <Mic className="w-4 h-4" />
-                                )}
-                            </button>
+                                </button>
+                            )}
                         </form>
                     </div>
                 </Card>
@@ -532,4 +507,3 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
         </div>
     )
 }
-

@@ -43,13 +43,8 @@ export async function POST(req: Request) {
                     })
                 }
 
-                return NextResponse.json({ 
-                    reply: cleanReply,
-                    vendorTakeover: {
-                        id: targetVendor,
-                        name: targetVendor,
-                        slug: targetVendor.toLowerCase().replace(/\s+/g, '-')
-                    }
+                return NextResponse.json({
+                    reply: cleanReply || `I could not find ${targetVendor} on Qriblo yet. Try the exact store name or ask me for similar vendors.`
                 })
             }
             return NextResponse.json({ reply })
