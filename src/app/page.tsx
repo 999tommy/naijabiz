@@ -160,12 +160,11 @@ export default function HomePage() {
 
           {/* Slug input */}
           <form action="/signup" method="GET" className="relative mx-auto max-w-md p-2 rounded-2xl bg-white border border-[#eadfd8] shadow-[0_18px_40px_rgba(70,35,25,.10)] flex gap-2 micro-reveal micro-delay-3 micro-lift">
-            <span className="hidden sm:flex pl-3 py-3 font-mono text-sm text-[#a98f84] items-center whitespace-nowrap">qriblo.com/</span>
             <input
               required
               name="brand"
-              placeholder="your-brand"
-              className="min-w-0 flex-1 px-3 py-3 sm:px-2 bg-transparent font-bold outline-none text-sm placeholder-[#c4aea6]"
+              placeholder="Your brand name"
+              className="min-w-0 flex-1 px-3 py-3 bg-transparent font-bold outline-none text-sm placeholder-[#c4aea6]"
             />
             <button className="shrink-0 rounded-xl px-4 sm:px-5 py-3 bg-[#B84D34] text-white font-bold text-sm hover:bg-[#9A3F2A] transition-colors flex items-center gap-1">
               Claim <ArrowRight className="w-4 h-4" />
@@ -174,7 +173,7 @@ export default function HomePage() {
 
           {/* Subdomain hint */}
           <p className="relative mt-2 text-xs text-[#806b63]">
-            Free link: <span className="font-mono font-bold text-[#1E1410]">qriblo.com/yourbrand</span> &bull; Pro subdomain: <span className="font-mono font-bold text-[#1E1410]">yourbrand.qriblo.com</span>
+            Brand domain: <span className="font-mono font-bold text-[#1E1410]">yourbrand.qriblo.com</span>
           </p>
 
           {/* Trust pills */}
