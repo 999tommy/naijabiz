@@ -14,6 +14,7 @@ import {
     Store 
 } from 'lucide-react'
 import { User as BusinessType } from '@/lib/types'
+import { extractOrderSummary, type OrderSummary } from '@/lib/ai/orderSummary'
 
 interface AiChatWidgetProps {
     business: BusinessType
@@ -26,14 +27,6 @@ interface Message {
     content: string
     timestamp?: string
     sentAt?: string
-}
-
-interface OrderSummary {
-    items: Array<{ name: string; price: number; quantity: number }>
-    customer_name?: string
-    delivery_address?: string
-    total: number
-    type?: 'product' | 'service'
 }
 
 function getFormattedTime() {
@@ -169,15 +162,13 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
     }
 
     const parseOrderSummary = (text: string): { cleanText: string; summary: OrderSummary | null } => {
-        const match = text.match(/\[ORDER_SUMMARY:\s*({[\s\S]*?})\]/)
-        if (!match) return { cleanText: text, summary: null }
+        const tag = extractOrderSummary(text)
+        if (!tag) return { cleanText: text, summary: null }
 
         try {
-            const parsed = JSON.parse(match[1])
+            const parsed = tag.value as Record<string, unknown>
             
             if (
-                typeof parsed === 'object' &&
-                parsed !== null &&
                 Array.isArray(parsed.items) &&
                 typeof parsed.total === 'number' &&
                 parsed.items.every((item: unknown) => 
@@ -185,17 +176,20 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                     item !== null &&
                     'name' in item &&
                     'price' in item &&
-                    'quantity' in item
+                    'quantity' in item &&
+                    typeof item.name === 'string' &&
+                    typeof item.price === 'number' &&
+                    typeof item.quantity === 'number'
                 )
             ) {
                 const summary: OrderSummary = {
-                    items: parsed.items,
+                    items: parsed.items as OrderSummary['items'],
                     total: parsed.total,
                     customer_name: typeof parsed.customer_name === 'string' ? parsed.customer_name : undefined,
                     delivery_address: typeof parsed.delivery_address === 'string' ? parsed.delivery_address : undefined,
-                    type: parsed.type === 'product' || parsed.type === 'service' ? parsed.type : undefined,
+                    type: parsed.type === 'product' || parsed.type === 'service' ? parsed.type : 'product',
                 }
-                const cleanText = text.replace(/\[ORDER_SUMMARY:\s*({[\s\S]*?})\]/, '').trim()
+                const cleanText = `${text.slice(0, tag.start)}${text.slice(tag.end)}`.trim()
                 return { cleanText, summary }
             }
             
@@ -305,8 +299,8 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                         {/* WhatsApp Encryption Notice */}
                         <div className="flex justify-center my-1">
                             <div className="bg-[#f4c7a1]/40 backdrop-blur-xs text-[#66351f] text-[11px] font-medium px-3 py-1 rounded-lg shadow-[0_1px_1px_rgba(0,0,0,0.05)] flex items-center gap-1.5 max-w-[92%] text-center">
-                                <span>🔒</span>
-                                <span>Messages are end-to-end encrypted with {business.business_name}.</span>
+                                <MessageCircle className="h-3 w-3 shrink-0" />
+                                <span>Chat with {business.business_name}'s Virtual Assistant.</span>
                             </div>
                         </div>
                         <div className="flex justify-center mb-1">

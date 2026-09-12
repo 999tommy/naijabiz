@@ -209,7 +209,7 @@ Please confirm my order. Thank you!`
             {cart.length > 0 && (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className={`fixed right-6 z-40 rounded-full p-4 shadow-lg transition-all animate-pulse-glow ${extraBottomSpacing ? 'bottom-24' : 'bottom-6'}`}
+                    className={`fixed right-3 sm:right-5 z-40 rounded-full p-4 shadow-lg transition-all animate-pulse-glow ${extraBottomSpacing ? 'bottom-24' : 'bottom-3 sm:bottom-5'}`}
                     style={{ backgroundColor: accent, color: accentText, boxShadow: `0 16px 34px ${accent}40` }}
                 >
                     <ShoppingCart className="w-6 h-6" />

@@ -435,7 +435,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                     Interactive Virtual Assistant
                                 </CardTitle>
                                 <CardDescription className="text-gray-300 text-xs">
-                                    Test how your assistant answers customer questions.
+                                    Test real customer questions with your current catalog. Owner tests do not use your visitor message allowance.
                                 </CardDescription>
                             </div>
                         </div>

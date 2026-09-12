@@ -8,6 +8,9 @@ const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://qriblo.com'
 const SITE_NAME = 'Qriblo'
 
 import { buildAssistantContext, normalizeMessagesForAi } from './context'
+import { cleanCustomerReply } from './customerConversation'
+import { keepVerifiedOrderSummary } from './orderSummary'
+import { getSalesPlaybook } from './salesPlaybook'
 
 type Message = { role: 'user' | 'assistant' | 'system'; content: string; sentAt?: string; timestamp?: string }
 
@@ -75,7 +78,15 @@ YOUR PERSONALITY & RULES:
    For services, append this tag only after the customer has explicitly confirmed the exact appointment date and time.
 8. PRICING: NEVER invent prices. Only use prices from the catalog above.
 9. BREVITY: Keep responses concise, conversational, and easy to read on mobile.
-10. TONE: ${tone}`
+10. TONE: ${tone}
+
+SALES INTELLIGENCE:
+- Do not pretend there are "different types" when the catalog only lists one product or one service. Speak from the actual catalog.
+- If the customer asks for a close variation, style, size, flavor, color, or version that is not listed, infer the closest catalog item only when it is reasonable, then say the owner will confirm the exact variation and final fit. Example: if a hair customer asks for "all back" or "allback" and the listed service is braids/cornrows, explain that all-back is a simpler braided/cornrow style, quote it as the closest listed price or starting price, and ask for date, time, name, and phone.
+- If the requested item is not close to anything in the catalog, be honest: say it is not listed yet, offer to pass the request to the owner, then collect their name, phone number, and preferred details.
+- Close the sale gently in every useful reply: ask one clear next question that moves toward booking, ordering, pickup, delivery, or WhatsApp handoff.
+- Never show internal metadata such as "[Message sent: ...]" to customers.
+${getSalesPlaybook(business)}`
 
     const callOpenRouter = async (model: string) => {
         const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -105,5 +116,6 @@ YOUR PERSONALITY & RULES:
     if (!res.ok) throw new Error('AI Service Unavailable')
 
     const data = await res.json()
-    return data.choices?.[0]?.message?.content || "I'm sorry, my network is a bit slow. What were you saying?"
+    const reply = cleanCustomerReply(data.choices?.[0]?.message?.content || "I'm sorry, my network is a bit slow. What were you saying?")
+    return keepVerifiedOrderSummary(reply, activeItems)
 }

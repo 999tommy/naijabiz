@@ -32,10 +32,9 @@ export function buildAssistantContext(now = new Date()) {
 
 export function normalizeMessagesForAi(messages: Message[]): Array<{ role: 'user' | 'assistant' | 'system'; content: string }> {
     return messages.map(message => {
-        const sentAt = message.sentAt ? formatMessageTime(message.sentAt) : message.timestamp
         return {
             role: message.role,
-            content: sentAt ? `[Message sent: ${sentAt}]\n${message.content}` : message.content,
+            content: message.content,
         }
     })
 }

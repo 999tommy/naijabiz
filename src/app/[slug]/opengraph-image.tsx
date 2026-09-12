@@ -190,8 +190,8 @@ export default async function Image({ params }: { params: Promise<{ slug: string
                     >
                         Powered by Qriblo
                     </div>
-                    <div style={{ fontSize: '20px', color: theme.bodyText }}>
-                        Create your own free page at <span style={{ fontWeight: 'bold', color: theme.headingText }}>qriblo.com</span>
+                    <div style={{ display: 'flex', fontSize: '20px', color: theme.bodyText }}>
+                        Create your own free page at <span style={{ fontWeight: 'bold', color: theme.headingText, marginLeft: '6px' }}>qriblo.com</span>
                     </div>
                 </div>
             </div>

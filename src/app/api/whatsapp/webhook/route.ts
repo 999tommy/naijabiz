@@ -19,6 +19,8 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { generateReply } from '@/lib/ai/generateReply'
 import { qribloMasterReply } from '@/lib/ai/qribloMasterReply'
 import { getDailyAiUsageState } from '@/lib/ai/usage'
+import { normalizeCustomerConversation } from '@/lib/ai/customerConversation'
+import { extractOrderSummary, stripOrderSummaries } from '@/lib/ai/orderSummary'
 
 export const maxDuration = 30
 
@@ -201,24 +203,29 @@ export async function POST(req: Request) {
             return new NextResponse('OK', { status: 200 })
         }
 
-        await supabase
-            .from('users')
-            .update({
-                ai_usage_count: usageState.nextUsage,
-                ai_usage_limit: usageState.limit,
-                ai_last_reset_at: usageState.shouldReset ? usageState.nowIso : business.ai_last_reset_at,
-            })
-            .eq('id', businessId)
-
         // ── Step 6: Build message history + call AI ──────────────────────────
         messages.push({ role: 'user', content: incomingText })
 
         let aiReply: string
+        let generatedReply = false
         try {
-            aiReply = await generateReply(business, messages)
+            aiReply = await generateReply(business, normalizeCustomerConversation(messages))
+            generatedReply = true
         } catch (e: any) {
             console.error('[WhatsApp AI Error]', e)
             aiReply = "Sorry, I'm having trouble right now. Please try again in a moment! 🙏"
+        }
+
+        // A provider failure is not a customer conversation and must not use allowance.
+        if (generatedReply) {
+            await supabase
+                .from('users')
+                .update({
+                    ai_usage_count: usageState.nextUsage,
+                    ai_usage_limit: usageState.limit,
+                    ai_last_reset_at: usageState.shouldReset ? usageState.nowIso : business.ai_last_reset_at,
+                })
+                .eq('id', businessId)
         }
 
         messages.push({ role: 'assistant', content: aiReply })
@@ -232,10 +239,10 @@ export async function POST(req: Request) {
         }, { onConflict: 'business_id,customer_phone' })
 
         // ── Step 8: Parse ORDER_SUMMARY and save order ───────────────────────
-        const orderMatch = aiReply.match(/\[ORDER_SUMMARY:\s*({[\s\S]*?})\]/)
-        if (orderMatch) {
+        const orderSummary = extractOrderSummary(aiReply)
+        if (orderSummary) {
             try {
-                const orderData = JSON.parse(orderMatch[1])
+                const orderData = orderSummary.value as Record<string, any>
                 await supabase.from('orders').insert({
                     user_id: businessId,
                     customer_name: orderData.customer_name || 'WhatsApp Customer',
@@ -254,7 +261,7 @@ export async function POST(req: Request) {
         }
 
         // Strip ORDER_SUMMARY tag from the message before sending to customer
-        const cleanReply = aiReply.replace(/\[ORDER_SUMMARY:[\s\S]*?\]/, '').trim()
+        const cleanReply = stripOrderSummaries(aiReply)
         await sendWhatsAppMessage(customerPhone, cleanReply)
 
         return new NextResponse('OK', { status: 200 })

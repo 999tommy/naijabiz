@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
-import { createServiceClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { generateReply } from '@/lib/ai/generateReply'
 import { qribloMasterReply } from '@/lib/ai/qribloMasterReply'
 import { getDailyAiUsageState } from '@/lib/ai/usage'
+import { normalizeCustomerConversation } from '@/lib/ai/customerConversation'
 
 export const maxDuration = 30
 
@@ -10,13 +11,14 @@ export async function POST(req: Request) {
     try {
         const { businessId, messages, isSandbox } = await req.json()
 
-        if (!messages) {
+        const conversation = normalizeCustomerConversation(messages)
+        if (conversation.length === 0) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
         }
 
         // Handle Qriblo Master VA request
         if (!businessId || businessId === 'qriblo-master') {
-            const reply = await qribloMasterReply(messages)
+            const reply = await qribloMasterReply(conversation)
             
             // Check for in-chat vendor takeover tag
             const vendorTagMatch = reply.match(/\[(?:CONNECT_VENDOR|ROUTE_TO_VENDOR):\s*(.+?)\]/i)
@@ -54,6 +56,15 @@ export async function POST(req: Request) {
 
         const supabase = await createServiceClient()
 
+        // Dashboard testing is free for the owner, but it is never a public quota bypass.
+        if (isSandbox) {
+            const authClient = await createClient()
+            const { data: { user } } = await authClient.auth.getUser()
+            if (!user || user.id !== businessId) {
+                return NextResponse.json({ error: 'Unauthorized sandbox request' }, { status: 403 })
+            }
+        }
+
         // Fetch business + product catalog
         const { data: business, error: userError } = await supabase
             .from('users')
@@ -67,20 +78,23 @@ export async function POST(req: Request) {
 
         // Rate-limit check
         const usageState = getDailyAiUsageState(business)
-        if (usageState.limitReached) {
+        if (!isSandbox && usageState.limitReached) {
             return NextResponse.json({ error: 'LIMIT_REACHED' }, { status: 429 })
         }
 
-        await supabase
-            .from('users')
-            .update({
-                ai_usage_count: usageState.nextUsage,
-                ai_usage_limit: usageState.limit,
-                ai_last_reset_at: usageState.shouldReset ? usageState.nowIso : business.ai_last_reset_at,
-            })
-            .eq('id', businessId)
+        const reply = await generateReply(business, conversation)
 
-        const reply = await generateReply(business, messages)
+        // Do not charge a business for a failed provider call or an owner test.
+        if (!isSandbox) {
+            await supabase
+                .from('users')
+                .update({
+                    ai_usage_count: usageState.nextUsage,
+                    ai_usage_limit: usageState.limit,
+                    ai_last_reset_at: usageState.shouldReset ? usageState.nowIso : business.ai_last_reset_at,
+                })
+                .eq('id', businessId)
+        }
         return NextResponse.json({ reply })
 
     } catch (error: any) {
