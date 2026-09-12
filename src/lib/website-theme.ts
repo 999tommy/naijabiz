@@ -322,8 +322,7 @@ export function getWebsiteTheme(
   businessType?: string | null,
 ): WebsiteTheme {
   if (businessType === 'both') {
-    const hybridThemes: ThemeId[] = ['iris-mauve', 'burgundy-glacier', 'sapphire-camel', 'byzantium-champagne']
-    return themes[hybridThemes[slugHash(businessSlug) % hybridThemes.length]]
+    return themes['burgundy-glacier']
   }
 
   if (businessType === 'services') {
