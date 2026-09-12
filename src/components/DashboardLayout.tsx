@@ -18,6 +18,7 @@ import {
     Crown,
     Bot,
     Users
+    ,CalendarDays
 } from 'lucide-react'
 import type { User } from '@/lib/types'
 import { FeedbackModal } from './FeedbackModal'
@@ -46,6 +47,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
     const navigation = [
         { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
         { name: catalogLabel, href: '/dashboard/products', icon: Package },
+        { name: 'Bookings', href: '/dashboard/bookings', icon: CalendarDays },
         { name: 'Settings', href: '/dashboard/settings', icon: Settings },
         {
             name: 'AI Assistant',

@@ -47,6 +47,8 @@ export interface User {
     // Bank details
     bank_name?: string | null
     account_number?: string | null
+    booking_hours?: Record<string, { enabled: boolean; start: string; end: string }> | null
+    booking_slot_minutes?: number | null
 }
 
 export interface Product {
@@ -114,6 +116,21 @@ export interface ChatSession {
     business_id: string
     customer_phone: string
     messages: { role: 'user' | 'assistant', content: string }[]
+    created_at: string
+    updated_at: string
+}
+
+export interface Booking {
+    id: string
+    business_id: string
+    service_id: string | null
+    service_name: string
+    customer_name: string
+    customer_phone: string
+    booking_date: string
+    booking_time: string
+    notes: string | null
+    status: 'confirmed' | 'rescheduled' | 'cancelled' | 'completed'
     created_at: string
     updated_at: string
 }

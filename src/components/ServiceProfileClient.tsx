@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -48,12 +48,28 @@ export function ServiceProfileClient({
     }
 
     const isVaEnabled = waWhatsappEnabled || false
-    const whatsappNumber = isVaEnabled ? '15551234567' : business.whatsapp_number
+    const whatsappNumber = isVaEnabled ? '2347047207012' : business.whatsapp_number
     const slug = business.business_slug
     const [selectedService, setSelectedService] = useState(products[0]?.name || '')
     const [preferredDate, setPreferredDate] = useState('')
     const [preferredTime, setPreferredTime] = useState('')
     const [bookingNotes, setBookingNotes] = useState('')
+    const [customerName, setCustomerName] = useState('')
+    const [customerPhone, setCustomerPhone] = useState('')
+    const [availableSlots, setAvailableSlots] = useState<string[]>([])
+    const [bookingState, setBookingState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+    const [bookingError, setBookingError] = useState('')
+
+    useEffect(() => {
+        if (!preferredDate) return
+        setBookingError('')
+        setAvailableSlots([])
+        setPreferredTime('')
+        fetch(`/api/bookings?business_id=${business.id}&date=${preferredDate}`)
+            .then(response => response.json())
+            .then(data => setAvailableSlots(data.slots || []))
+            .catch(() => setBookingError('Could not load availability. Please try again.'))
+    }, [business.id, preferredDate])
 
     const bookingMessage = useMemo(() => {
         const prefix = isVaEnabled ? `hi ${slug}\n` : ''
@@ -68,9 +84,32 @@ export function ServiceProfileClient({
         return lines.join('\n')
     }, [bookingNotes, business.business_name, preferredDate, preferredTime, selectedService, isVaEnabled, slug])
 
-    const bookingUrl = whatsappNumber
-        ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(bookingMessage)}`
-        : '#'
+    const submitBooking = async () => {
+        setBookingState('loading')
+        setBookingError('')
+        const service = products.find(item => item.name === selectedService)
+        const response = await fetch('/api/bookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                business_id: business.id,
+                service_id: service?.id,
+                service_name: selectedService,
+                customer_name: customerName,
+                customer_phone: customerPhone,
+                booking_date: preferredDate,
+                booking_time: preferredTime,
+                notes: bookingNotes,
+            }),
+        })
+        const data = await response.json()
+        if (!response.ok) {
+            setBookingState('error')
+            setBookingError(data.error || 'Could not create booking')
+            return
+        }
+        setBookingState('success')
+    }
 
     return (
         <div className="min-h-screen bg-[#faf9f6]">
@@ -234,7 +273,7 @@ export function ServiceProfileClient({
                                 <p className="text-xs font-bold uppercase tracking-widest text-green-700 mb-2">Request an appointment</p>
                                 <h2 className="text-2xl font-black text-gray-900">Send a complete booking request</h2>
                                 <p className="text-sm text-gray-500 mt-2 max-w-xl">
-                                    Pick the service, date, and time. Qriblo prepares a structured WhatsApp message so the business gets the details clearly.
+                                    Pick an available service slot. Your booking is confirmed instantly and the business can manage it from their dashboard.
                                 </p>
                             </div>
                             {isPro && (
@@ -245,6 +284,14 @@ export function ServiceProfileClient({
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label htmlFor="customer-name" className="text-sm font-bold text-gray-700">Name</label>
+                                <input id="customer-name" value={customerName} onChange={event => setCustomerName(event.target.value)} className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm" />
+                            </div>
+                            <div className="space-y-2">
+                                <label htmlFor="customer-phone" className="text-sm font-bold text-gray-700">Phone</label>
+                                <input id="customer-phone" value={customerPhone} onChange={event => setCustomerPhone(event.target.value)} className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm" />
+                            </div>
                             <div className="space-y-2">
                                 <label htmlFor="service" className="text-sm font-bold text-gray-700">Service</label>
                                 <select
@@ -271,13 +318,16 @@ export function ServiceProfileClient({
                                 </div>
                                 <div className="space-y-2">
                                     <label htmlFor="time" className="text-sm font-bold text-gray-700">Time</label>
-                                    <input
+                                    <select
                                         id="time"
-                                        type="time"
                                         value={preferredTime}
                                         onChange={(event) => setPreferredTime(event.target.value)}
+                                        disabled={!preferredDate || availableSlots.length === 0}
                                         className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium focus:border-green-600 focus:outline-none focus:ring-2 focus:ring-green-600/20"
-                                    />
+                                    >
+                                        <option value="">Select a slot</option>
+                                        {availableSlots.map(slot => <option key={slot} value={slot}>{slot}</option>)}
+                                    </select>
                                 </div>
                             </div>
                             <div className="md:col-span-2 space-y-2">
@@ -295,14 +345,14 @@ export function ServiceProfileClient({
 
                         <div className="mt-5 flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
                             <p className="text-xs text-gray-500">
-                                WhatsApp-first today. The business confirms availability and payment directly with you.
+                                {availableSlots.length ? `${availableSlots.length} available slots. Bookings use Africa/Lagos time.` : 'Choose a date to see available slots.'}
                             </p>
-                            <a href={bookingUrl} target="_blank" rel="noopener noreferrer">
-                                <Button className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold">
-                                    Send Booking Request <ArrowRight className="w-4 h-4 ml-1" />
-                                </Button>
-                            </a>
+                            <Button onClick={submitBooking} disabled={bookingState === 'loading' || !customerName || !customerPhone || !preferredDate || !preferredTime} className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold">
+                                {bookingState === 'success' ? 'Booking confirmed' : bookingState === 'loading' ? 'Booking...' : 'Confirm booking'} <ArrowRight className="w-4 h-4 ml-1" />
+                            </Button>
                         </div>
+                        {bookingError && <p className="mt-3 text-sm text-red-600">{bookingError}</p>}
+                        {bookingState === 'success' && <p className="mt-3 text-sm text-green-700">Your appointment is confirmed. The business has received the booking.</p>}
                     </div>
                 )}
 

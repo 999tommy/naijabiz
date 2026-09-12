@@ -133,7 +133,7 @@ Please confirm my order. Thank you!`
         const message = generateOrderMessage()
 
         if (orderMethod === 'whatsapp') {
-            const finalWaNumber = waWhatsappEnabled ? '15551234567' : whatsappNumber
+            const finalWaNumber = waWhatsappEnabled ? '2347047207012' : whatsappNumber
             const whatsappUrl = generateWhatsAppLink(finalWaNumber, message)
             window.open(whatsappUrl, '_blank')
         } else if (instagramHandle) {

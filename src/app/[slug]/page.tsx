@@ -123,7 +123,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
     recordPageView(business.id)
 
     const whatsappLink = (business.plan === 'pro' && business.wa_whatsapp_enabled)
-        ? `https://wa.me/15551234567?text=hi%20${business.business_slug}`
+        ? `https://wa.me/2347047207012?text=hi%20${business.business_slug}`
         : business.whatsapp_number ? `https://wa.me/${business.whatsapp_number}` : null;
 
     const isVerified = isPro

@@ -51,7 +51,8 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
 
     const isPro = user.plan === 'pro'
     const maxProducts = isPro ? Infinity : 5
-    const canAddMore = products.length < maxProducts
+    const activeProductCount = products.filter(product => product.is_active !== false).length
+    const canAddMore = activeProductCount < maxProducts
 
     const fetchProducts = useCallback(async () => {
         const { data } = await supabase
@@ -90,6 +91,9 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
         setCompressing(true)
 
         try {
+            if (!editingProduct && !isPro && activeProductCount >= 5) {
+                throw new Error('Free accounts can have up to 5 active catalog items. Deactivate an item or upgrade to Pro.')
+            }
             const compressedFile = await compressImage(file)
             setImageFile(compressedFile)
             setImagePreview(URL.createObjectURL(compressedFile))
@@ -224,7 +228,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Products & Services Catalog</h1>
                     <p className="text-gray-500">
-                        {products.length} / {isPro ? '∞' : '5'} items listed
+                        {activeProductCount} / {isPro ? '∞' : '5'} active items listed
                     </p>
                 </div>
 
@@ -241,12 +245,12 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
             </div>
 
             {/* Product limit warning */}
-            {!isPro && products.length >= 2 && (
+            {!isPro && activeProductCount >= 2 && (
                 <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-xl flex items-start gap-3">
                     <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
                     <div>
                         <p className="font-medium text-orange-800">
-                            {products.length >= 5 ? 'Catalog limit reached!' : 'Almost at limit!'}
+                            {activeProductCount >= 5 ? 'Catalog limit reached!' : 'Almost at limit!'}
                         </p>
                         <p className="text-sm text-orange-700 mt-1">
                             Free accounts can add up to 5 items. Upgrade to Pro for unlimited items, your personal brand subdomain ({user.business_slug ? `${user.business_slug}.qriblo.com` : 'yourbrand.qriblo.com'}), and 24/7 AI Sales Assistant.

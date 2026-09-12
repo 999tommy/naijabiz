@@ -231,7 +231,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION get_product_count(uid UUID)
 RETURNS INTEGER AS $$
 BEGIN
-    RETURN (SELECT COUNT(*) FROM public.products WHERE user_id = uid);
+    RETURN (SELECT COUNT(*) FROM public.products WHERE user_id = uid AND is_active = TRUE);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -248,9 +248,9 @@ BEGIN
         RETURN TRUE;
     END IF;
     
-    SELECT COUNT(*) INTO product_count FROM public.products WHERE user_id = uid;
+    SELECT COUNT(*) INTO product_count FROM public.products WHERE user_id = uid AND is_active = TRUE;
     
-    RETURN product_count < 3;
+    RETURN product_count < 5;
 END;
 $$ LANGUAGE plpgsql;
 

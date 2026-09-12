@@ -6,7 +6,8 @@
     "dev": "node --dns-result-order=ipv4first node_modules/next/dist/bin/next dev",
     "build": "next build",
     "start": "node --dns-result-order=ipv4first node_modules/next/dist/bin/next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --test tests/*.test.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",

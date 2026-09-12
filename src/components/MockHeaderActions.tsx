@@ -9,7 +9,9 @@ export function MockHeaderActions() {
             variant="outline"
             size="sm"
             onClick={() => {
-                alert("This is a demo page. In a real page, this would share the link!")
+                const url = window.location.href
+                if (navigator.share) navigator.share({ title: document.title, url }).catch(() => undefined)
+                else navigator.clipboard.writeText(url)
             }}
         >
             <Share2 className="w-4 h-4 mr-2" />

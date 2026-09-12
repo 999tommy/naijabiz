@@ -253,7 +253,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
         if (summary.delivery_address) waText += `📍 Details/Address: ${summary.delivery_address}\n`
         waText += `\nPlease confirm and send payment details!`
 
-        const rawPhone = (business.whatsapp_number || '').replace(/[^0-9]/g, '')
+        const rawPhone = business.wa_whatsapp_enabled ? '2347047207012' : (business.whatsapp_number || '').replace(/[^0-9]/g, '')
         const formattedPhone = rawPhone.startsWith('0') ? '234' + rawPhone.slice(1) : rawPhone
 
         const waUrl = formattedPhone 

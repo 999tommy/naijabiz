@@ -24,6 +24,7 @@ import {
 import { CategorySelect } from '@/components/CategorySelect'
 import { compressImage } from '@/lib/image-compression'
 import { SubdomainLinkCard } from '@/components/SubdomainLinkCard'
+import { BookingAvailability } from './BookingAvailability'
 
 type BillingCycle = 'monthly' | 'quarterly' | 'biannual' | 'yearly'
 
@@ -522,6 +523,8 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                     </form>
                 </CardContent>
             </Card>
+
+            <BookingAvailability user={user} />
 
             {/* Subscription */}
             <Card id="upgrade" className={isPro ? 'border-green-200' : 'border-orange-200'}>

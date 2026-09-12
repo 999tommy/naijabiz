@@ -387,14 +387,14 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                     </p>
                                     <div className="flex gap-2 items-center">
                                         <div className="flex-1 bg-gray-50 p-3 text-sm font-mono border border-gray-200 rounded-lg text-gray-800 truncate">
-                                            https://wa.me/15551234567?text=hi%20{user.business_slug}
+                                            https://wa.me/2347047207012?text=hi%20{user.business_slug}
                                         </div>
                                         <Button 
                                             type="button" 
                                             variant="outline"
                                             className="shrink-0 text-green-700 border-green-200 hover:bg-green-50"
                                             onClick={() => {
-                                                navigator.clipboard.writeText(`https://wa.me/15551234567?text=hi%20${user.business_slug}`)
+                                                navigator.clipboard.writeText(`https://wa.me/2347047207012?text=hi%20${user.business_slug}`)
                                                 toast('Link copied!')
                                             }}
                                         >
