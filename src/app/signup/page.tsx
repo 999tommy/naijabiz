@@ -21,7 +21,7 @@ export default function SignupPage() {
     const [password, setPassword] = useState('')
     const [businessName, setBusinessName] = useState('')
     const [whatsappNumber, setWhatsappNumber] = useState('')
-    const [businessType, setBusinessType] = useState<'products' | 'services'>('products')
+    const [businessType, setBusinessType] = useState<'products' | 'services' | 'both'>('products')
     const [location, setLocation] = useState('')
     const [categoryId, setCategoryId] = useState('')
     const [categories, setCategories] = useState<Category[]>([])
@@ -403,23 +403,34 @@ export default function SignupPage() {
 
                                 {/* Business Type Selection */}
                                 <div className="space-y-3 pb-2 pt-2">
-                                    <label className="text-sm font-medium text-gray-700">Business Type</label>
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <label className="text-sm font-medium text-gray-700">What do you offer?</label>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                         <button
                                             type="button"
                                             onClick={() => setBusinessType('products')}
-                                            className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${businessType === 'products' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-gray-200 bg-white text-gray-500 hover:border-orange-200 hover:bg-orange-50/50'}`}
+                                            className={`flex min-h-24 flex-col items-center justify-center gap-1 p-3 text-center rounded-xl border-2 transition-all ${businessType === 'products' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-gray-200 bg-white text-gray-500 hover:border-orange-200 hover:bg-orange-50/50'}`}
                                         >
                                             <Store className="w-4 h-4" />
-                                            <span className="font-semibold text-sm">Selling Products</span>
+                                            <span className="font-semibold text-sm">Sell goods</span>
+                                            <span className="text-xs font-normal">Food, fashion, beauty items</span>
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => setBusinessType('services')}
-                                            className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${businessType === 'services' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-gray-200 bg-white text-gray-500 hover:border-orange-200 hover:bg-orange-50/50'}`}
+                                            className={`flex min-h-24 flex-col items-center justify-center gap-1 p-3 text-center rounded-xl border-2 transition-all ${businessType === 'services' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-gray-200 bg-white text-gray-500 hover:border-orange-200 hover:bg-orange-50/50'}`}
                                         >
                                             <Scissors className="w-4 h-4" />
-                                            <span className="font-semibold text-sm">Offering Services</span>
+                                            <span className="font-semibold text-sm">Offer services</span>
+                                            <span className="text-xs font-normal">Hair, makeup, repair, coaching</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setBusinessType('both')}
+                                            className={`flex min-h-24 flex-col items-center justify-center gap-1 p-3 text-center rounded-xl border-2 transition-all ${businessType === 'both' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-gray-200 bg-white text-gray-500 hover:border-orange-200 hover:bg-orange-50/50'}`}
+                                        >
+                                            <CheckCircle className="w-4 h-4" />
+                                            <span className="font-semibold text-sm">Both</span>
+                                            <span className="text-xs font-normal">Sell items and take bookings</span>
                                         </button>
                                     </div>
                                 </div>

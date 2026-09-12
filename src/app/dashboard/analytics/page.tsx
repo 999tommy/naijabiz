@@ -72,6 +72,15 @@ async function getAnalytics(userId: string) {
     }
 }
 
+function getReferrerLabel(referrer: string | null) {
+    if (!referrer) return 'Direct visit'
+    try {
+        return `From: ${new URL(referrer).hostname}`
+    } catch {
+        return 'Referral visit'
+    }
+}
+
 export default async function AnalyticsPage() {
     const supabase = await createClient()
     const { data: { user: authUser } } = await supabase.auth.getUser()
@@ -200,10 +209,10 @@ export default async function AnalyticsPage() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Package className="w-5 h-5" />
-                                Top Products
+                                Top Items
                             </CardTitle>
                             <CardDescription>
-                                Your best selling items
+                                Your best selling products or services
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -269,7 +278,7 @@ export default async function AnalyticsPage() {
                                                         Visitor
                                                     </p>
                                                     <p className="text-xs text-gray-500">
-                                                        {view.referrer ? `From: ${new URL(view.referrer).hostname}` : 'Direct visit'}
+                                                        {getReferrerLabel(view.referrer)}
                                                     </p>
                                                 </div>
                                             </div>

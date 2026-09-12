@@ -57,12 +57,10 @@ export default async function AdminReferralsPage() {
     // Enrich with their referral stats
     const enrichedParticipants = await Promise.all(
         participants.map(async (p) => {
-            if (!p.business_slug) return { ...p, eligiblePending: 0, totalPaying: 0, paidRounds: 0 }
-
             const { count: payingCount } = await supabase
                 .from('users')
                 .select('*', { count: 'exact', head: true })
-                .eq('referred_by', p.business_slug)
+                .eq('referred_by', p.id)
                 .eq('plan', 'pro')
 
             const { count: payoutRounds } = await supabase

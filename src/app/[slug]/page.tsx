@@ -120,6 +120,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
         getProducts(business.id, isPro ? undefined : 5),
         getReviews(business.id),
     ])
+    const hasBookableServices = business.business_type === 'both' && products.some(product => product.item_type === 'service')
     recordPageView(business.id)
 
     const whatsappLink = (business.plan === 'pro' && business.wa_whatsapp_enabled)
@@ -176,6 +177,13 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                 </Link>
                             )}
                             <BusinessShareButton businessName={business.business_name} />
+                            {hasBookableServices && (
+                                <a href="#booking-panel">
+                                    <Button size="sm" className="bg-green-600 hover:bg-green-700 font-semibold shadow-sm">
+                                        Book Now
+                                    </Button>
+                                </a>
+                            )}
                         </div>
                     </div>
                 </header>
@@ -209,6 +217,11 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                     {whatsappLink && (
                                         <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
                                             <Button size="sm" className="bg-green-600 hover:bg-green-700 font-semibold shadow-sm"><MessageCircle className="w-4 h-4 mr-2" />WhatsApp</Button>
+                                        </a>
+                                    )}
+                                    {hasBookableServices && (
+                                        <a href="#booking-panel">
+                                            <Button size="sm" className="bg-gray-900 hover:bg-gray-800 font-semibold shadow-sm">Book Now</Button>
                                         </a>
                                     )}
                                     {business.instagram_handle && (
@@ -283,6 +296,13 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                 <ShoppingBag className="w-4 h-4" />Shop
                             </button>
                         </a>
+                        {hasBookableServices && (
+                            <a href="#booking-panel">
+                                <button className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all hover:opacity-90 bg-green-600 text-white">
+                                    Book
+                                </button>
+                            </a>
+                        )}
                     </div>
                 </div>
             </nav>
@@ -320,6 +340,13 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                         <ShoppingBag className="w-5 h-5" />Shop Now<ArrowRight className="w-4 h-4" />
                                     </button>
                                 </a>
+                                {hasBookableServices && (
+                                    <a href="#booking-panel">
+                                        <button className="h-13 px-6 py-3.5 rounded-2xl text-base font-bold flex items-center gap-2 transition-all hover:opacity-90 bg-green-600 text-white shadow-xl">
+                                            Book Now
+                                        </button>
+                                    </a>
+                                )}
                                 {whatsappLink && (
                                     <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
                                         <button className="h-13 px-6 py-3.5 rounded-2xl text-base font-bold flex items-center gap-2 transition-all hover:opacity-80" style={{ background: 'rgba(255,255,255,0.15)', color: theme.heroText, border: '1px solid rgba(255,255,255,0.25)' }}>

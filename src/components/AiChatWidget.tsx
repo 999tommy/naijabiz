@@ -112,32 +112,11 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
         }
     }, [messages, loading])
 
-    // Free Tier Teaser: Minimalist FAB without logos or text
-    if (business.plan !== 'pro') {
-        return (
-            <div className="fixed bottom-3 left-3 sm:bottom-5 sm:left-5 z-50 flex flex-col items-start">
-                <button
-                    onClick={() => window.location.href = '/pricing'}
-                    className="h-14 w-14 rounded-full bg-gradient-to-r from-[#66351f] to-[#c65a24] hover:from-[#7a3f25] hover:to-[#b04d1c] text-white shadow-[0_12px_32px_rgba(102,53,31,0.35)] flex items-center justify-center transition-all hover:scale-105 active:scale-95 border border-[#f4c7a1]/30 cursor-pointer"
-                    aria-label="Chat"
-                    title="Chat"
-                >
-                    <div className="relative">
-                        <MessageCircle className="w-6 h-6 text-white" />
-                        <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-[#c65a24] border-2 border-[#66351f]"></span>
-                        </span>
-                    </div>
-                </button>
-            </div>
-        )
-    }
-
     const handleSend = async (e?: React.FormEvent) => {
         e?.preventDefault()
         if (!input.trim() || loading) return
 
-        if (replyCount >= 12) {
+        if (business.plan === 'pro' && replyCount >= 12) {
             setMessages(prev => [...prev, {
                 role: 'assistant',
                 content: "I've reached my message limit for this chat session. Please click the WhatsApp button below to chat with us directly! 📲",
@@ -167,7 +146,10 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                 try {
                     const errData = await response.json()
                     if (errData.error === 'LIMIT_REACHED') {
-                        throw new Error("Today's chat limit has been reached for this business. Please contact the owner directly via WhatsApp.");
+                        throw new Error(business.plan === 'pro'
+                            ? "Today's chat limit has been reached for this business. Please contact the owner directly via WhatsApp."
+                            : "This business has used its 100 free Virtual Assistant messages for the month. Please contact the owner directly via WhatsApp."
+                        );
                     }
                 } catch {
                     // ignore JSON parse error
@@ -468,7 +450,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                             <div className="flex-1 bg-white rounded-full px-4 py-2.5 flex items-center shadow-[0_1px_3px_rgba(34,34,34,0.06)] border border-[#f4c7a1]/50 focus-within:border-[#c65a24] focus-within:ring-1 focus-within:ring-[#c65a24]/20 transition-all">
                                 <input
                                     type="text"
-                                    placeholder="Ask price, stock, or place an order..."
+                                    placeholder={business.plan === 'pro' ? 'Ask price, stock, or place an order...' : 'Ask the Virtual Assistant...'}
                                     className="flex-1 bg-transparent text-base text-[#222222] placeholder:text-[#222222]/45 outline-none min-w-0"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}

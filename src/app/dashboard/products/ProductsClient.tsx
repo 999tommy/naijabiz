@@ -224,7 +224,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
 
     return (
         <div className="max-w-6xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Products & Services Catalog</h1>
                     <p className="text-gray-500">
@@ -233,12 +233,12 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                 </div>
 
                 {canAddMore ? (
-                    <Button onClick={() => setShowForm(true)} className="bg-orange-600 hover:bg-orange-700 font-bold">
+                    <Button onClick={() => setShowForm(true)} className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 font-bold">
                         <Plus className="w-4 h-4 mr-2" />
                         Add Item / Service
                     </Button>
                 ) : (
-                    <Button variant="outline" onClick={() => router.push('/dashboard/settings#upgrade')}>
+                    <Button variant="outline" onClick={() => router.push('/dashboard/settings#upgrade')} className="w-full sm:w-auto">
                         Upgrade to add more
                     </Button>
                 )}
@@ -253,7 +253,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                             {activeProductCount >= 5 ? 'Catalog limit reached!' : 'Almost at limit!'}
                         </p>
                         <p className="text-sm text-orange-700 mt-1">
-                            Free accounts can add up to 5 items. Upgrade to Pro for unlimited items, your personal brand subdomain ({user.business_slug ? `${user.business_slug}.qriblo.com` : 'yourbrand.qriblo.com'}), and 24/7 AI Sales Assistant.
+                            Free accounts can add up to 5 items. Upgrade to Pro for unlimited items, your personal brand subdomain ({user.business_slug ? `${user.business_slug}.qriblo.com` : 'yourbrand.qriblo.com'}), and more Virtual Assistant capacity.
                         </p>
                     </div>
                 </div>
@@ -273,7 +273,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                             {/* Type Selector */}
                             <div className="space-y-2">
                                 <label className="text-sm font-bold text-gray-700">Listing Type</label>
-                                <div className="flex gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <label className="flex items-center gap-2 px-4 py-2 border rounded-xl cursor-pointer hover:border-orange-500 bg-white">
                                         <input
                                             type="radio"
@@ -414,7 +414,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                                 </p>
                             )}
 
-                            <div className="flex gap-2 pt-2">
+                            <div className="flex flex-col sm:flex-row gap-2 pt-2">
                                 <Button type="submit" disabled={loading} className="bg-orange-600 hover:bg-orange-700">
                                     {loading ? (
                                         <>
@@ -440,7 +440,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                     <Package className="w-12 h-12 mx-auto text-gray-300 mb-4" />
                     <h3 className="font-medium text-gray-900 mb-2">No items listed yet</h3>
                     <p className="text-gray-500 text-sm mb-4">
-                        Add your first product or service so your AI Assistant can start closing sales
+                        Add your first product or service so customers can buy or book from your page.
                     </p>
                     <Button onClick={() => setShowForm(true)} className="bg-orange-600 hover:bg-orange-700 font-bold">
                         <Plus className="w-4 h-4 mr-2" />

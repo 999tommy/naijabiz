@@ -30,7 +30,7 @@ export function ReferralCard({ user, referralStats }: ReferralCardProps) {
         setMounted(true)
     }, [])
 
-    const referralLink = mounted ? `${window.location.origin}/signup?ref=${user.business_slug}` : `...`
+    const referralLink = mounted && user.business_slug ? `${window.location.origin}/signup?ref=${user.business_slug}` : ''
 
     // Logic: calculate progress towards the NEXT 5
     const payingCount = referralStats.payingReferredCount
@@ -44,13 +44,14 @@ export function ReferralCard({ user, referralStats }: ReferralCardProps) {
     const percentage = Math.min((currentProgress / target) * 100, 100)
 
     const handleCopy = () => {
-        if (!mounted) return
+        if (!mounted || !referralLink) return
         navigator.clipboard.writeText(referralLink)
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
     }
 
     const handleShare = async () => {
+        if (!referralLink) return
         if (navigator.share) {
             try {
                 await navigator.share({
@@ -194,12 +195,12 @@ export function ReferralCard({ user, referralStats }: ReferralCardProps) {
                     {/* Link */}
                     <div className="flex gap-2">
                         <div className="flex-1 min-w-0 bg-white border border-indigo-200 rounded-lg px-3 py-2 text-sm text-gray-600 truncate font-mono">
-                            {user.business_slug ? referralLink : '...'}
+                            {user.business_slug ? referralLink || 'Loading link...' : 'Create a business slug to activate your link'}
                         </div>
-                        <Button size="icon" variant="outline" onClick={handleCopy} className="shrink-0 border-indigo-200 hover:bg-indigo-50 text-indigo-700">
+                        <Button size="icon" variant="outline" onClick={handleCopy} disabled={!referralLink} className="shrink-0 border-indigo-200 hover:bg-indigo-50 text-indigo-700">
                             {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                         </Button>
-                        <Button size="icon" className="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleShare}>
+                        <Button size="icon" className="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleShare} disabled={!referralLink}>
                             <Share2 className="w-4 h-4" />
                         </Button>
                     </div>

@@ -50,7 +50,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
         { name: 'Bookings', href: '/dashboard/bookings', icon: CalendarDays },
         { name: 'Settings', href: '/dashboard/settings', icon: Settings },
         {
-            name: 'AI Assistant',
+            name: 'Virtual Assistant',
             href: '/dashboard/ai',
             icon: Bot
         },
@@ -149,7 +149,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                     </div>
 
                     {/* Navigation */}
-                    <nav className="flex-1 p-4 space-y-1">
+                    <nav className="flex-1 overflow-y-auto p-4 space-y-1">
                         {navigation.map((item) => {
                             const isActive = pathname === item.href
                             const isLocked = item.proOnly && !isPro
@@ -197,15 +197,13 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                     )}
 
                     {/* Feedback Button */}
-                    <div className="p-4 border-t border-gray-200">
-                        <FeedbackModal />
-                    </div>
-
-                    {/* Logout */}
-                    <div className="p-4 border-t border-gray-200">
+                    <div className="shrink-0 border-t border-gray-200 bg-white">
+                        <div className="p-3">
+                            <FeedbackModal />
+                        </div>
                         <button
                             onClick={handleLogout}
-                            className="flex items-center gap-3 w-full px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                            className="flex items-center gap-3 w-full px-6 py-3 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
                         >
                             <LogOut className="w-5 h-5" />
                             Sign Out
@@ -228,7 +226,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                 </header>
 
                 {/* Page content */}
-                <main className="p-6">
+                <main className="p-4 sm:p-6">
                     {children}
                 </main>
             </div>

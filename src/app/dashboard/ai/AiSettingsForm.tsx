@@ -8,10 +8,10 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { updateAiSettings } from './actions'
-import { Bot, Save, Loader2, Lock, Briefcase, MessageSquareText, Play, Send, Zap, CheckCircle2, ArrowRight, MessageCircle, Copy } from 'lucide-react'
+import { Bot, Save, Loader2, Briefcase, MessageSquareText, Send, ArrowRight, MessageCircle, Copy } from 'lucide-react'
 import { User } from '@/lib/types'
 import Link from 'next/link'
-import { DAILY_AI_USAGE_LIMIT } from '@/lib/ai/usage'
+import { DAILY_AI_USAGE_LIMIT, FREE_MONTHLY_AI_USAGE_LIMIT } from '@/lib/ai/usage'
 
 interface AiSettingsFormProps {
     user: User
@@ -26,11 +26,15 @@ interface SandboxMessage {
 export function AiSettingsForm({ user }: AiSettingsFormProps) {
     const [loading, setLoading] = useState(false)
     const isPro = user.plan === 'pro'
+    const limit = isPro ? DAILY_AI_USAGE_LIMIT : FREE_MONTHLY_AI_USAGE_LIMIT
+    const currentUsagePeriod = isPro
+        ? new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 10)
+        : new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 7)
     const hasFreshUsage = user.ai_last_reset_at
-        ? new Date(new Date(user.ai_last_reset_at).getTime() + 60 * 60 * 1000).toISOString().slice(0, 10) === new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 10)
+        ? new Date(new Date(user.ai_last_reset_at).getTime() + 60 * 60 * 1000).toISOString().slice(0, isPro ? 10 : 7) === currentUsagePeriod
         : false
     const dailyUsageCount = hasFreshUsage ? user.ai_usage_count || 0 : 0
-    const usagePercent = Math.min((dailyUsageCount / DAILY_AI_USAGE_LIMIT) * 100, 100)
+    const usagePercent = Math.min((dailyUsageCount / limit) * 100, 100)
 
     // Interactive Sandbox state
     const [sandboxMessages, setSandboxMessages] = useState<SandboxMessage[]>([
@@ -55,7 +59,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
 
         await updateAiSettings(formData)
         setLoading(false)
-        toast('AI Sales Assistant settings updated successfully!')
+        toast('Virtual Assistant settings updated successfully!')
     }
 
     // Send test chat to AI endpoint using sandbox
@@ -84,7 +88,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
             if (!res.ok) {
                 const data = await res.json().catch(() => ({}))
                 if (data.error === 'LIMIT_REACHED') {
-                    setSandboxMessages(prev => [...prev, { role: 'assistant', content: "Today's chat limit has been reached. Please try again tomorrow.", sentAt: new Date().toISOString() }])
+                    setSandboxMessages(prev => [...prev, { role: 'assistant', content: isPro ? "Today's chat limit has been reached. Please try again tomorrow." : 'Your 100 free Virtual Assistant messages for this month have been used.', sentAt: new Date().toISOString() }])
                     return
                 }
                 throw new Error(data.error || 'Failed to reach AI')
@@ -93,29 +97,26 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
             const data = await res.json()
             setSandboxMessages(prev => [...prev, { role: 'assistant', content: data.reply || 'No response.', sentAt: new Date().toISOString() }])
         } catch (err: any) {
-            setSandboxMessages(prev => [...prev, { role: 'assistant', content: `[Sandbox Mode] I hear you! To test me with live customer traffic on your business page link, unlock the Pro Engine.`, sentAt: new Date().toISOString() }])
+            setSandboxMessages(prev => [...prev, { role: 'assistant', content: `I hear you. Add your catalog, booking rules, delivery details, and payment notes above so I can answer customers more clearly.`, sentAt: new Date().toISOString() }])
         } finally {
             setSandboxLoading(false)
         }
     }
 
     return (
-        <div className="space-y-8">
-            {/* Free Tier Promotion Banner */}
+        <div className="space-y-6">
+            {/* Free Tier Usage Banner */}
             {!isPro && (
-                <div className="p-6 rounded-2xl bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="space-y-2 text-center md:text-left">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold uppercase tracking-wider backdrop-blur-sm">
-                            <Play className="w-3.5 h-3.5" /> AI Sales Engine Preview
-                        </div>
-                        <h2 className="text-2xl font-bold font-display">Test Your 24/7 AI Sales Assistant Below</h2>
-                        <p className="text-orange-100 text-sm max-w-xl">
-                            Configure your AI speaking style and test-chat with it live. Upgrade to Pro when you want it serving real customers on your public business link.
+                <div className="p-5 rounded-xl bg-white border border-orange-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                        <h2 className="text-lg font-bold text-gray-900">Virtual Assistant is available on your page</h2>
+                        <p className="text-gray-600 text-sm max-w-xl">
+                            Free plan includes {FREE_MONTHLY_AI_USAGE_LIMIT} assistant messages per month. Upgrade when you need higher daily capacity and WhatsApp routing.
                         </p>
                     </div>
                     <Link href="/pricing">
-                        <Button className="bg-white text-orange-700 hover:bg-orange-50 font-extrabold h-12 px-6 rounded-xl shadow-lg shrink-0 flex items-center gap-2">
-                            Upgrade to Pro (₦2,500/mo)
+                        <Button className="bg-orange-600 hover:bg-orange-700 font-bold h-11 px-5 rounded-lg shrink-0 flex items-center gap-2">
+                            Upgrade for more
                             <ArrowRight className="w-4 h-4" />
                         </Button>
                     </Link>
@@ -130,24 +131,18 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                             <div className="space-y-1">
                                 <CardTitle className="flex items-center gap-2 text-xl text-orange-950 font-display">
                                     <Bot className="w-6 h-6 text-orange-600" />
-                                    AI Sales Assistant Settings
+                                    Virtual Assistant Settings
                                 </CardTitle>
                                 <CardDescription>
-                                    Configure your automated receptionist, sales closer, booking assistant, and speaking tone.
+                                    Set what your assistant should know, how it should speak, and how customers can pay or book.
                                 </CardDescription>
                             </div>
-                            {isPro ? (
-                                <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-orange-200 shadow-sm shrink-0">
-                                    <span className="text-xs font-medium text-gray-600">Daily Usage:</span>
-                                    <span className={`text-xs font-bold ${usagePercent >= 100 ? 'text-red-600' : 'text-orange-700'}`}>
-                                        {dailyUsageCount}/{DAILY_AI_USAGE_LIMIT} chats
-                                    </span>
-                                </div>
-                            ) : (
-                                <span className="bg-amber-100 text-amber-800 text-xs font-extrabold px-3 py-1 rounded-full border border-amber-200">
-                                    Sandbox / Trial Mode
+                            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-orange-200 shadow-sm shrink-0">
+                                <span className="text-xs font-medium text-gray-600">{isPro ? 'Today:' : 'This month:'}</span>
+                                <span className={`text-xs font-bold ${usagePercent >= 100 ? 'text-red-600' : 'text-orange-700'}`}>
+                                    {dailyUsageCount}/{limit} messages
                                 </span>
-                            )}
+                            </div>
                         </div>
                     </CardHeader>
 
@@ -171,8 +166,8 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                         className="text-orange-600 focus:ring-orange-500"
                                     />
                                     <div>
-                                        <p className="font-semibold text-sm text-gray-900">Physical Products</p>
-                                        <p className="text-xs text-gray-500">Wigs, clothes, gadgets, food</p>
+                                        <p className="font-semibold text-sm text-gray-900">Sell goods</p>
+                                        <p className="text-xs text-gray-500">Food, fashion, beauty items, gadgets</p>
                                     </div>
                                 </label>
                                 <label className="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:border-orange-500 transition-colors bg-white">
@@ -184,8 +179,8 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                         className="text-orange-600 focus:ring-orange-500"
                                     />
                                     <div>
-                                        <p className="font-semibold text-sm text-gray-900">Services & Bookings</p>
-                                        <p className="text-xs text-gray-500">Makeup, hair, repair, consulting</p>
+                                        <p className="font-semibold text-sm text-gray-900">Offer services</p>
+                                        <p className="text-xs text-gray-500">Hair, makeup, repairs, consulting</p>
                                     </div>
                                 </label>
                                 <label className="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:border-orange-500 transition-colors bg-white">
@@ -197,8 +192,8 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                         className="text-orange-600 focus:ring-orange-500"
                                     />
                                     <div>
-                                        <p className="font-semibold text-sm text-gray-900">Both Products & Services</p>
-                                        <p className="text-xs text-gray-500">Combined catalog</p>
+                                        <p className="font-semibold text-sm text-gray-900">Both</p>
+                                        <p className="text-xs text-gray-500">Sell items and take bookings</p>
                                     </div>
                                 </label>
                             </div>
@@ -208,7 +203,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                         <div className="space-y-2">
                             <Label className="flex items-center gap-2 font-bold text-gray-800">
                                 <MessageSquareText className="w-4 h-4 text-orange-600" />
-                                AI Assistant Speaking Style (Tone)
+                                Speaking style
                             </Label>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <label className="flex items-start gap-3 p-3 border rounded-xl cursor-pointer hover:border-orange-500 transition-colors bg-white">
@@ -220,7 +215,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                         className="mt-1 text-orange-600 focus:ring-orange-500"
                                     />
                                     <div>
-                                        <p className="font-semibold text-sm text-gray-900">Warm & Friendly 🇳🇬</p>
+                                        <p className="font-semibold text-sm text-gray-900">Warm & Friendly</p>
                                         <p className="text-xs text-gray-500">Polite Nigerian English with sales energy.</p>
                                     </div>
                                 </label>
@@ -234,7 +229,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                         className="mt-1 text-orange-600 focus:ring-orange-500"
                                     />
                                     <div>
-                                        <p className="font-semibold text-sm text-gray-900">Pidgin Street-Sharp ⚡</p>
+                                        <p className="font-semibold text-sm text-gray-900">Pidgin Street-Sharp</p>
                                         <p className="text-xs text-gray-500">Authentic Pidgin ("How far!", "We get am for stock!").</p>
                                     </div>
                                 </label>
@@ -248,7 +243,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                         className="mt-1 text-orange-600 focus:ring-orange-500"
                                     />
                                     <div>
-                                        <p className="font-semibold text-sm text-gray-900">Formal Executive 💼</p>
+                                        <p className="font-semibold text-sm text-gray-900">Formal Executive</p>
                                         <p className="text-xs text-gray-500">Strict corporate English, structured and direct.</p>
                                     </div>
                                 </label>
@@ -313,7 +308,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
 
                         {/* Business Instructions */}
                         <div className="space-y-2">
-                            <Label htmlFor="ai_instructions" className="font-semibold">Business Knowledge Base & Special Instructions</Label>
+                            <Label htmlFor="ai_instructions" className="font-semibold">Business notes and instructions</Label>
                             <Textarea
                                 id="ai_instructions"
                                 name="ai_instructions"
@@ -322,7 +317,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                 className="min-h-[140px]"
                             />
                             <p className="text-xs text-gray-500">
-                                Add your product catalog or service list rules: delivery costs, physical location, booking policies, appointment hours, or discounts. The AI automatically knows your product/service prices.
+                                Add delivery costs, address, booking policies, appointment hours, discounts, and any rules customers should know.
                             </p>
                         </div>
 
@@ -359,11 +354,11 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
 
                         {/* WhatsApp AI Routing (Central Model) */}
                         <div className="space-y-4 pt-6 border-t border-gray-100">
-                            <div className="flex items-center justify-between border border-green-100 p-4 rounded-xl bg-green-50/40">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border border-green-100 p-4 rounded-xl bg-green-50/40 gap-4">
                                 <Label htmlFor="wa_whatsapp_enabled" className="flex flex-col space-y-1 cursor-pointer">
                                     <span className="font-semibold text-base text-gray-900 flex items-center gap-2">
                                         <MessageCircle className="w-5 h-5 text-green-600" />
-                                        Enable AI on WhatsApp
+                                        Enable Virtual Assistant on WhatsApp
                                         {isPro && user.wa_whatsapp_enabled && (
                                             <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
                                         )}
@@ -419,7 +414,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                 </>
                             ) : (
                                 <>
-                                    <Save className="w-4 h-4 mr-2" /> Save AI Assistant Settings
+                            <Save className="w-4 h-4 mr-2" /> Save Virtual Assistant Settings
                                 </>
                             )}
                         </Button>
@@ -427,20 +422,20 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                 </Card>
             </form>
 
-            {/* Interactive Sandbox Playground */}
+            {/* Interactive Assistant Playground */}
             <Card className="border-orange-200 bg-white shadow-lg overflow-hidden">
                 <CardHeader className="bg-gradient-to-r from-gray-900 to-gray-800 text-white p-5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div className="flex items-center gap-3">
                             <div className="p-2 rounded-full bg-orange-500 text-white">
                                 <Bot className="w-5 h-5" />
                             </div>
                             <div>
                                 <CardTitle className="text-lg font-bold font-display text-white">
-                                    Interactive AI Sales Rep Sandbox
+                                    Interactive Virtual Assistant
                                 </CardTitle>
                                 <CardDescription className="text-gray-300 text-xs">
-                                    Test how your AI rep handles buyer questions in real-time.
+                                    Test how your assistant answers customer questions.
                                 </CardDescription>
                             </div>
                         </div>
@@ -472,7 +467,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                         )}
                     </div>
 
-                    <form onSubmit={handleSandboxSend} className="p-3 bg-white border-t border-gray-200 flex gap-2">
+                    <form onSubmit={handleSandboxSend} className="p-3 bg-white border-t border-gray-200 flex flex-col sm:flex-row gap-2">
                         <Input
                             placeholder="Type a test buyer question (e.g. 'How far, do you deliver to Lekki?')..."
                             value={sandboxInput}

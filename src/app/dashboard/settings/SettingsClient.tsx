@@ -19,7 +19,8 @@ import {
     AlertCircle,
     Crown,
     Shield,
-    Upload
+    Upload,
+    ChevronDown
 } from 'lucide-react'
 import { CategorySelect } from '@/components/CategorySelect'
 import { compressImage } from '@/lib/image-compression'
@@ -360,12 +361,15 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
             )}
 
             {/* Business Profile */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>Business Profile</CardTitle>
-                    <CardDescription>Update your business information</CardDescription>
-                </CardHeader>
-                <CardContent>
+            <details className="group rounded-xl border border-gray-200 bg-white shadow-sm">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-6">
+                    <div>
+                        <h2 className="text-lg font-semibold text-gray-900">Business Profile</h2>
+                        <p className="text-sm text-gray-500">Update your logo, contact details, category, and public page copy.</p>
+                    </div>
+                    <ChevronDown className="h-5 w-5 shrink-0 text-gray-400 transition-transform group-open:rotate-180" />
+                </summary>
+                <div className="border-t border-gray-100 p-6">
                     <form onSubmit={handleProfileSubmit} className="space-y-4">
                         {/* Logo */}
                         <div className="flex items-start gap-4">
@@ -435,26 +439,26 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700">Business Type</label>
-                            <div className="flex bg-gray-100 p-1 rounded-lg max-w-xl">
+                            <label className="text-sm font-medium text-gray-700">What do you offer?</label>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 rounded-lg bg-gray-100 p-1 max-w-2xl">
                                 <button
                                     type="button"
                                     onClick={() => setBusinessType('products')}
-                                    className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${businessType === 'products' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
+                                    className={`px-3 py-2 text-sm font-semibold rounded-md transition-all ${businessType === 'products' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
                                 >
-                                    Products
+                                    Sell goods
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setBusinessType('services')}
-                                    className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${businessType === 'services' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
+                                    className={`px-3 py-2 text-sm font-semibold rounded-md transition-all ${businessType === 'services' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
                                 >
-                                    Services
+                                    Offer services
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setBusinessType('both')}
-                                    className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${businessType === 'both' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
+                                    className={`px-3 py-2 text-sm font-semibold rounded-md transition-all ${businessType === 'both' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
                                 >
                                     Both
                                 </button>
@@ -521,8 +525,8 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                             )}
                         </Button>
                     </form>
-                </CardContent>
-            </Card>
+                </div>
+            </details>
 
             <BookingAvailability user={user} />
 
@@ -567,51 +571,52 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                         </div>
                     ) : (
                         <div className="space-y-6">
-                            <div className="grid sm:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <h4 className="font-medium">Free Plan includes:</h4>
-                                    <ul className="text-sm text-gray-500 space-y-1">
-                                        <li>• Standard link (qriblo.com/{user.business_slug || 'yourbrand'})</li>
-                                        <li>• Basic business page</li>
-                                        <li>• Up to 5 products or services</li>
-                                        <li>• WhatsApp order and booking links</li>
-                                        <li>• Listed in directory</li>
-                                    </ul>
+                            <details className="group rounded-xl border border-gray-200 bg-white">
+                                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-4">
+                                    <div>
+                                        <h4 className="font-bold text-gray-900">Compare Free and Pro</h4>
+                                        <p className="text-sm text-gray-500">Open this if you want the feature details.</p>
+                                    </div>
+                                    <ChevronDown className="h-5 w-5 text-gray-400 transition-transform group-open:rotate-180" />
+                                </summary>
+                                <div className="grid gap-4 border-t border-gray-100 p-4 sm:grid-cols-2">
+                                    <div className="space-y-2">
+                                        <h4 className="font-medium">Free Plan includes:</h4>
+                                        <ul className="text-sm text-gray-500 space-y-1">
+                                            <li>• Standard link (qriblo.com/{user.business_slug || 'yourbrand'})</li>
+                                            <li>• Basic business page</li>
+                                            <li>• Up to 5 products or services</li>
+                                            <li>• WhatsApp order and booking links</li>
+                                            <li>• 100 Virtual Assistant messages/month</li>
+                                        </ul>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <h4 className="font-medium text-orange-600">Pro Plan includes:</h4>
+                                        <ul className="text-sm text-gray-600 space-y-1">
+                                            <li className="flex items-center gap-1 font-bold text-orange-700">
+                                                <CheckCircle2 className="w-4 h-4 text-orange-600" />
+                                                Personal brand subdomain ({user.business_slug || 'yourbrand'}.qriblo.com)
+                                            </li>
+                                            <li className="flex items-center gap-1">
+                                                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                                Green verified badge
+                                            </li>
+                                            <li className="flex items-center gap-1">
+                                                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                                Unlimited products and services
+                                            </li>
+                                            <li className="flex items-center gap-1">
+                                                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                                Customer reviews and analytics
+                                            </li>
+                                            <li className="flex items-center gap-1 font-bold text-orange-700">
+                                                <CheckCircle2 className="w-4 h-4 text-orange-600" />
+                                                Virtual Assistant for orders and bookings (40 chats/day)
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <h4 className="font-medium text-orange-600">Pro Plan includes:</h4>
-                                    <ul className="text-sm text-gray-600 space-y-1">
-                                        <li className="flex items-center gap-1 font-bold text-orange-700">
-                                            <CheckCircle2 className="w-4 h-4 text-orange-600" />
-                                            Personal brand subdomain ({user.business_slug || 'yourbrand'}.qriblo.com)
-                                        </li>
-                                        <li className="flex items-center gap-1">
-                                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                            Green verified badge
-                                        </li>
-                                        <li className="flex items-center gap-1">
-                                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                            Unlimited products and services
-                                        </li>
-                                        <li className="flex items-center gap-1">
-                                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                            Customer reviews
-                                        </li>
-                                        <li className="flex items-center gap-1">
-                                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                            Increased Customer Reach
-                                        </li>
-                                        <li className="flex items-center gap-1">
-                                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                            High Leaderboard Ranking
-                                        </li>
-                                        <li className="flex items-center gap-1 font-bold text-orange-700">
-                                            <CheckCircle2 className="w-4 h-4 text-orange-600" />
-                                            AI Assistant for orders and bookings (40 chats/day)
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+                            </details>
 
                             <div className="flex flex-col gap-6 p-6 rounded-2xl bg-orange-50/50 border border-orange-100">
                                 <div>
@@ -626,8 +631,8 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                             type="button"
                                             onClick={() => setUpgradeBillingCycle(option.cycle)}
                                             className={`p-4 rounded-xl border-2 text-left transition-all relative overflow-hidden ${upgradeBillingCycle === option.cycle
-                                                ? 'border-orange-500 bg-white shadow-md'
-                                                : 'border-gray-100 bg-white/50 hover:border-orange-200'
+                                                ? 'border-orange-600 bg-white shadow-md ring-2 ring-orange-100'
+                                                : 'border-gray-200 bg-white hover:border-orange-300'
                                                 }`}
                                         >
                                             {option.badge && (

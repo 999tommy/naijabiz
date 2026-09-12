@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { LayoutGrid, Film, Star, Package } from 'lucide-react'
+import { ArrowRight, CalendarCheck, LayoutGrid, Film, Star, Package } from 'lucide-react'
 import Link from 'next/link'
 import { OrderCart } from '@/components/OrderCart'
 import { ShoppableReels } from '@/components/ShoppableReels'
@@ -35,6 +35,18 @@ export function StorefrontClient({
     // Default to Grid for all businesses
     const [viewMode, setViewMode] = useState<'grid' | 'reels'>('grid')
     const cartHelper = useCart(business.business_name || '')
+    const productItems = products.filter(product => product.item_type !== 'service')
+    const serviceItems = products.filter(product => product.item_type === 'service')
+    const showHybridBookings = business.business_type === 'both' && serviceItems.length > 0
+    const [selectedService, setSelectedService] = useState(serviceItems[0]?.name || '')
+    const [preferredDate, setPreferredDate] = useState('')
+    const [preferredTime, setPreferredTime] = useState('')
+    const [bookingNotes, setBookingNotes] = useState('')
+    const [customerName, setCustomerName] = useState('')
+    const [customerPhone, setCustomerPhone] = useState('')
+    const [availableSlots, setAvailableSlots] = useState<string[]>([])
+    const [bookingState, setBookingState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+    const [bookingError, setBookingError] = useState('')
 
     // Restore saved preference on mount
     useEffect(() => {
@@ -68,6 +80,50 @@ export function StorefrontClient({
         }
     }, [viewMode, isPro])
 
+    useEffect(() => {
+        if (!preferredDate || !showHybridBookings) return
+        setBookingError('')
+        setAvailableSlots([])
+        setPreferredTime('')
+        fetch(`/api/bookings?business_id=${business.id}&date=${preferredDate}`)
+            .then(response => response.json())
+            .then(data => setAvailableSlots(data.slots || []))
+            .catch(() => setBookingError('Could not load availability. Please try again.'))
+    }, [business.id, preferredDate, showHybridBookings])
+
+    const submitBooking = async () => {
+        if (!customerName.trim() || !customerPhone.trim() || !selectedService || !preferredDate || !preferredTime) {
+            setBookingState('error')
+            setBookingError('Please add your name, phone number, service, date, and time before confirming.')
+            return
+        }
+
+        setBookingState('loading')
+        setBookingError('')
+        const service = serviceItems.find(item => item.name === selectedService)
+        const response = await fetch('/api/bookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                business_id: business.id,
+                service_id: service?.id,
+                service_name: selectedService,
+                customer_name: customerName,
+                customer_phone: customerPhone,
+                booking_date: preferredDate,
+                booking_time: preferredTime,
+                notes: bookingNotes,
+            }),
+        })
+        const data = await response.json()
+        if (!response.ok) {
+            setBookingState('error')
+            setBookingError(data.error || 'Could not create booking')
+            return
+        }
+        setBookingState('success')
+    }
+
     const handleToggle = (mode: 'grid' | 'reels') => {
         setViewMode(mode)
         if (isPro) {
@@ -90,7 +146,7 @@ export function StorefrontClient({
                     <div className="max-w-4xl mx-auto px-4 py-8">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-xl font-semibold text-gray-900">
-                                Products ({products.length})
+                                {showHybridBookings ? `Products (${productItems.length})` : `Products (${products.length})`}
                             </h2>
                             {/* Toggle only for Pro businesses */}
                             {isPro && (
@@ -98,14 +154,14 @@ export function StorefrontClient({
                             )}
                         </div>
 
-                        {products.length === 0 ? (
+                        {(showHybridBookings ? productItems : products).length === 0 ? (
                             <div className="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
                                 <Package className="w-12 h-12 mx-auto text-gray-200 mb-4" />
                                 <p className="text-gray-400 font-medium">No products listed yet</p>
                             </div>
                         ) : (
                             <OrderCart
-                                products={products}
+                                products={showHybridBookings ? productItems : products}
                                 businessName={business.business_name || ''}
                                 whatsappNumber={whatsappNumber}
                                 instagramHandle={instagramHandle}
@@ -121,6 +177,66 @@ export function StorefrontClient({
                             />
                         )}
                     </div>
+
+                    {showHybridBookings && (
+                        <div id="booking-panel" className="max-w-4xl mx-auto px-4 pb-10">
+                            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
+                                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-5">
+                                    <div>
+                                        <p className="text-xs font-bold uppercase tracking-widest text-green-700 mb-2">Bookings</p>
+                                        <h2 className="text-2xl font-black text-gray-900">Book a service</h2>
+                                        <p className="text-sm text-gray-500 mt-1">Choose one of the services from this hybrid brand and request an available slot.</p>
+                                    </div>
+                                    <CalendarCheck className="w-9 h-9 text-green-600" />
+                                </div>
+
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label htmlFor="customer-name" className="text-sm font-bold text-gray-700">Name</label>
+                                        <input id="customer-name" value={customerName} onChange={event => setCustomerName(event.target.value)} className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label htmlFor="customer-phone" className="text-sm font-bold text-gray-700">Phone</label>
+                                        <input id="customer-phone" value={customerPhone} onChange={event => setCustomerPhone(event.target.value)} className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label htmlFor="service" className="text-sm font-bold text-gray-700">Service</label>
+                                        <select id="service" value={selectedService} onChange={event => setSelectedService(event.target.value)} className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium">
+                                            {serviceItems.map(service => <option key={service.id} value={service.name}>{service.name}</option>)}
+                                        </select>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="space-y-2">
+                                            <label htmlFor="date" className="text-sm font-bold text-gray-700">Date</label>
+                                            <input id="date" type="date" value={preferredDate} onChange={event => setPreferredDate(event.target.value)} className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label htmlFor="time" className="text-sm font-bold text-gray-700">Time</label>
+                                            <select id="time" value={preferredTime} onChange={event => setPreferredTime(event.target.value)} disabled={!preferredDate || availableSlots.length === 0} className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium">
+                                                <option value="">Select a slot</option>
+                                                {availableSlots.map(slot => <option key={slot} value={slot}>{slot}</option>)}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="md:col-span-2 space-y-2">
+                                        <label htmlFor="notes" className="text-sm font-bold text-gray-700">Notes</label>
+                                        <textarea id="notes" value={bookingNotes} onChange={event => setBookingNotes(event.target.value)} rows={3} placeholder="Add your address, preferred style, issue, or anything the business should know..." className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium" />
+                                    </div>
+                                </div>
+
+                                <div className="mt-5 flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
+                                    <p className="text-xs text-gray-500">
+                                        {preferredDate && availableSlots.length === 0 ? 'No available slot for this date. Try another date.' : availableSlots.length ? `${availableSlots.length} available slots. Bookings use Africa/Lagos time.` : 'Choose a date to see available slots.'}
+                                    </p>
+                                    <Button onClick={submitBooking} disabled={bookingState === 'loading'} className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold">
+                                        {bookingState === 'success' ? 'Booking confirmed' : bookingState === 'loading' ? 'Booking...' : 'Confirm booking'} <ArrowRight className="w-4 h-4 ml-1" />
+                                    </Button>
+                                </div>
+                                {bookingError && <p className="mt-3 text-sm text-red-600">{bookingError}</p>}
+                                {bookingState === 'success' && <p className="mt-3 text-sm text-green-700">Your appointment is confirmed. The business has received the booking.</p>}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Reviews section (Pro only, grid only) */}
                     {isPro && (

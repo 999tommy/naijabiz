@@ -65,11 +65,6 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Business not found' }, { status: 404 })
         }
 
-        // Gate checks (sandbox bypasses plan checks for testing)
-        if (!isSandbox && business.plan !== 'pro') {
-            return NextResponse.json({ error: 'AI is a Pro feature' }, { status: 403 })
-        }
-
         // Rate-limit check
         const usageState = getDailyAiUsageState(business)
         if (usageState.limitReached) {

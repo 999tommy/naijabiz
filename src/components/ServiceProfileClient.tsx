@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -71,20 +71,12 @@ export function ServiceProfileClient({
             .catch(() => setBookingError('Could not load availability. Please try again.'))
     }, [business.id, preferredDate])
 
-    const bookingMessage = useMemo(() => {
-        const prefix = isVaEnabled ? `hi ${slug}\n` : ''
-        const lines = [
-            `${prefix}Hi, I want to book a service with ${business.business_name}.`,
-            selectedService ? `Service: ${selectedService}` : '',
-            preferredDate ? `Preferred date: ${preferredDate}` : '',
-            preferredTime ? `Preferred time: ${preferredTime}` : '',
-            bookingNotes ? `Notes: ${bookingNotes}` : '',
-        ].filter(Boolean)
-
-        return lines.join('\n')
-    }, [bookingNotes, business.business_name, preferredDate, preferredTime, selectedService, isVaEnabled, slug])
-
     const submitBooking = async () => {
+        if (!customerName.trim() || !customerPhone.trim() || !selectedService || !preferredDate || !preferredTime) {
+            setBookingState('error')
+            setBookingError('Please add your name, phone number, service, date, and time before confirming.')
+            return
+        }
         setBookingState('loading')
         setBookingError('')
         const service = products.find(item => item.name === selectedService)
@@ -345,9 +337,9 @@ export function ServiceProfileClient({
 
                         <div className="mt-5 flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
                             <p className="text-xs text-gray-500">
-                                {availableSlots.length ? `${availableSlots.length} available slots. Bookings use Africa/Lagos time.` : 'Choose a date to see available slots.'}
+                                {preferredDate && availableSlots.length === 0 ? 'No available slot for this date. Try another date.' : availableSlots.length ? `${availableSlots.length} available slots. Bookings use Africa/Lagos time.` : 'Choose a date to see available slots.'}
                             </p>
-                            <Button onClick={submitBooking} disabled={bookingState === 'loading' || !customerName || !customerPhone || !preferredDate || !preferredTime} className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold">
+                            <Button onClick={submitBooking} disabled={bookingState === 'loading'} className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold">
                                 {bookingState === 'success' ? 'Booking confirmed' : bookingState === 'loading' ? 'Booking...' : 'Confirm booking'} <ArrowRight className="w-4 h-4 ml-1" />
                             </Button>
                         </div>
