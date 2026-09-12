@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { formatPrice, generateWhatsAppLink } from '@/lib/utils'
 import type { Product, CartItem } from '@/lib/types'
+import type { WebsiteTheme } from '@/lib/website-theme'
 import { useCart } from '@/lib/useCart'
 import {
     ShoppingCart,
@@ -34,6 +35,7 @@ interface OrderCartProps {
     clearCart?: () => void
     totalItems?: number
     totalAmount?: number
+    theme?: WebsiteTheme
 }
 
 export function OrderCart({
@@ -44,8 +46,16 @@ export function OrderCart({
     waWhatsappEnabled,
     businessSlug,
     extraBottomSpacing = false,
+    theme,
     ...props
 }: OrderCartProps) {
+    const accent = theme?.accent || '#CC5500'
+    const accentHover = theme?.accentHover || '#36454F'
+    const accentText = theme?.accentText || '#ffffff'
+    const cardBorder = theme?.cardBorder || 'rgba(0,0,0,0.08)'
+    const headingText = theme?.headingText || '#111827'
+    const bodyText = theme?.bodyText || '#36454F'
+    const mutedText = theme?.mutedText || '#6b7280'
     const localCartHelper = useCart(businessName)
 
     const cart = props.cart ?? localCartHelper.cart
@@ -153,7 +163,8 @@ Please confirm my order. Thank you!`
                 {products.map(product => (
                     <div
                         key={product.id}
-                        className="bg-white rounded-xl border border-gray-200 overflow-hidden card-hover"
+                        className="bg-white rounded-xl border overflow-hidden card-hover"
+                        style={{ borderColor: cardBorder }}
                     >
                         <div className="aspect-square relative bg-gray-100">
                             {product.image_url ? (
@@ -171,18 +182,19 @@ Please confirm my order. Thank you!`
                             )}
                         </div>
                         <div className="p-4">
-                            <h3 className="font-medium text-gray-900 truncate">{product.name}</h3>
-                            <p className="text-lg font-bold text-orange-600 mt-1">
+                            <h3 className="font-medium truncate" style={{ color: headingText }}>{product.name}</h3>
+                            <p className="text-lg font-bold mt-1" style={{ color: accent }}>
                                 {formatPrice(product.price)}
                             </p>
                             {product.description && (
-                                <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                                <p className="text-sm mt-1 line-clamp-2" style={{ color: mutedText }}>
                                     {product.description}
                                 </p>
                             )}
                             <Button
                                 onClick={() => addToCart(product)}
                                 className="w-full mt-3"
+                                style={{ backgroundColor: accent, color: accentText }}
                                 size="sm"
                             >
                                 <Plus className="w-4 h-4 mr-1" />
@@ -197,7 +209,8 @@ Please confirm my order. Thank you!`
             {cart.length > 0 && (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className={`fixed right-6 z-40 bg-orange-500 text-white rounded-full p-4 shadow-lg shadow-orange-500/25 hover:bg-orange-600 transition-all animate-pulse-glow ${extraBottomSpacing ? 'bottom-24' : 'bottom-6'}`}
+                    className={`fixed right-6 z-40 rounded-full p-4 shadow-lg transition-all animate-pulse-glow ${extraBottomSpacing ? 'bottom-24' : 'bottom-6'}`}
+                    style={{ backgroundColor: accent, color: accentText, boxShadow: `0 16px 34px ${accent}40` }}
                 >
                     <ShoppingCart className="w-6 h-6" />
                     <span className="absolute -top-2 -right-2 bg-gray-900 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
@@ -242,8 +255,8 @@ Please confirm my order. Thank you!`
                                                 </div>
                                             )}
                                             <div className="flex-1 min-w-0">
-                                                <p className="font-medium text-gray-900 truncate">{item.name}</p>
-                                                <p className="text-sm text-orange-600 font-semibold">
+                                                <p className="font-medium truncate" style={{ color: headingText }}>{item.name}</p>
+                                                <p className="text-sm font-semibold" style={{ color: accent }}>
                                                     {formatPrice(item.price)}
                                                 </p>
                                             </div>
@@ -276,9 +289,9 @@ Please confirm my order. Thank you!`
                                 <div className="border-t p-4 space-y-4">
                                     <div className="flex justify-between text-lg font-semibold">
                                         <span>Total</span>
-                                        <span className="text-orange-600">{formatPrice(totalAmount)}</span>
+                                        <span style={{ color: accent }}>{formatPrice(totalAmount)}</span>
                                     </div>
-                                    <Button onClick={() => setStep('details')} className="w-full" size="lg">
+                                    <Button onClick={() => setStep('details')} className="w-full" size="lg" style={{ backgroundColor: accent, color: accentText }}>
                                         Continue to Checkout
                                     </Button>
                                     <button
@@ -295,7 +308,8 @@ Please confirm my order. Thank you!`
                                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
                                     <button
                                         onClick={() => setStep('cart')}
-                                        className="text-sm text-orange-600 hover:underline"
+                                        className="text-sm hover:underline"
+                                        style={{ color: accent }}
                                     >
                                         ← Back to cart
                                     </button>
@@ -309,7 +323,8 @@ Please confirm my order. Thank you!`
                                             value={customerName}
                                             onChange={(e) => setCustomerName(e.target.value)}
                                             placeholder="Enter your name"
-                                            className="w-full h-11 px-4 rounded-lg border-2 border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                            className="w-full h-11 px-4 rounded-lg border-2 border-gray-200 focus:ring-2"
+                                            style={{ '--tw-ring-color': `${accent}33`, borderColor: cardBorder } as React.CSSProperties}
                                         />
                                     </div>
 
@@ -322,7 +337,8 @@ Please confirm my order. Thank you!`
                                             onChange={(e) => setCustomerAddress(e.target.value)}
                                             placeholder="Enter your delivery address"
                                             rows={3}
-                                            className="w-full px-4 py-2 rounded-lg border-2 border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                            className="w-full px-4 py-2 rounded-lg border-2 border-gray-200 focus:ring-2"
+                                            style={{ '--tw-ring-color': `${accent}33`, borderColor: cardBorder } as React.CSSProperties}
                                         />
                                     </div>
 
@@ -367,7 +383,7 @@ Please confirm my order. Thank you!`
                                             ))}
                                             <div className="border-t pt-2 mt-2 font-semibold flex justify-between">
                                                 <span>Total</span>
-                                                <span className="text-orange-600">{formatPrice(totalAmount)}</span>
+                                                <span style={{ color: accent }}>{formatPrice(totalAmount)}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -380,6 +396,7 @@ Please confirm my order. Thank you!`
                                         className="w-full"
                                         size="lg"
                                         disabled={!customerName.trim()}
+                                        style={{ backgroundColor: customerName.trim() ? accent : undefined, color: customerName.trim() ? accentText : undefined }}
                                     >
                                         <Send className="w-5 h-5 mr-2" />
                                         {orderMethod === 'whatsapp' 

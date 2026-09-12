@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '@/lib/useCart'
 import { formatPrice, generateWhatsAppLink } from '@/lib/utils'
 import type { Product, User, CartItem } from '@/lib/types'
+import type { WebsiteTheme } from '@/lib/website-theme'
 import {
     ShoppingCart,
     Plus,
@@ -57,17 +58,22 @@ interface SlideProps {
     isFirst: boolean
     setRef: (el: HTMLDivElement | null) => void
     currentIndex: number
+    theme?: WebsiteTheme
 }
 
 function ProductSlide({
     product, business, index, total, whatsappNumber, instagramHandle,
-    onAdd, isFirst, setRef, currentIndex,
+    onAdd, isFirst, setRef, currentIndex, theme,
 }: SlideProps) {
     const [aspectRatio, setAspectRatio] = useState<number | null>(null)
     const [localJustAdded, setLocalJustAdded] = useState(false)
 
     const tiktokHandle = business.tiktok_handle
     const isPortrait = aspectRatio !== null && aspectRatio < 0.85
+    const accent = theme?.accent || '#CC5500'
+    const accentHover = theme?.accentHover || '#36454F'
+    const accentText = theme?.accentText || '#ffffff'
+    const logoRing = theme?.logoRing || '#C19A6B'
 
     const handleAddToCart = () => {
         onAdd(product)
@@ -114,7 +120,7 @@ function ProductSlide({
                                 priority={isFirst}
                             />
                         ) : (
-                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                            <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ background: `linear-gradient(135deg, ${accent}, ${accentHover})`, color: accentText, border: `1px solid ${logoRing}` }}>
                                 {(business.business_name || 'B')[0].toUpperCase()}
                             </div>
                         )}
@@ -205,15 +211,15 @@ function ProductSlide({
                         className="w-11 h-11 rounded-[16px] flex items-center justify-center active:scale-90"
                         style={{
                             ...glass,
-                            background: localJustAdded ? 'rgba(249,115,22,0.22)' : 'rgba(255,255,255,0.12)',
-                            border: localJustAdded ? '1px solid rgba(249,115,22,0.45)' : '1px solid rgba(255,255,255,0.3)',
+                            background: localJustAdded ? `${accent}26` : 'rgba(255,255,255,0.12)',
+                            border: localJustAdded ? `1px solid ${accent}73` : '1px solid rgba(255,255,255,0.3)',
                             transition: 'background 0.2s, border 0.2s',
                         }}
                     >
                         {/* CSS-only swap — no Framer wait delay */}
                         <span
-                            className="text-orange-600 font-extrabold text-base"
-                            style={{ display: localJustAdded ? 'block' : 'none' }}
+                            className="font-extrabold text-base"
+                            style={{ display: localJustAdded ? 'block' : 'none', color: accent }}
                         >
                             ✓
                         </span>
@@ -300,7 +306,7 @@ function ProductSlide({
                             <span
                                 className="text-xl font-black"
                                 style={{
-                                    background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                                    background: `linear-gradient(135deg, ${accent}, ${accentHover})`,
                                     WebkitBackgroundClip: 'text',
                                     WebkitTextFillColor: 'transparent',
                                 }}
@@ -316,10 +322,10 @@ function ProductSlide({
                         style={{
                             background: localJustAdded 
                                 ? 'linear-gradient(135deg, #22c55e, #16a34a)' 
-                                : 'linear-gradient(135deg, rgba(249,115,22,0.95), rgba(234,88,12,0.95))',
+                                : `linear-gradient(135deg, ${accent}, ${accentHover})`,
                             boxShadow: localJustAdded 
                                 ? '0 4px 16px rgba(34,197,94,0.22), inset 0 1px 0 rgba(255,255,255,0.2)' 
-                                : '0 4px 16px rgba(249,115,22,0.22), inset 0 1px 0 rgba(255,255,255,0.2)',
+                                : `0 4px 16px ${accent}38, inset 0 1px 0 rgba(255,255,255,0.2)`,
                         }}
                     >
                         {localJustAdded ? '✓  Added to Cart!' : '+ Add to Cart'}
@@ -357,6 +363,7 @@ interface ShoppableReelsProps {
     clearCart?: () => void
     totalItems?: number
     totalAmount?: number
+    theme?: WebsiteTheme
 }
 
 export function ShoppableReels({
@@ -364,6 +371,7 @@ export function ShoppableReels({
     business,
     whatsappNumber,
     instagramHandle,
+    theme,
     ...props
 }: ShoppableReelsProps) {
     const [currentIndex, setCurrentIndex] = useState(0)
@@ -384,6 +392,9 @@ export function ShoppableReels({
     const clearCart = props.clearCart ?? localCartHelper.clearCart
     const totalItems = props.totalItems ?? localCartHelper.totalItems
     const totalAmount = props.totalAmount ?? localCartHelper.totalAmount
+    const accent = theme?.accent || '#CC5500'
+    const accentHover = theme?.accentHover || '#36454F'
+    const accentText = theme?.accentText || '#ffffff'
 
     // Sync checkout details from localStorage
     useEffect(() => {
@@ -500,6 +511,7 @@ Please confirm my order. Thank you!`
                         isFirst={index === 0}
                         setRef={el => { slideRefs.current[index] = el }}
                         currentIndex={currentIndex}
+                        theme={theme}
                     />
                 ))}
             </div>
@@ -516,10 +528,10 @@ Please confirm my order. Thank you!`
                         transition={{ type: 'spring', stiffness: 400, damping: 28 }}
                         style={{
                             backdropFilter: 'blur(20px) saturate(200%)',
-                            background: 'rgba(249, 115, 22, 0.9)',
-                            border: '1px solid rgba(249,115,22,0.4)',
-                            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 20px rgba(249,115,22,0.35)',
-                            color: '#fff',
+                            background: accent,
+                            border: `1px solid ${accent}66`,
+                            boxShadow: `inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 20px ${accent}59`,
+                            color: accentText,
                         }}
                     >
                         <ShoppingCart className="w-4 h-4" />
@@ -579,7 +591,7 @@ Please confirm my order. Thank you!`
                                                 )}
                                                 <div className="flex-1 min-w-0">
                                                     <p className="text-gray-900 font-semibold text-sm truncate">{item.name}</p>
-                                                    <p className="text-orange-500 font-bold text-sm">{formatPrice(item.price)}</p>
+                                                    <p className="font-bold text-sm" style={{ color: accent }}>{formatPrice(item.price)}</p>
                                                 </div>
                                                 <div className="flex items-center gap-1.5">
                                                     <button onClick={() => updateQuantity(item.id, -1)} className="w-7 h-7 rounded-full flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"><Minus className="w-3.5 h-3.5" /></button>
@@ -593,12 +605,12 @@ Please confirm my order. Thank you!`
                                     <div className="p-4 space-y-3 border-t border-black/6">
                                         <div className="flex justify-between items-center">
                                             <span className="text-gray-600 font-medium">Total</span>
-                                            <span className="text-orange-500 font-black text-xl">{formatPrice(totalAmount)}</span>
+                                            <span className="font-black text-xl" style={{ color: accent }}>{formatPrice(totalAmount)}</span>
                                         </div>
                                         <button
                                             onClick={() => setStep('details')}
                                             className="w-full py-4 rounded-2xl font-bold text-white text-[15px] transition-all active:scale-[0.97]"
-                                            style={{ background: 'linear-gradient(135deg, #f97316, #ea580c)', boxShadow: '0 4px 20px rgba(249,115,22,0.3), inset 0 1px 0 rgba(255,255,255,0.2)' }}
+                                            style={{ background: `linear-gradient(135deg, ${accent}, ${accentHover})`, color: accentText, boxShadow: `0 4px 20px ${accent}4d, inset 0 1px 0 rgba(255,255,255,0.2)` }}
                                         >
                                             Continue to Checkout →
                                         </button>
@@ -610,7 +622,7 @@ Please confirm my order. Thank you!`
                             ) : (
                                 <>
                                     <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                                        <button onClick={() => setStep('cart')} className="text-orange-500 text-sm hover:underline font-medium">← Back to cart</button>
+                                        <button onClick={() => setStep('cart')} className="text-sm hover:underline font-medium" style={{ color: accent }}>← Back to cart</button>
 
                                         <div className="space-y-1.5">
                                             <label className="text-gray-700 text-sm font-semibold block">Your Name *</label>
@@ -618,7 +630,8 @@ Please confirm my order. Thank you!`
                                                 type="text" value={customerName}
                                                 onChange={e => setCustomerName(e.target.value)}
                                                 placeholder="Enter your name"
-                                                className="w-full px-4 py-3 rounded-2xl text-gray-900 placeholder-gray-400 outline-none text-sm bg-white border border-black/8 focus:border-orange-400 focus:ring-2 focus:ring-orange-200 transition-all"
+                                                className="w-full px-4 py-3 rounded-2xl text-gray-900 placeholder-gray-400 outline-none text-sm bg-white border border-black/8 focus:ring-2 transition-all"
+                                                style={{ '--tw-ring-color': `${accent}33` } as React.CSSProperties}
                                             />
                                         </div>
                                         <div className="space-y-1.5">
@@ -626,7 +639,8 @@ Please confirm my order. Thank you!`
                                             <textarea
                                                 value={customerAddress} onChange={e => setCustomerAddress(e.target.value)}
                                                 placeholder="Enter delivery address" rows={3}
-                                                className="w-full px-4 py-3 rounded-2xl text-gray-900 placeholder-gray-400 outline-none text-sm resize-none bg-white border border-black/8 focus:border-orange-400 focus:ring-2 focus:ring-orange-200 transition-all"
+                                                className="w-full px-4 py-3 rounded-2xl text-gray-900 placeholder-gray-400 outline-none text-sm resize-none bg-white border border-black/8 focus:ring-2 transition-all"
+                                                style={{ '--tw-ring-color': `${accent}33` } as React.CSSProperties}
                                             />
                                         </div>
                                         <div className="space-y-1.5">
@@ -670,7 +684,7 @@ Please confirm my order. Thank you!`
                                                 ))}
                                                 <div className="flex justify-between font-bold text-gray-900 pt-2 mt-1 border-t border-black/5">
                                                     <span>Total</span>
-                                                    <span className="text-orange-500">{formatPrice(totalAmount)}</span>
+                                                    <span style={{ color: accent }}>{formatPrice(totalAmount)}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -679,7 +693,7 @@ Please confirm my order. Thank you!`
                                         <button
                                             onClick={handleCheckout} disabled={!customerName.trim()}
                                             className="w-full py-4 rounded-2xl font-bold text-white text-[15px] flex items-center justify-center gap-2 transition-all active:scale-[0.97] disabled:opacity-40"
-                                            style={{ background: 'linear-gradient(135deg, #f97316, #ea580c)', boxShadow: customerName.trim() ? '0 4px 20px rgba(249,115,22,0.3)' : 'none' }}
+                                            style={{ background: `linear-gradient(135deg, ${accent}, ${accentHover})`, color: accentText, boxShadow: customerName.trim() ? `0 4px 20px ${accent}4d` : 'none' }}
                                         >
                                             <Send className="w-4 h-4" />
                                             Send Order via {orderMethod === 'whatsapp' ? 'WhatsApp' : 'Instagram'}

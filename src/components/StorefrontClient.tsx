@@ -8,6 +8,7 @@ import { ShoppableReels } from '@/components/ShoppableReels'
 import { Button } from '@/components/ui/button'
 import type { Product, User, Review } from '@/lib/types'
 import { useCart } from '@/lib/useCart'
+import type { WebsiteTheme } from '@/lib/website-theme'
 
 interface StorefrontClientProps {
     products: Product[]
@@ -20,6 +21,7 @@ interface StorefrontClientProps {
     instagramHandle?: string | null
     waWhatsappEnabled?: boolean
     reviewHref?: string
+    theme?: WebsiteTheme
 }
 
 export function StorefrontClient({
@@ -33,6 +35,7 @@ export function StorefrontClient({
     instagramHandle,
     waWhatsappEnabled,
     reviewHref,
+    theme,
 }: StorefrontClientProps) {
     // Default to Grid for all businesses
     const [viewMode, setViewMode] = useState<'grid' | 'reels'>('grid')
@@ -147,7 +150,7 @@ export function StorefrontClient({
                     {/* Products section */}
                     <div className="max-w-4xl mx-auto px-4 py-8">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-xl font-semibold text-gray-900">
+                            <h2 className="text-xl font-semibold" style={theme ? { color: theme.headingText } : undefined}>
                                 {showHybridBookings ? `Products (${productItems.length})` : `Products (${products.length})`}
                             </h2>
                             {/* Toggle only for Pro businesses */}
@@ -176,20 +179,21 @@ export function StorefrontClient({
                                 clearCart={cartHelper.clearCart}
                                 totalItems={cartHelper.totalItems}
                                 totalAmount={cartHelper.totalAmount}
+                                theme={theme}
                             />
                         )}
                     </div>
 
                     {showHybridBookings && (
                         <div id="booking-panel" className="max-w-4xl mx-auto px-4 pb-10">
-                            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
+                            <div className="bg-white rounded-2xl border shadow-sm p-5 sm:p-6" style={theme ? { borderColor: theme.cardBorder } : undefined}>
                                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-5">
                                     <div>
-                                        <p className="text-xs font-bold uppercase tracking-widest text-green-700 mb-2">Bookings</p>
-                                        <h2 className="text-2xl font-black text-gray-900">Book a service</h2>
-                                        <p className="text-sm text-gray-500 mt-1">Choose one of the services from this hybrid brand and request an available slot.</p>
+                                        <p className="text-xs font-bold uppercase tracking-widest mb-2" style={theme ? { color: theme.accent } : undefined}>Bookings</p>
+                                        <h2 className="text-2xl font-black" style={theme ? { color: theme.headingText } : undefined}>Book a service</h2>
+                                        <p className="text-sm mt-1" style={theme ? { color: theme.mutedText } : undefined}>Choose one of the services from this hybrid brand and request an available slot.</p>
                                     </div>
-                                    <CalendarCheck className="w-9 h-9 text-green-600" />
+                                    <CalendarCheck className="w-9 h-9" style={theme ? { color: theme.accent } : undefined} />
                                 </div>
 
                                 <div className="grid md:grid-cols-2 gap-4">
@@ -230,7 +234,7 @@ export function StorefrontClient({
                                     <p className="text-xs text-gray-500">
                                         {preferredDate && availableSlots.length === 0 ? 'No available slot for this date. Try another date.' : availableSlots.length ? `${availableSlots.length} available slots. Bookings use Africa/Lagos time.` : 'Choose a date to see available slots.'}
                                     </p>
-                                    <Button onClick={submitBooking} disabled={bookingState === 'loading'} className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold">
+                                    <Button onClick={submitBooking} disabled={bookingState === 'loading'} className="w-full sm:w-auto text-white font-bold" style={theme ? { backgroundColor: theme.accent, color: theme.accentText } : undefined}>
                                         {bookingState === 'success' ? 'Booking confirmed' : bookingState === 'loading' ? 'Booking...' : 'Confirm booking'} <ArrowRight className="w-4 h-4 ml-1" />
                                     </Button>
                                 </div>
@@ -243,7 +247,7 @@ export function StorefrontClient({
                     {/* Reviews section (Pro only, grid only) */}
                     {isPro && (
                         <div className="max-w-4xl mx-auto px-4 pb-8">
-                            <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                            <h2 className="text-xl font-semibold mb-6" style={theme ? { color: theme.headingText } : undefined}>
                                 Customer Reviews ({reviews.length})
                             </h2>
 
@@ -294,7 +298,8 @@ export function StorefrontClient({
                                 <Link href={reviewHref || `/${slug}/review`}>
                                     <Button
                                         variant="outline"
-                                        className="border-orange-200 text-orange-600 hover:bg-orange-50 hover:text-orange-700 font-bold px-8"
+                                        className="font-bold px-8"
+                                        style={theme ? { borderColor: theme.accent, color: theme.accent } : undefined}
                                     >
                                         <Star className="w-4 h-4 mr-2" />
                                         Leave a Review
@@ -331,6 +336,7 @@ export function StorefrontClient({
                             clearCart={cartHelper.clearCart}
                             totalItems={cartHelper.totalItems}
                             totalAmount={cartHelper.totalAmount}
+                            theme={theme}
                         />
                     )}
 

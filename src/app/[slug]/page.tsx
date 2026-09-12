@@ -275,6 +275,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                     instagramHandle={business.instagram_handle}
                     waWhatsappEnabled={business.plan === 'pro' && business.wa_whatsapp_enabled}
                     reviewHref={reviewHref}
+                    theme={theme}
                 />
 
                 <footer className="bg-white border-t border-gray-200 py-6 relative z-30">
@@ -459,6 +460,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                     instagramHandle={business.instagram_handle}
                     waWhatsappEnabled={business.plan === 'pro' && business.ai_enabled && business.wa_whatsapp_enabled}
                     reviewHref={reviewHref}
+                    theme={theme}
                 />
             </section>
 
