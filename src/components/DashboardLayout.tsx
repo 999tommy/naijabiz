@@ -52,8 +52,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
         {
             name: 'AI Assistant',
             href: '/dashboard/ai',
-            icon: Bot,
-            proOnly: true
+            icon: Bot
         },
         {
             name: 'Analytics',

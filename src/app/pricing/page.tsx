@@ -44,6 +44,16 @@ const freeFeatures = [
     ],
   },
   {
+    icon: Bot,
+    section: 'Virtual Assistant Preview',
+    color: '#b45309',
+    items: [
+      'Open the Virtual Assistant page in your dashboard',
+      'Set your tone, greeting, services, and business instructions',
+      'Test responses before going live',
+    ],
+  },
+  {
     icon: MessageCircle,
     section: 'Contact & Links',
     color: '#2d4fb5',
@@ -88,6 +98,7 @@ const proFeatures = [
     items: [
       '24/7 Virtual Assistant on your page',
       'Answers product and pricing questions automatically',
+      'Understands current date, time, and recent chat context',
       'Handles booking and appointment management',
       'AI booking assistant collects preferred date, time, and notes',
       'Captures orders and sends them to WhatsApp',
@@ -185,7 +196,7 @@ const faqs = [
   },
   {
     q: 'How does the Virtual Assistant work?',
-    a: 'It\'s a chat widget on your brand page. When a customer asks a question, it responds using your catalog data, welcome message, and business instructions. Product orders and service booking requests are sent straight to your WhatsApp.',
+    a: 'Free users can open the Virtual Assistant page, configure the assistant, and test responses in the dashboard. Pro puts the assistant live on your brand page, where it uses your catalog, instructions, the current Lagos date/time, and recent chat context. Product orders and confirmed service booking requests are sent straight to your WhatsApp.',
   },
   {
     q: 'What does "Pro Verified" mean?',
@@ -348,6 +359,7 @@ export default function PricingPage() {
                 'Standard brand link (qriblo.com/yourbrand)',
                 'Up to 5 catalog items',
                 'WhatsApp ordering and booking enquiries',
+                'Virtual Assistant training and test mode',
                 'Listed in the directory',
                 'SEO-optimised page',
               ].map(item => (
@@ -407,7 +419,7 @@ export default function PricingPage() {
                 'Everything in Free',
                 'Unlimited catalog items',
                 'Full themed brand website',
-                'Virtual Assistant for orders and bookings',
+                'Live Virtual Assistant for orders and bookings',
                 'Customer reviews & ratings',
                 'Pro Verified badge',
               ].map(item => (
@@ -479,7 +491,7 @@ export default function PricingPage() {
             <div>
               <p className="font-bold text-sm text-[#B84D34] mb-3">Pro</p>
               <ul className="space-y-2">
-                {['Priority service booking display', 'AI assistant collects order and appointment details', 'Reviews, analytics, and badge build trust automatically'].map(i => (
+                {['Priority service booking display', 'Live assistant collects order and appointment details', 'Reviews, analytics, and badge build trust automatically'].map(i => (
                   <li key={i} className="flex gap-2 text-sm text-gray-800 font-medium"><CheckCircle2 className="w-4 h-4 text-[#B84D34] flex-shrink-0 mt-0.5" />{i}</li>
                 ))}
               </ul>

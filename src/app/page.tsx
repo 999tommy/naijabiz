@@ -35,7 +35,7 @@ export default function HomePage() {
     'Customers order directly from your page',
     'Reviews and ratings build trust automatically',
     'Personal subdomain (yourbrand.qriblo.com) on Pro',
-    'Virtual Assistant handles enquiries 24/7',
+    'Virtual Assistant can be trained, tested, and put live on Pro',
   ]
 
   const businessTypes = [
@@ -155,7 +155,7 @@ export default function HomePage() {
           {/* Subtext */}
           <p className="relative mx-auto max-w-lg text-base sm:text-lg leading-relaxed text-[#6B5850] mb-8 micro-reveal micro-delay-2">
             Claim one beautiful link where customers discover your story, browse your catalog,
-            and book your services. A highly trained <span className="font-bold">virtual assistant</span> runs your business for you when you&apos;re asleep or busy.
+            and book your services. Train a <span className="font-bold">virtual assistant</span> that understands your catalog, tone, time, and customer conversations.
           </p>
 
           {/* Slug input */}
@@ -174,15 +174,15 @@ export default function HomePage() {
 
           {/* Subdomain hint */}
           <p className="relative mt-2 text-xs text-[#806b63]">
-            Free link: <span className="font-mono font-bold text-[#1E1410]">yourbrand.qriblo.com</span> &bull;
+            Free link: <span className="font-mono font-bold text-[#1E1410]">qriblo.com/yourbrand</span> &bull; Pro subdomain: <span className="font-mono font-bold text-[#1E1410]">yourbrand.qriblo.com</span>
           </p>
 
           {/* Trust pills */}
           <div className="relative mt-5 flex justify-center gap-4 flex-wrap text-xs font-semibold text-[#6B5850]">
             <span className="flex gap-1.5 items-center"><CheckCircle2 className="w-4 h-4 text-[#62ba82]" />Free to start</span>
-            <span className="flex gap-1.5 items-center"><Globe2 className="w-4 h-4 text-[#7c5cbf]" />Personal Subdomain</span>
+            <span className="flex gap-1.5 items-center"><Globe2 className="w-4 h-4 text-[#7c5cbf]" />Pro subdomain</span>
             <span className="flex gap-1.5 items-center"><ShieldCheck className="w-4 h-4 text-[#62ba82]" />No card required</span>
-            <span className="flex gap-1.5 items-center"><Bot className="w-4 h-4 text-[#B84D34]" />Virtual Assistant included on Pro</span>
+            <span className="flex gap-1.5 items-center"><Bot className="w-4 h-4 text-[#B84D34]" />Train free, go live on Pro</span>
           </div>
         </section>
 
@@ -191,7 +191,7 @@ export default function HomePage() {
           <div className="grid sm:grid-cols-3 gap-3">
             {[
               ['yourbrand', '.qriblo.com', 'Every Pro business gets their own personal subdomain for a clean, standout web presence.'],
-              ['24/7', 'Virtual Assistant', 'Answers questions, manages appointments, and captures order requests while you sleep.'],
+              ['24/7', 'Virtual Assistant', 'Learns your business context, handles appointments, and captures order requests while you sleep.'],
               ['100%', 'WhatsApp First', 'Turn visitors into direct chats — bookings, menu orders, and inquiries land straight in WhatsApp.'],
             ].map(([value, label, text]) => (
               <div key={label} className="rounded-2xl bg-white border border-[#eadfd8] p-5 shadow-[0_10px_28px_rgba(70,35,25,.05)] micro-lift">
@@ -214,7 +214,7 @@ export default function HomePage() {
                   See how real brand links feel before you create yours.
                 </h2>
                 <p className="text-white/65 leading-relaxed mb-6">
-                  Product sellers get shoppable menus. Service brands get booking-ready pages. Both get trust signals, WhatsApp actions, and a Virtual Assistant.
+                  Product sellers get shoppable menus. Service brands get booking-ready pages. Both get trust signals, WhatsApp actions, and a context-aware Virtual Assistant.
                 </p>
                 <div className="grid gap-3">
                   {demoLinks.map(([type, name, text, href, Icon, color]) => (
@@ -391,7 +391,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-black mb-2">Always on assistant</h3>
               <p className="text-sm text-[#6b3d0c] leading-relaxed">
-                Pro businesses get a Virtual Assistant that answers from your catalog, handles enquiries, and captures WhatsApp orders 24/7.
+                Train it for free in your dashboard. On Pro, it goes live on your page and answers with your catalog, business rules, current time, and chat history in mind.
               </p>
             </div>
 
@@ -454,7 +454,7 @@ export default function HomePage() {
             {[
               ['01', 'Make it yours', 'Add your name, logo, description, products or services. Takes 5 minutes.'],
               ['02', 'Share your brand link', 'Put qriblo.com/yourbrand (or your personal yourbrand.qriblo.com on Pro) in your bio, status, and flyers.'],
-              ['03', 'Turn visits into orders', 'Customers browse, book, or chat with your virtual assistant — you close the sale.'],
+              ['03', 'Turn visits into orders', 'Customers browse, book, or chat with your virtual assistant, and confirmed requests land in WhatsApp.'],
             ].map(([num, title, text]) => (
               <div key={num} className="flex flex-col">
                 <span className="text-6xl font-black text-[#dec8be] leading-none mb-4">{num}</span>

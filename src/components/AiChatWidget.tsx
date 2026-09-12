@@ -25,6 +25,7 @@ interface Message {
     role: 'user' | 'assistant'
     content: string
     timestamp?: string
+    sentAt?: string
 }
 
 interface OrderSummary {
@@ -99,7 +100,8 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
             setMessages([{ 
                 role: 'assistant', 
                 content: business.ai_welcome_msg || `Hello! Welcome to ${business.business_name}. How can I help you today?`,
-                timestamp: getFormattedTime()
+                timestamp: getFormattedTime(),
+                sentAt: new Date().toISOString()
             }])
         }
     }, [actualOpen, messages.length, business.ai_welcome_msg, business.business_name])
@@ -147,7 +149,8 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
         const userMsg = input.trim()
         setInput('')
         const userTime = getFormattedTime()
-        setMessages(prev => [...prev, { role: 'user', content: userMsg, timestamp: userTime }])
+        const userMessage = { role: 'user' as const, content: userMsg, timestamp: userTime, sentAt: new Date().toISOString() }
+        setMessages(prev => [...prev, userMessage])
         setLoading(true)
 
         try {
@@ -156,7 +159,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     businessId: business.id,
-                    messages: [...messages, { role: 'user', content: userMsg }],
+                    messages: [...messages, userMessage],
                 }),
             })
 
@@ -164,7 +167,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                 try {
                     const errData = await response.json()
                     if (errData.error === 'LIMIT_REACHED') {
-                        throw new Error("Monthly message limit reached for this business. Please contact the owner directly via WhatsApp.");
+                        throw new Error("Today's chat limit has been reached for this business. Please contact the owner directly via WhatsApp.");
                     }
                 } catch {
                     // ignore JSON parse error
@@ -173,11 +176,11 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
             }
 
             const data = await response.json()
-            setMessages(prev => [...prev, { role: 'assistant', content: data.reply, timestamp: getFormattedTime() }])
+            setMessages(prev => [...prev, { role: 'assistant', content: data.reply, timestamp: getFormattedTime(), sentAt: new Date().toISOString() }])
             setReplyCount(prev => prev + 1)
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : "Sorry, I'm having trouble connecting. Please WhatsApp the owner."
-            setMessages(prev => [...prev, { role: 'assistant', content: message, timestamp: getFormattedTime() }])
+            setMessages(prev => [...prev, { role: 'assistant', content: message, timestamp: getFormattedTime(), sentAt: new Date().toISOString() }])
         } finally {
             setLoading(false)
         }
@@ -253,7 +256,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
         if (summary.delivery_address) waText += `📍 Details/Address: ${summary.delivery_address}\n`
         waText += `\nPlease confirm and send payment details!`
 
-        const rawPhone = business.wa_whatsapp_enabled ? '2347047207012' : (business.whatsapp_number || '').replace(/[^0-9]/g, '')
+        const rawPhone = (business.whatsapp_number || '').replace(/[^0-9]/g, '')
         const formattedPhone = rawPhone.startsWith('0') ? '234' + rawPhone.slice(1) : rawPhone
 
         const waUrl = formattedPhone 
@@ -466,7 +469,7 @@ export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: A
                                 <input
                                     type="text"
                                     placeholder="Ask price, stock, or place an order..."
-                                    className="flex-1 bg-transparent text-[13.5px] text-[#222222] placeholder:text-[#222222]/45 outline-none min-w-0"
+                                    className="flex-1 bg-transparent text-base text-[#222222] placeholder:text-[#222222]/45 outline-none min-w-0"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     disabled={loading}

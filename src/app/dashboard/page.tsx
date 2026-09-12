@@ -251,6 +251,16 @@ export default async function DashboardPage() {
                                         </Button>
                                     </Link>
                                 )}
+
+                                <Link href="/dashboard/ai" className="block">
+                                    <Button variant="outline" className="w-full justify-between">
+                                        <span className="flex items-center gap-2">
+                                            <Lightbulb className="w-4 h-4" />
+                                            Train Virtual Assistant
+                                        </span>
+                                        <ArrowRight className="w-4 h-4" />
+                                    </Button>
+                                </Link>
                             </CardContent>
                         </Card>
                     </div>

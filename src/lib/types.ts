@@ -40,6 +40,7 @@ export interface User {
     ai_welcome_msg: string
     ai_usage_limit: number
     ai_usage_count: number
+    ai_last_reset_at?: string | null
     ai_persona?: 'friendly' | 'formal' | 'pidgin' | 'yoruba' | 'igbo' | 'hausa'
     business_type?: 'products' | 'services' | 'both'
     // WhatsApp VA (Central Number Model)

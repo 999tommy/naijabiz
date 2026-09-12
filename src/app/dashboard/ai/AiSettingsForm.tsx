@@ -11,6 +11,7 @@ import { updateAiSettings } from './actions'
 import { Bot, Save, Loader2, Lock, Briefcase, MessageSquareText, Play, Send, Zap, CheckCircle2, ArrowRight, MessageCircle, Copy } from 'lucide-react'
 import { User } from '@/lib/types'
 import Link from 'next/link'
+import { DAILY_AI_USAGE_LIMIT } from '@/lib/ai/usage'
 
 interface AiSettingsFormProps {
     user: User
@@ -19,16 +20,21 @@ interface AiSettingsFormProps {
 interface SandboxMessage {
     role: 'user' | 'assistant'
     content: string
+    sentAt?: string
 }
 
 export function AiSettingsForm({ user }: AiSettingsFormProps) {
     const [loading, setLoading] = useState(false)
     const isPro = user.plan === 'pro'
-    const usagePercent = Math.min(((user.ai_usage_count || 0) / (user.ai_usage_limit || 100)) * 100, 100)
+    const hasFreshUsage = user.ai_last_reset_at
+        ? new Date(new Date(user.ai_last_reset_at).getTime() + 60 * 60 * 1000).toISOString().slice(0, 10) === new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 10)
+        : false
+    const dailyUsageCount = hasFreshUsage ? user.ai_usage_count || 0 : 0
+    const usagePercent = Math.min((dailyUsageCount / DAILY_AI_USAGE_LIMIT) * 100, 100)
 
     // Interactive Sandbox state
     const [sandboxMessages, setSandboxMessages] = useState<SandboxMessage[]>([
-        { role: 'assistant', content: user.ai_welcome_msg || "Hello! Check out our catalog below. What can I help you order or book today?" }
+        { role: 'assistant', content: user.ai_welcome_msg || "Hello! Check out our catalog below. What can I help you order or book today?", sentAt: new Date().toISOString() }
     ])
     const [sandboxInput, setSandboxInput] = useState('')
     const [sandboxLoading, setSandboxLoading] = useState(false)
@@ -59,7 +65,8 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
 
         const userMsg = sandboxInput.trim()
         setSandboxInput('')
-        setSandboxMessages(prev => [...prev, { role: 'user', content: userMsg }])
+        const userMessage = { role: 'user' as const, content: userMsg, sentAt: new Date().toISOString() }
+        setSandboxMessages(prev => [...prev, userMessage])
         setSandboxLoading(true)
 
         try {
@@ -69,7 +76,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     businessId: user.id,
-                    messages: [...sandboxMessages, { role: 'user', content: userMsg }],
+                    messages: [...sandboxMessages, userMessage],
                     isSandbox: true
                 })
             })
@@ -77,16 +84,16 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
             if (!res.ok) {
                 const data = await res.json().catch(() => ({}))
                 if (data.error === 'LIMIT_REACHED') {
-                    setSandboxMessages(prev => [...prev, { role: 'assistant', content: 'Monthly chat limit reached. Upgrade to Pro for more chats!' }])
+                    setSandboxMessages(prev => [...prev, { role: 'assistant', content: "Today's chat limit has been reached. Please try again tomorrow.", sentAt: new Date().toISOString() }])
                     return
                 }
                 throw new Error(data.error || 'Failed to reach AI')
             }
 
             const data = await res.json()
-            setSandboxMessages(prev => [...prev, { role: 'assistant', content: data.reply || 'No response.' }])
+            setSandboxMessages(prev => [...prev, { role: 'assistant', content: data.reply || 'No response.', sentAt: new Date().toISOString() }])
         } catch (err: any) {
-            setSandboxMessages(prev => [...prev, { role: 'assistant', content: `[Sandbox Mode] I hear you! To test me with live customer traffic on your business page link, unlock the Pro Engine.` }])
+            setSandboxMessages(prev => [...prev, { role: 'assistant', content: `[Sandbox Mode] I hear you! To test me with live customer traffic on your business page link, unlock the Pro Engine.`, sentAt: new Date().toISOString() }])
         } finally {
             setSandboxLoading(false)
         }
@@ -103,7 +110,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                         </div>
                         <h2 className="text-2xl font-bold font-display">Test Your 24/7 AI Sales Assistant Below</h2>
                         <p className="text-orange-100 text-sm max-w-xl">
-                            Configure your AI speaking style and test-chat with it live. Upgrade to Pro to activate it for product questions, service inquiries, orders, and bookings on your public business link.
+                            Configure your AI speaking style and test-chat with it live. Upgrade to Pro when you want it serving real customers on your public business link.
                         </p>
                     </div>
                     <Link href="/pricing">
@@ -131,9 +138,9 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                             </div>
                             {isPro ? (
                                 <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-orange-200 shadow-sm shrink-0">
-                                    <span className="text-xs font-medium text-gray-600">Monthly Usage:</span>
+                                    <span className="text-xs font-medium text-gray-600">Daily Usage:</span>
                                     <span className={`text-xs font-bold ${usagePercent >= 100 ? 'text-red-600' : 'text-orange-700'}`}>
-                                        {user.ai_usage_count || 0}/{user.ai_usage_limit || 100} chats
+                                        {dailyUsageCount}/{DAILY_AI_USAGE_LIMIT} chats
                                     </span>
                                 </div>
                             ) : (

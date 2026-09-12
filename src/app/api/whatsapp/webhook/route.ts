@@ -18,6 +18,7 @@ import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { generateReply } from '@/lib/ai/generateReply'
 import { qribloMasterReply } from '@/lib/ai/qribloMasterReply'
+import { getDailyAiUsageState } from '@/lib/ai/usage'
 
 export const maxDuration = 30
 
@@ -93,7 +94,7 @@ export async function POST(req: Request) {
             }
 
             // Check if Master VA wants to route to a vendor
-            const routeMatch = aiReply.match(/\[ROUTE_TO_VENDOR:\s*(.+?)\]/i)
+            const routeMatch = aiReply.match(/\[(?:CONNECT_VENDOR|ROUTE_TO_VENDOR):\s*(.+?)\]/i)
             if (routeMatch) {
                 const detectedName = routeMatch[1].trim()
                 
@@ -131,7 +132,7 @@ export async function POST(req: Request) {
                 const welcome = business.ai_welcome_msg || `Hello! Welcome to *${business.business_name}*. How can I help you today?`
                 
                 // Strip the tag from the AI reply and prepend the switch message
-                const cleanReply = aiReply.replace(/\[ROUTE_TO_VENDOR:[\s\S]*?\]/gi, '').trim()
+                const cleanReply = aiReply.replace(/\[(?:CONNECT_VENDOR|ROUTE_TO_VENDOR):[\s\S]*?\]/gi, '').trim()
                 let finalMsg = `🏪 Switched! You're now chatting with *${business.business_name}*.\n\n${welcome}`
                 if (cleanReply) finalMsg = `${cleanReply}\n\n${finalMsg}`
 
@@ -194,18 +195,20 @@ export async function POST(req: Request) {
         }
 
         // ── Step 5: Rate limit check ─────────────────────────────────────────
-        const limit = business.ai_usage_limit || 100
-        const usage = business.ai_usage_count || 0
-        if (usage >= limit) {
-            await sendWhatsAppMessage(customerPhone, `⚠️ ${business.business_name}'s AI assistant has reached its monthly limit. Please contact them directly at their Qriblo page.`)
+        const usageState = getDailyAiUsageState(business)
+        if (usageState.limitReached) {
+            await sendWhatsAppMessage(customerPhone, `⚠️ ${business.business_name}'s AI assistant has reached today's chat limit. Please contact them directly at their Qriblo page.`)
             return new NextResponse('OK', { status: 200 })
         }
 
-        // Increment usage
-        const { error: rpcError } = await supabase.rpc('increment_ai_usage', { user_id: businessId })
-        if (rpcError) {
-            await supabase.from('users').update({ ai_usage_count: usage + 1 }).eq('id', businessId)
-        }
+        await supabase
+            .from('users')
+            .update({
+                ai_usage_count: usageState.nextUsage,
+                ai_usage_limit: usageState.limit,
+                ai_last_reset_at: usageState.shouldReset ? usageState.nowIso : business.ai_last_reset_at,
+            })
+            .eq('id', businessId)
 
         // ── Step 6: Build message history + call AI ──────────────────────────
         messages.push({ role: 'user', content: incomingText })

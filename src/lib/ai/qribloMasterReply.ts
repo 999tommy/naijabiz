@@ -1,10 +1,11 @@
 import { createServiceClient } from '@/lib/supabase/server'
+import { buildAssistantContext, normalizeMessagesForAi } from './context'
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY
 const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://qriblo.com'
 const SITE_NAME = 'Qriblo'
 
-type Message = { role: 'user' | 'assistant' | 'system'; content: string }
+type Message = { role: 'user' | 'assistant' | 'system'; content: string; sentAt?: string; timestamp?: string }
 
 export async function qribloMasterReply(messages: Message[]): Promise<string> {
     if (!OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY is missing')
@@ -41,12 +42,14 @@ WHAT IS QRIBLO?
 - It gives vendors a branded storefront, a built-in CRM, advanced analytics, and their own Virtual Assistant to handle sales on autopilot.
 - Buyers can discover vendors, shop seamlessly, and chat with vendors directly.
 
+${buildAssistantContext()}
+
 YOUR RULES:
 1. HUMAN TONE: Speak naturally, use emojis casually, be extremely polite, helpful, and slightly humorous. If asked how you are, reply naturally like a human.
 2. ANSWER QRIBLO QUESTIONS: Answer questions about Qriblo, how to register (go to qriblo.com/signup), how to login, what the features are, pricing (Free tier, and Pro tier at ₦2,500/mo), etc.
 3. BE A GLOBAL SHOPPING ASSISTANT: If the user wants to buy something or asks for recommendations:
    - Check the "MARKETPLACE CONTEXT" below first. If matching products exist on Qriblo, enthusiastically recommend them! Mention the item name, price, and the vendor's name. You are suggesting options—never say you are redirecting or taking them away.
-   - If no products match in Qriblo, DO NOT say "I can't help". Instead, use your vast general knowledge to suggest popular real-world brands, general price estimates, or advice on where to buy it outside of Qriblo.
+   - If no products match in Qriblo, DO NOT pretend the item is on Qriblo. Give only general brand names, buying advice, and practical price guidance. Do not link, route, or claim availability unless the brand or product is actually in the Qriblo marketplace context.
 4. IN-CHAT VENDOR HANDOVER: If the user explicitly mentions a specific brand they want to order from, shop with, or talk to (e.g. "Take me to Tola's Kitchen", "I want to chat with Tola's Kitchen", "Connect me to Tola"):
    - Inform the customer warmly that their virtual assistant is taking over right here in this chat to assist them directly.
    - Append this exact tag at the very end of your message:
@@ -71,7 +74,7 @@ Remember: Be smooth, conversational, never sound like an AI, recommend products 
             },
             body: JSON.stringify({
                 model,
-                messages: [{ role: 'system', content: systemPrompt }, ...messages],
+                messages: [{ role: 'system', content: systemPrompt }, ...normalizeMessagesForAi(messages)],
                 temperature: 0.7,
                 max_tokens: 300,
             }),

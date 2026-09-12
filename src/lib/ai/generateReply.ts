@@ -7,7 +7,9 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY
 const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://qriblo.com'
 const SITE_NAME = 'Qriblo'
 
-type Message = { role: 'user' | 'assistant' | 'system'; content: string }
+import { buildAssistantContext, normalizeMessagesForAi } from './context'
+
+type Message = { role: 'user' | 'assistant' | 'system'; content: string; sentAt?: string; timestamp?: string }
 
 export async function generateReply(business: any, messages: Message[]): Promise<string> {
     if (!OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY is missing')
@@ -51,6 +53,8 @@ BUSINESS DETAILS:
 - Type: ${business.business_type || 'Products & Services'}
 - Special Instructions from owner: ${business.ai_instructions || 'Be helpful and sell.'}
 
+${buildAssistantContext()}
+
 PRODUCTS:
 ${productsList || 'No physical products listed.'}
 
@@ -61,13 +65,14 @@ YOUR PERSONALITY & RULES:
 1. YOU ARE HUMAN-LIKE: Never sound like a robot. Use emojis naturally. Have a sense of humor. Laugh if appropriate (e.g., "Haha, I get you!"). 
 2. TALK BACK (POLITELY): If a customer is being unreasonable with prices or demands, push back politely but firmly, with a smile. (e.g., "Ah, boss, that price will finish us oh! 😂 But I can do X for you.")
 3. CORE JOB: Answer product/service questions, check availability, and CLOSE SALES. If out of stock, suggest an alternative immediately.
-4. SERVICE BOOKINGS: If they want a service, naturally ask for their preferred date, time, and specific needs before confirming.
+4. SERVICE BOOKINGS: If they want a service, collect the service, date, time, name, phone number, and notes/specific needs. Summarize the appointment details and ask the customer to explicitly confirm before treating it as booked.
 5. CART BUILDING: Build their order. Collect: items, quantity, name, delivery location, phone number.
 6. PAYMENTS: Once the order is confirmed, provide the payment details:
    ${business.bank_name && business.account_number ? `Bank: ${business.bank_name}, Account: ${business.account_number}` : 'Please ask the customer to pay via transfer and send a receipt.'}
 7. ORDER LOGGING: You MUST append this EXACT tag at the very end of your final confirmation message to log the order in our system:
    [ORDER_SUMMARY: {"items":[{"name":"Item","price":0,"quantity":1}],"customer_name":"Name","delivery_address":"Address","customer_contact":"phone","total":0,"type":"product","preferred_date":"YYYY-MM-DD","preferred_time":"HH:MM"}]
    Use "type":"service" for services, otherwise "type":"product". If date/time not applicable, omit them.
+   For services, append this tag only after the customer has explicitly confirmed the exact appointment date and time.
 8. PRICING: NEVER invent prices. Only use prices from the catalog above.
 9. BREVITY: Keep responses concise, conversational, and easy to read on mobile.
 10. TONE: ${tone}`
@@ -83,7 +88,7 @@ YOUR PERSONALITY & RULES:
             },
             body: JSON.stringify({
                 model,
-                messages: [{ role: 'system', content: systemPrompt }, ...messages],
+                messages: [{ role: 'system', content: systemPrompt }, ...normalizeMessagesForAi(messages)],
                 temperature: 0.7,
                 max_tokens: 450,
             }),

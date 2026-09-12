@@ -19,6 +19,7 @@ interface Message {
     role: 'user' | 'assistant'
     content: string
     timestamp?: string
+    sentAt?: string
     isTakeoverAnnouncement?: boolean
     vendorSlug?: string
     vendorName?: string
@@ -29,6 +30,7 @@ interface ActiveVendor {
     name: string
     slug: string
     welcomeMsg?: string
+    whatsappNumber?: string
 }
 
 interface OrderSummary {
@@ -126,7 +128,8 @@ export function MasterChatWidget() {
             setMessages([{ 
                 role: 'assistant', 
                 content: "Hi! I'm Qriblo's Virtual Assistant. I can help you discover vendors, explore products, book appointments, or connect with any store. How can I help you today?",
-                timestamp: getFormattedTime()
+                timestamp: getFormattedTime(),
+                sentAt: new Date().toISOString()
             }])
         }
     }, [isOpen, messages.length])
@@ -195,7 +198,11 @@ export function MasterChatWidget() {
         if (summary.delivery_address) waText += `📍 Details/Address: ${summary.delivery_address}\n`
         waText += `\nPlease confirm and send payment details!`
 
-        const waUrl = `https://wa.me/?text=${encodeURIComponent(waText)}`
+        const rawPhone = (activeVendor.whatsappNumber || '').replace(/[^0-9]/g, '')
+        const formattedPhone = rawPhone.startsWith('0') ? '234' + rawPhone.slice(1) : rawPhone
+        const waUrl = formattedPhone
+            ? `https://wa.me/${formattedPhone}?text=${encodeURIComponent(waText)}`
+            : `https://wa.me/?text=${encodeURIComponent(waText)}`
         window.open(waUrl, '_blank')
         setProcessingOrder(null)
     }
@@ -207,7 +214,8 @@ export function MasterChatWidget() {
             {
                 role: 'assistant',
                 content: "Switched back to Qriblo Virtual Assistant. How else can I help you discover shops or products?",
-                timestamp: getFormattedTime()
+                timestamp: getFormattedTime(),
+                sentAt: new Date().toISOString()
             }
         ])
     }
@@ -218,7 +226,8 @@ export function MasterChatWidget() {
         const userMsg = textToSend.trim()
         setInput('')
         const userTime = getFormattedTime()
-        setMessages(prev => [...prev, { role: 'user', content: userMsg, timestamp: userTime }])
+        const userMessage = { role: 'user' as const, content: userMsg, timestamp: userTime, sentAt: new Date().toISOString() }
+        setMessages(prev => [...prev, userMessage])
         setLoading(true)
 
         try {
@@ -230,7 +239,7 @@ export function MasterChatWidget() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     businessId: targetBusinessId,
-                    messages: [...messages, { role: 'user', content: userMsg }],
+                    messages: [...messages, userMessage],
                 }),
             })
 
@@ -247,22 +256,23 @@ export function MasterChatWidget() {
                 setActiveVendor(vendor)
                 setMessages(prev => [
                     ...prev,
-                    { role: 'assistant', content: data.reply, timestamp: replyTime },
+                    { role: 'assistant', content: data.reply, timestamp: replyTime, sentAt: new Date().toISOString() },
                     { 
                         role: 'assistant', 
                         content: `Now chatting directly with ${vendor.name}'s assistant.`, 
                         timestamp: replyTime,
+                        sentAt: new Date().toISOString(),
                         isTakeoverAnnouncement: true,
                         vendorSlug: vendor.slug,
                         vendorName: vendor.name
                     }
                 ])
             } else {
-                setMessages(prev => [...prev, { role: 'assistant', content: data.reply, timestamp: replyTime }])
+                setMessages(prev => [...prev, { role: 'assistant', content: data.reply, timestamp: replyTime, sentAt: new Date().toISOString() }])
             }
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : "Sorry, I'm having trouble connecting."
-            setMessages(prev => [...prev, { role: 'assistant', content: message, timestamp: getFormattedTime() }])
+            setMessages(prev => [...prev, { role: 'assistant', content: message, timestamp: getFormattedTime(), sentAt: new Date().toISOString() }])
         } finally {
             setLoading(false)
         }
@@ -580,7 +590,7 @@ export function MasterChatWidget() {
                         <input
                             type="text"
                             placeholder={activeVendor ? `Message ${activeVendor.name}...` : "Type a message..."}
-                            className="flex-1 bg-transparent text-[13.5px] text-[#222222] placeholder:text-[#222222]/45 outline-none min-w-0"
+                            className="flex-1 bg-transparent text-base text-[#222222] placeholder:text-[#222222]/45 outline-none min-w-0"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             disabled={loading}
@@ -603,4 +613,3 @@ export function MasterChatWidget() {
         </Card>
     )
 }
-

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { generateReply } from '@/lib/ai/generateReply'
 import { qribloMasterReply } from '@/lib/ai/qribloMasterReply'
+import { getDailyAiUsageState } from '@/lib/ai/usage'
 
 export const maxDuration = 30
 
@@ -26,19 +27,20 @@ export async function POST(req: Request) {
                 const supabase = await createServiceClient()
                 const { data: vendor } = await supabase
                     .from('users')
-                    .select('id, business_name, business_slug, plan, ai_welcome_msg')
+                    .select('id, business_name, business_slug, plan, ai_welcome_msg, whatsapp_number')
                     .or(`business_slug.eq.${targetVendor},business_name.ilike.%${targetVendor}%`)
                     .limit(1)
                     .maybeSingle()
 
-                if (vendor) {
+                if (vendor && vendor.plan === 'pro') {
                     return NextResponse.json({ 
                         reply: cleanReply || `Connecting you to ${vendor.business_name}...`,
                         vendorTakeover: {
                             id: vendor.id,
                             name: vendor.business_name,
                             slug: vendor.business_slug,
-                            welcomeMsg: vendor.ai_welcome_msg
+                            welcomeMsg: vendor.ai_welcome_msg,
+                            whatsappNumber: vendor.whatsapp_number,
                         }
                     })
                 }
@@ -69,17 +71,19 @@ export async function POST(req: Request) {
         }
 
         // Rate-limit check
-        const limit = business.ai_usage_limit || 100
-        const usage = business.ai_usage_count || 0
-        if (usage >= limit) {
+        const usageState = getDailyAiUsageState(business)
+        if (usageState.limitReached) {
             return NextResponse.json({ error: 'LIMIT_REACHED' }, { status: 429 })
         }
 
-        // Increment usage counter
-        const { data: incOk, error: rpcError } = await supabase.rpc('increment_ai_usage', { user_id: businessId })
-        if (rpcError || incOk === false) {
-            await supabase.from('users').update({ ai_usage_count: usage + 1 }).eq('id', businessId)
-        }
+        await supabase
+            .from('users')
+            .update({
+                ai_usage_count: usageState.nextUsage,
+                ai_usage_limit: usageState.limit,
+                ai_last_reset_at: usageState.shouldReset ? usageState.nowIso : business.ai_last_reset_at,
+            })
+            .eq('id', businessId)
 
         const reply = await generateReply(business, messages)
         return NextResponse.json({ reply })

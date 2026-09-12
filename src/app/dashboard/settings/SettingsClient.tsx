@@ -607,7 +607,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                         </li>
                                         <li className="flex items-center gap-1 font-bold text-orange-700">
                                             <CheckCircle2 className="w-4 h-4 text-orange-600" />
-                                            AI Assistant for orders and bookings (100 replies/mo)
+                                            AI Assistant for orders and bookings (40 chats/day)
                                         </li>
                                     </ul>
                                 </div>
