@@ -19,6 +19,7 @@ import { BusinessShareButton } from '@/components/BusinessShareButton'
 import { getCategoryIcon } from '@/lib/category-icons'
 import type { Product, User, Review } from '@/lib/types'
 import { AiChatWidget } from '@/components/AiChatWidget'
+import type { WebsiteTheme } from '@/lib/website-theme'
 
 interface ServiceProfileClientProps {
     products: Product[]
@@ -28,6 +29,8 @@ interface ServiceProfileClientProps {
     averageRating: string | null
     isOwner: boolean
     waWhatsappEnabled?: boolean
+    reviewHref?: string
+    theme?: WebsiteTheme
 }
 
 export function ServiceProfileClient({
@@ -37,8 +40,23 @@ export function ServiceProfileClient({
     reviews,
     averageRating,
     isOwner,
-    waWhatsappEnabled
+    waWhatsappEnabled,
+    reviewHref,
+    theme
 }: ServiceProfileClientProps) {
+    const pageTheme = theme || {
+        pageBg: '#f5faf9',
+        navBg: 'rgba(255,255,255,0.90)',
+        accent: '#004953',
+        accentHover: '#003153',
+        accentText: '#ffffff',
+        headingText: '#004953',
+        bodyText: '#36454F',
+        mutedText: 'rgba(54,69,79,0.72)',
+        cardBg: '#ffffff',
+        cardBorder: 'rgba(0,73,83,0.16)',
+        divider: 'rgba(0,73,83,0.14)',
+    }
     const formatPrice = (amount: number) => {
         return new Intl.NumberFormat('en-NG', {
             style: 'currency',
@@ -104,9 +122,9 @@ export function ServiceProfileClient({
     }
 
     return (
-        <div className="min-h-screen bg-[#faf9f6]">
+        <div className="min-h-screen" style={{ background: pageTheme.pageBg, color: pageTheme.bodyText }}>
             {/* Header */}
-            <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200">
+            <header className="backdrop-blur-md sticky top-0 z-50 border-b" style={{ background: pageTheme.navBg, borderColor: pageTheme.divider }}>
                 <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
                         <Image src="/logo.png" alt="Qriblo" width={24} height={24} className="opacity-80" />
@@ -115,7 +133,7 @@ export function ServiceProfileClient({
                     <div className="flex items-center gap-3">
                         {isOwner && (
                             <Link href="/dashboard">
-                                <Button variant="outline" size="sm" className="hidden sm:flex border-gray-200 text-gray-700 hover:bg-gray-50">
+                                <Button variant="outline" size="sm" className="hidden sm:flex">
                                     <LayoutDashboard className="w-4 h-4 mr-2" />
                                     Dashboard
                                 </Button>
@@ -124,7 +142,7 @@ export function ServiceProfileClient({
                         <BusinessShareButton businessName={business.business_name || 'Business'} />
                         {whatsappNumber && (
                             <a href="#booking-panel">
-                                <Button size="sm" className="bg-gray-900 hover:bg-gray-800 text-white rounded-full px-5">
+                                <Button size="sm" className="text-white rounded-full px-5" style={{ background: pageTheme.accent }}>
                                     Book Now
                                 </Button>
                             </a>
@@ -154,7 +172,7 @@ export function ServiceProfileClient({
                     
                     <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2 flex-wrap">
-                            <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight">
+                            <h1 className="text-3xl md:text-5xl font-black tracking-tight" style={{ color: pageTheme.headingText }}>
                                 {business.business_name}
                             </h1>
                             {(isPro || (business.reviewCount && business.reviewCount >= 5)) && (
@@ -162,9 +180,9 @@ export function ServiceProfileClient({
                             )}
                         </div>
                         
-                        <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-gray-500 mb-6">
+                        <div className="flex flex-wrap items-center gap-3 text-sm font-medium mb-6" style={{ color: pageTheme.mutedText }}>
                             {business.category && (
-                                <span className="flex items-center gap-1.5 bg-white border border-gray-200 px-3 py-1 rounded-full text-gray-700 shadow-sm">
+                                <span className="flex items-center gap-1.5 border px-3 py-1 rounded-full shadow-sm" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder, color: pageTheme.bodyText }}>
                                     {getCategoryIcon(business.category.name)} {business.category.name}
                                 </span>
                             )}
@@ -182,7 +200,7 @@ export function ServiceProfileClient({
                         </div>
 
                         {business.description && (
-                            <p className="text-gray-600 text-lg leading-relaxed max-w-2xl mb-8">
+                            <p className="text-lg leading-relaxed max-w-2xl mb-8" style={{ color: pageTheme.mutedText }}>
                                 {business.description}
                             </p>
                         )}
@@ -190,14 +208,14 @@ export function ServiceProfileClient({
                         <div className="flex flex-wrap gap-3">
                             {whatsappNumber && (
                                 <a href="#booking-panel">
-                                    <Button className="h-12 px-8 rounded-full bg-green-600 hover:bg-green-700 text-white font-bold text-base shadow-lg shadow-green-600/20">
+                                    <Button className="h-12 px-8 rounded-full text-white font-bold text-base shadow-lg" style={{ background: pageTheme.accent }}>
                                         <CalendarCheck className="w-5 h-5 mr-2" /> Book Now
                                     </Button>
                                 </a>
                             )}
                             {business.instagram_handle && (
                                 <a href={`https://instagram.com/${business.instagram_handle}`} target="_blank" rel="noopener noreferrer">
-                                    <Button variant="outline" className="h-12 px-6 rounded-full border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold">
+                                    <Button variant="outline" className="h-12 px-6 rounded-full font-semibold" style={{ color: pageTheme.bodyText }}>
                                         <Instagram className="w-5 h-5 mr-2 text-pink-600" /> Instagram
                                     </Button>
                                 </a>
@@ -212,39 +230,40 @@ export function ServiceProfileClient({
                     <div className="mb-16">
                         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
                             <div>
-                                <h2 className="text-2xl font-black text-gray-900">Services & Packages</h2>
-                                <p className="text-sm text-gray-500 mt-1">
+                                <h2 className="text-2xl font-black" style={{ color: pageTheme.headingText }}>Services & Packages</h2>
+                                <p className="text-sm mt-1" style={{ color: pageTheme.mutedText }}>
                                     Choose a service, then send your preferred date and time on WhatsApp.
                                 </p>
                             </div>
                             {isPro && (
-                                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-green-700 bg-green-50 border border-green-100 rounded-full px-3 py-1">
+                                <span className="inline-flex items-center gap-1.5 text-xs font-bold border rounded-full px-3 py-1" style={{ color: pageTheme.accent, borderColor: pageTheme.cardBorder, background: pageTheme.cardBg }}>
                                     <CheckCircle2 className="w-3.5 h-3.5" /> Priority booking display
                                 </span>
                             )}
                         </div>
                         <div className="grid sm:grid-cols-2 gap-4">
                             {products.map((product) => (
-                                <div key={product.id} className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow group flex gap-4">
+                                <div key={product.id} className="rounded-2xl p-4 sm:p-5 border shadow-sm hover:shadow-md transition-shadow group flex gap-4" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder }}>
                                     {product.image_url && (
                                         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 relative">
                                             <Image src={product.image_url} alt={product.name} fill className="object-cover" />
                                         </div>
                                     )}
                                     <div className="flex-1 min-w-0 flex flex-col">
-                                        <h3 className="font-bold text-gray-900 text-lg line-clamp-1 mb-1">{product.name}</h3>
-                                        <p className="text-gray-500 text-sm line-clamp-2 mb-2 flex-1">
+                                        <h3 className="font-bold text-lg line-clamp-1 mb-1" style={{ color: pageTheme.headingText }}>{product.name}</h3>
+                                        <p className="text-sm line-clamp-2 mb-2 flex-1" style={{ color: pageTheme.mutedText }}>
                                             {product.description || 'Professional service offering.'}
                                         </p>
                                         <div className="flex items-center justify-between mt-auto">
-                                            <span className="font-black text-gray-900 text-lg">
+                                            <span className="font-black text-lg" style={{ color: pageTheme.headingText }}>
                                                 {formatPrice(product.price)}
                                             </span>
                                             {whatsappNumber && (
                                                 <a
                                                     href="#booking-panel"
                                                     onClick={() => setSelectedService(product.name)}
-                                                    className="inline-flex items-center gap-1.5 px-3 h-8 rounded-full bg-gray-100 text-gray-700 text-xs font-bold hover:bg-gray-900 hover:text-white transition-colors"
+                                                    className="inline-flex items-center gap-1.5 px-3 h-8 rounded-full text-xs font-bold transition-colors"
+                                                    style={{ background: pageTheme.accent, color: pageTheme.accentText }}
                                                 >
                                                     Book <ArrowRight className="w-3.5 h-3.5" />
                                                 </a>
@@ -259,17 +278,17 @@ export function ServiceProfileClient({
 
                 {/* Booking Request */}
                 {whatsappNumber && products.length > 0 && (
-                    <div id="booking-panel" className="mb-16 bg-white rounded-3xl border border-gray-100 shadow-sm p-5 sm:p-6">
+                    <div id="booking-panel" className="mb-16 rounded-3xl border shadow-sm p-5 sm:p-6" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder }}>
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-5 mb-6">
                             <div>
-                                <p className="text-xs font-bold uppercase tracking-widest text-green-700 mb-2">Request an appointment</p>
-                                <h2 className="text-2xl font-black text-gray-900">Send a complete booking request</h2>
-                                <p className="text-sm text-gray-500 mt-2 max-w-xl">
+                                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: pageTheme.accent }}>Request an appointment</p>
+                                <h2 className="text-2xl font-black" style={{ color: pageTheme.headingText }}>Send a complete booking request</h2>
+                                <p className="text-sm mt-2 max-w-xl" style={{ color: pageTheme.mutedText }}>
                                     Pick an available service slot. Your booking is confirmed instantly and the business can manage it from their dashboard.
                                 </p>
                             </div>
                             {isPro && (
-                                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-orange-700 bg-orange-50 border border-orange-100 rounded-full px-3 py-1 shrink-0">
+                                <span className="inline-flex items-center gap-1.5 text-xs font-bold border rounded-full px-3 py-1 shrink-0" style={{ color: pageTheme.accent, borderColor: pageTheme.cardBorder, background: pageTheme.pageBg }}>
                                     <CalendarCheck className="w-3.5 h-3.5" /> AI booking assistant enabled
                                 </span>
                             )}
@@ -339,7 +358,7 @@ export function ServiceProfileClient({
                             <p className="text-xs text-gray-500">
                                 {preferredDate && availableSlots.length === 0 ? 'No available slot for this date. Try another date.' : availableSlots.length ? `${availableSlots.length} available slots. Bookings use Africa/Lagos time.` : 'Choose a date to see available slots.'}
                             </p>
-                            <Button onClick={submitBooking} disabled={bookingState === 'loading'} className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold">
+                            <Button onClick={submitBooking} disabled={bookingState === 'loading'} className="w-full sm:w-auto text-white font-bold" style={{ background: pageTheme.accent }}>
                                 {bookingState === 'success' ? 'Booking confirmed' : bookingState === 'loading' ? 'Booking...' : 'Confirm booking'} <ArrowRight className="w-4 h-4 ml-1" />
                             </Button>
                         </div>
@@ -351,11 +370,11 @@ export function ServiceProfileClient({
                 {/* Reviews */}
                 {isPro && (
                     <div className="mb-16">
-                        <h2 className="text-2xl font-black text-gray-900 mb-6">Client Reviews</h2>
+                        <h2 className="text-2xl font-black mb-6" style={{ color: pageTheme.headingText }}>Client Reviews</h2>
                         {reviews.length > 0 ? (
                             <div className="grid sm:grid-cols-2 gap-4">
                                 {reviews.map((review) => (
-                                    <div key={review.id} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                                    <div key={review.id} className="p-5 rounded-2xl border shadow-sm" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder }}>
                                         <div className="flex items-center gap-1 mb-3">
                                             {[...Array(5)].map((_, i) => (
                                                 <Star
@@ -373,13 +392,13 @@ export function ServiceProfileClient({
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-12 bg-white rounded-2xl border border-gray-100 border-dashed">
-                                <p className="text-gray-500">No reviews yet.</p>
+                            <div className="text-center py-12 rounded-2xl border border-dashed" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder }}>
+                                <p style={{ color: pageTheme.mutedText }}>No reviews yet.</p>
                             </div>
                         )}
                         <div className="mt-6 text-center">
-                            <Link href={`/${slug}/review`}>
-                                <Button variant="outline" className="border-gray-300 text-gray-700 font-semibold rounded-full px-8">
+                            <Link href={reviewHref || `/${slug}/review`}>
+                                <Button variant="outline" className="font-semibold rounded-full px-8" style={{ borderColor: pageTheme.accent, color: pageTheme.accent }}>
                                     Leave a Review
                                 </Button>
                             </Link>

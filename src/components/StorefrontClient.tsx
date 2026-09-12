@@ -19,6 +19,7 @@ interface StorefrontClientProps {
     whatsappNumber: string
     instagramHandle?: string | null
     waWhatsappEnabled?: boolean
+    reviewHref?: string
 }
 
 export function StorefrontClient({
@@ -31,6 +32,7 @@ export function StorefrontClient({
     whatsappNumber,
     instagramHandle,
     waWhatsappEnabled,
+    reviewHref,
 }: StorefrontClientProps) {
     // Default to Grid for all businesses
     const [viewMode, setViewMode] = useState<'grid' | 'reels'>('grid')
@@ -289,7 +291,7 @@ export function StorefrontClient({
                             )}
 
                             <div className="mt-8 text-center">
-                                <Link href={`/${slug}/review`}>
+                                <Link href={reviewHref || `/${slug}/review`}>
                                     <Button
                                         variant="outline"
                                         className="border-orange-200 text-orange-600 hover:bg-orange-50 hover:text-orange-700 font-bold px-8"

@@ -13,9 +13,10 @@ interface ReviewFormProps {
     businessId: string
     businessName: string
     businessSlug: string
+    backHref?: string
 }
 
-export function ReviewForm({ businessId, businessName, businessSlug }: ReviewFormProps) {
+export function ReviewForm({ businessId, businessName, businessSlug, backHref }: ReviewFormProps) {
     const [rating, setRating] = useState(0)
     const [hoverRating, setHoverRating] = useState(0)
     const [customerName, setCustomerName] = useState('')
@@ -44,14 +45,14 @@ export function ReviewForm({ businessId, businessName, businessSlug }: ReviewFor
                 customer_contact: customerContact,
                 rating,
                 comment: comment || null,
-                is_verified: false, // Will be verified by admin or order matching
+                is_verified: true,
             })
 
             if (insertError) throw insertError
 
             setSuccess(true)
             setTimeout(() => {
-                router.push(`/${businessSlug}`)
+                router.push(backHref || `/${businessSlug}`)
             }, 2000)
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Failed to submit review'
@@ -71,7 +72,7 @@ export function ReviewForm({ businessId, businessName, businessSlug }: ReviewFor
                         </div>
                         <h2 className="text-xl font-semibold text-gray-900 mb-2">Thank You!</h2>
                         <p className="text-gray-500">
-                            Your review has been submitted and will appear once verified.
+                            Your review has been published.
                         </p>
                     </CardContent>
                 </Card>
@@ -83,7 +84,7 @@ export function ReviewForm({ businessId, businessName, businessSlug }: ReviewFor
         <div className="min-h-screen bg-cream-50 py-8 px-4">
             <div className="max-w-md mx-auto">
                 <Link
-                    href={`/${businessSlug}`}
+                    href={backHref || `/${businessSlug}`}
                     className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
                 >
                     <ArrowLeft className="w-5 h-5" />

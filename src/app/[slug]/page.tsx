@@ -96,13 +96,23 @@ export async function generateMetadata({ params }: BusinessPageProps): Promise<M
     const { slug } = await params
     const business = await getBusiness(slug)
     if (!business?.business_name) return { title: 'Business Not Found' }
+    const headersList = await headers()
+    const host = headersList.get('host') || 'qriblo.com'
+    const hostWithoutPort = host.split(':')[0]
+    const isSubdomainRequest = hostWithoutPort === `${slug}.qriblo.com` || hostWithoutPort === `${slug}.localhost`
+    const protocol = host.includes('localhost') ? 'http' : 'https'
+    const origin = `${protocol}://${host}`
+    const businessUrl = isSubdomainRequest ? origin : `${origin}/${slug}`
     const isPro = business.plan === 'pro'
     const title = `${business.business_name}${isPro ? ' – Official Store' : ''} | Qriblo`
     const description = business.description || `Shop ${business.business_name} on Qriblo. View products, prices, and order via WhatsApp.`
-    const imageUrl = business.logo_url || '/logo.png'
+    const imageUrl = `${businessUrl}/opengraph-image`
     return {
-        title, description,
-        openGraph: { title, description, type: 'website', images: [{ url: imageUrl, width: 800, height: 800, alt: business.business_name }] },
+        title,
+        description,
+        metadataBase: new URL(origin),
+        alternates: { canonical: businessUrl },
+        openGraph: { title, description, type: 'website', url: businessUrl, images: [{ url: imageUrl, width: 1200, height: 630, alt: business.business_name }] },
         twitter: { card: 'summary_large_image', title, description, images: [imageUrl] },
     }
 }
@@ -116,6 +126,11 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
     const { data: { user: currentUser } } = await supabase.auth.getUser()
     const isOwner = currentUser?.id === business.id
     const isPro = business.plan === 'pro'
+    const headersList = await headers()
+    const host = headersList.get('host') || ''
+    const hostWithoutPort = host.split(':')[0]
+    const isSubdomainRequest = hostWithoutPort === `${slug}.qriblo.com` || hostWithoutPort === `${slug}.localhost`
+    const reviewHref = isSubdomainRequest ? '/review' : `/${slug}/review`
     const [products, reviews] = await Promise.all([
         getProducts(business.id, isPro ? undefined : 5),
         getReviews(business.id),
@@ -131,6 +146,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
     const averageRating = reviews.length > 0
         ? (reviews.reduce((sum: number, review: Review) => sum + review.rating, 0) / reviews.length).toFixed(1)
         : null
+    const theme = getWebsiteTheme(business.category?.slug, business.category?.name, slug, business.business_type)
 
     const jsonLd = {
         '@context': 'https://schema.org', '@type': 'Store',
@@ -153,6 +169,8 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                 averageRating={averageRating}
                 isOwner={isOwner}
                 waWhatsappEnabled={business.plan === 'pro' && business.wa_whatsapp_enabled}
+                reviewHref={reviewHref}
+                theme={theme}
             />
         )
     }
@@ -256,6 +274,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                     whatsappNumber={business.whatsapp_number || ''}
                     instagramHandle={business.instagram_handle}
                     waWhatsappEnabled={business.plan === 'pro' && business.wa_whatsapp_enabled}
+                    reviewHref={reviewHref}
                 />
 
                 <footer className="bg-white border-t border-gray-200 py-6 relative z-30">
@@ -268,8 +287,6 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
     }
 
     // ── PRODUCT BUSINESSES – PRO: Unified brand page + inline catalog ──────────
-    const theme = getWebsiteTheme(business.category?.slug, business.category?.name, slug)
-
     return (
         <div style={{ background: theme.pageBg, color: theme.bodyText, minHeight: '100vh' }}>
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -441,6 +458,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                     whatsappNumber={business.whatsapp_number || ''}
                     instagramHandle={business.instagram_handle}
                     waWhatsappEnabled={business.plan === 'pro' && business.ai_enabled && business.wa_whatsapp_enabled}
+                    reviewHref={reviewHref}
                 />
             </section>
 
@@ -475,7 +493,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                             ))}
                         </div>
                         <div className="text-center mt-8">
-                            <Link href={`/${slug}/review`}>
+                            <Link href={reviewHref}>
                                 <button className="px-6 py-2.5 rounded-xl text-sm font-bold border-2 transition-all hover:opacity-80" style={{ borderColor: theme.accent, color: theme.accent }}>
                                     <Star className="w-4 h-4 inline mr-1.5" />Leave a Review
                                 </button>

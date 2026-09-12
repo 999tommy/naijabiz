@@ -1,179 +1,343 @@
 /**
  * Qriblo Website Theme System
- * Category-weighted, deterministic per slug — no DB storage needed.
+ * Category-weighted, deterministic per slug. Users see variety, but each brand
+ * keeps the same palette unless its category or slug changes.
  */
 
-export type ThemeId = 'warm-market' | 'clean-studio' | 'bold-lagos'
+export type ThemeId =
+  | 'burgundy-glacier'
+  | 'burnt-charcoal'
+  | 'deep-teal-champagne'
+  | 'iris-mauve'
+  | 'copper-espresso'
+  | 'sapphire-camel'
+  | 'moss-amazon'
+  | 'ruby-blush'
+  | 'prussian-glacier'
+  | 'byzantium-champagne'
 
 export interface WebsiteTheme {
   id: ThemeId
-  /** Hero background gradient or solid */
   heroBg: string
-  /** Hero text color */
   heroText: string
-  /** Secondary text on hero */
   heroSubText: string
-  /** Main accent color (buttons, badges, underlines) */
   accent: string
-  /** Accent hover */
   accentHover: string
-  /** Accent text (on accent bg) */
   accentText: string
-  /** Page background */
   pageBg: string
-  /** Card background */
   cardBg: string
-  /** Card border */
   cardBorder: string
-  /** Body text */
   bodyText: string
-  /** Muted text */
   mutedText: string
-  /** Section heading color */
   headingText: string
-  /** Navbar glass tint */
   navBg: string
-  /** Hero logo ring color */
   logoRing: string
-  /** CTA store button style */
   ctaBg: string
   ctaText: string
-  /** Section divider style */
   divider: string
 }
 
+const colors = {
+  burgundy: '#800020',
+  glacier: '#88BDBC',
+  charcoal: '#36454F',
+  burntOrange: '#CC5500',
+  deepTeal: '#004953',
+  iris: '#5D3FD3',
+  mauve: '#E0B0FF',
+  copper: '#B87333',
+  espresso: '#4B3621',
+  sapphire: '#0F52BA',
+  moss: '#8A9A5B',
+  ruby: '#E0115F',
+  champagne: '#F0E68C',
+  amazon: '#3B7A57',
+  byzantium: '#702963',
+  blush: '#F4C2C2',
+  prussianBlue: '#003153',
+  camel: '#C19A6B',
+}
+
 const themes: Record<ThemeId, WebsiteTheme> = {
-  'warm-market': {
-    id: 'warm-market',
-    heroBg: 'linear-gradient(135deg, #da552f 0%, #c44422 60%, #1a1a1a 100%)',
+  'burgundy-glacier': {
+    id: 'burgundy-glacier',
+    heroBg: `linear-gradient(135deg, ${colors.burgundy} 0%, ${colors.charcoal} 100%)`,
+    heroText: '#ffffff',
+    heroSubText: 'rgba(255,255,255,0.82)',
+    accent: colors.burgundy,
+    accentHover: colors.charcoal,
+    accentText: '#ffffff',
+    pageBg: '#fbf6f7',
+    cardBg: '#ffffff',
+    cardBorder: 'rgba(128,0,32,0.16)',
+    bodyText: colors.charcoal,
+    mutedText: 'rgba(54,69,79,0.72)',
+    headingText: colors.burgundy,
+    navBg: 'rgba(255,255,255,0.90)',
+    logoRing: colors.glacier,
+    ctaBg: colors.glacier,
+    ctaText: colors.charcoal,
+    divider: 'rgba(128,0,32,0.14)',
+  },
+  'burnt-charcoal': {
+    id: 'burnt-charcoal',
+    heroBg: `linear-gradient(135deg, ${colors.burntOrange} 0%, ${colors.charcoal} 100%)`,
+    heroText: '#ffffff',
+    heroSubText: 'rgba(255,255,255,0.82)',
+    accent: colors.burntOrange,
+    accentHover: colors.charcoal,
+    accentText: '#ffffff',
+    pageBg: '#fbf7f4',
+    cardBg: '#ffffff',
+    cardBorder: 'rgba(204,85,0,0.16)',
+    bodyText: colors.charcoal,
+    mutedText: 'rgba(54,69,79,0.72)',
+    headingText: colors.charcoal,
+    navBg: 'rgba(255,255,255,0.90)',
+    logoRing: colors.camel,
+    ctaBg: colors.champagne,
+    ctaText: colors.espresso,
+    divider: 'rgba(204,85,0,0.14)',
+  },
+  'deep-teal-champagne': {
+    id: 'deep-teal-champagne',
+    heroBg: `linear-gradient(135deg, ${colors.deepTeal} 0%, ${colors.prussianBlue} 100%)`,
     heroText: '#ffffff',
     heroSubText: 'rgba(255,255,255,0.80)',
-    accent: '#da552f',
-    accentHover: '#c44422',
+    accent: colors.deepTeal,
+    accentHover: colors.prussianBlue,
     accentText: '#ffffff',
-    pageBg: '#f7f4f0',
-    cardBg: 'rgba(255,255,255,0.80)',
-    cardBorder: 'rgba(0,0,0,0.07)',
-    bodyText: '#1a1a1a',
-    mutedText: '#6b7280',
-    headingText: '#111827',
-    navBg: 'rgba(255,255,255,0.85)',
-    logoRing: '#da552f',
-    ctaBg: '#ffffff',
-    ctaText: '#da552f',
-    divider: 'rgba(218,85,47,0.15)',
-  },
-  'clean-studio': {
-    id: 'clean-studio',
-    heroBg: 'linear-gradient(160deg, #f9f6f2 0%, #ede8e0 100%)',
-    heroText: '#111827',
-    heroSubText: '#6b7280',
-    accent: '#7c3aed',
-    accentHover: '#6d28d9',
-    accentText: '#ffffff',
-    pageBg: '#fafaf9',
+    pageBg: '#f5faf9',
     cardBg: '#ffffff',
-    cardBorder: 'rgba(0,0,0,0.06)',
-    bodyText: '#1a1a1a',
-    mutedText: '#6b7280',
-    headingText: '#111827',
-    navBg: 'rgba(255,255,255,0.92)',
-    logoRing: '#7c3aed',
-    ctaBg: '#7c3aed',
-    ctaText: '#ffffff',
-    divider: 'rgba(124,58,237,0.12)',
+    cardBorder: 'rgba(0,73,83,0.16)',
+    bodyText: colors.charcoal,
+    mutedText: 'rgba(54,69,79,0.72)',
+    headingText: colors.deepTeal,
+    navBg: 'rgba(255,255,255,0.90)',
+    logoRing: colors.champagne,
+    ctaBg: colors.champagne,
+    ctaText: colors.deepTeal,
+    divider: 'rgba(0,73,83,0.14)',
   },
-  'bold-lagos': {
-    id: 'bold-lagos',
-    heroBg: 'linear-gradient(135deg, #064e3b 0%, #065f46 40%, #0f172a 100%)',
+  'iris-mauve': {
+    id: 'iris-mauve',
+    heroBg: `linear-gradient(135deg, ${colors.iris} 0%, ${colors.byzantium} 100%)`,
     heroText: '#ffffff',
-    heroSubText: 'rgba(255,255,255,0.75)',
-    accent: '#10b981',
-    accentHover: '#059669',
+    heroSubText: 'rgba(255,255,255,0.80)',
+    accent: colors.iris,
+    accentHover: colors.byzantium,
     accentText: '#ffffff',
-    pageBg: '#f0fdf4',
-    cardBg: 'rgba(255,255,255,0.85)',
-    cardBorder: 'rgba(0,0,0,0.06)',
-    bodyText: '#0f172a',
-    mutedText: '#6b7280',
-    headingText: '#064e3b',
-    navBg: 'rgba(255,255,255,0.88)',
-    logoRing: '#10b981',
-    ctaBg: '#10b981',
+    pageBg: '#fbf7ff',
+    cardBg: '#ffffff',
+    cardBorder: 'rgba(93,63,211,0.16)',
+    bodyText: colors.charcoal,
+    mutedText: 'rgba(54,69,79,0.72)',
+    headingText: colors.byzantium,
+    navBg: 'rgba(255,255,255,0.90)',
+    logoRing: colors.mauve,
+    ctaBg: colors.mauve,
+    ctaText: colors.byzantium,
+    divider: 'rgba(93,63,211,0.14)',
+  },
+  'copper-espresso': {
+    id: 'copper-espresso',
+    heroBg: `linear-gradient(135deg, ${colors.copper} 0%, ${colors.espresso} 100%)`,
+    heroText: '#ffffff',
+    heroSubText: 'rgba(255,255,255,0.82)',
+    accent: colors.copper,
+    accentHover: colors.espresso,
+    accentText: '#ffffff',
+    pageBg: '#fbf8f4',
+    cardBg: '#ffffff',
+    cardBorder: 'rgba(184,115,51,0.18)',
+    bodyText: colors.espresso,
+    mutedText: 'rgba(75,54,33,0.70)',
+    headingText: colors.espresso,
+    navBg: 'rgba(255,255,255,0.90)',
+    logoRing: colors.camel,
+    ctaBg: colors.camel,
+    ctaText: colors.espresso,
+    divider: 'rgba(184,115,51,0.16)',
+  },
+  'sapphire-camel': {
+    id: 'sapphire-camel',
+    heroBg: `linear-gradient(135deg, ${colors.sapphire} 0%, ${colors.prussianBlue} 100%)`,
+    heroText: '#ffffff',
+    heroSubText: 'rgba(255,255,255,0.80)',
+    accent: colors.sapphire,
+    accentHover: colors.prussianBlue,
+    accentText: '#ffffff',
+    pageBg: '#f5f8fd',
+    cardBg: '#ffffff',
+    cardBorder: 'rgba(15,82,186,0.16)',
+    bodyText: colors.charcoal,
+    mutedText: 'rgba(54,69,79,0.72)',
+    headingText: colors.prussianBlue,
+    navBg: 'rgba(255,255,255,0.90)',
+    logoRing: colors.camel,
+    ctaBg: colors.camel,
+    ctaText: colors.prussianBlue,
+    divider: 'rgba(15,82,186,0.14)',
+  },
+  'moss-amazon': {
+    id: 'moss-amazon',
+    heroBg: `linear-gradient(135deg, ${colors.amazon} 0%, ${colors.deepTeal} 100%)`,
+    heroText: '#ffffff',
+    heroSubText: 'rgba(255,255,255,0.80)',
+    accent: colors.amazon,
+    accentHover: colors.deepTeal,
+    accentText: '#ffffff',
+    pageBg: '#f6f8f2',
+    cardBg: '#ffffff',
+    cardBorder: 'rgba(59,122,87,0.16)',
+    bodyText: colors.charcoal,
+    mutedText: 'rgba(54,69,79,0.72)',
+    headingText: colors.deepTeal,
+    navBg: 'rgba(255,255,255,0.90)',
+    logoRing: colors.moss,
+    ctaBg: colors.moss,
     ctaText: '#ffffff',
-    divider: 'rgba(16,185,129,0.15)',
+    divider: 'rgba(59,122,87,0.14)',
+  },
+  'ruby-blush': {
+    id: 'ruby-blush',
+    heroBg: `linear-gradient(135deg, ${colors.ruby} 0%, ${colors.burgundy} 100%)`,
+    heroText: '#ffffff',
+    heroSubText: 'rgba(255,255,255,0.82)',
+    accent: colors.ruby,
+    accentHover: colors.burgundy,
+    accentText: '#ffffff',
+    pageBg: '#fff7f8',
+    cardBg: '#ffffff',
+    cardBorder: 'rgba(224,17,95,0.16)',
+    bodyText: colors.charcoal,
+    mutedText: 'rgba(54,69,79,0.72)',
+    headingText: colors.burgundy,
+    navBg: 'rgba(255,255,255,0.90)',
+    logoRing: colors.blush,
+    ctaBg: colors.blush,
+    ctaText: colors.burgundy,
+    divider: 'rgba(224,17,95,0.14)',
+  },
+  'prussian-glacier': {
+    id: 'prussian-glacier',
+    heroBg: `linear-gradient(135deg, ${colors.prussianBlue} 0%, ${colors.deepTeal} 100%)`,
+    heroText: '#ffffff',
+    heroSubText: 'rgba(255,255,255,0.80)',
+    accent: colors.prussianBlue,
+    accentHover: colors.deepTeal,
+    accentText: '#ffffff',
+    pageBg: '#f4f9fa',
+    cardBg: '#ffffff',
+    cardBorder: 'rgba(0,49,83,0.16)',
+    bodyText: colors.charcoal,
+    mutedText: 'rgba(54,69,79,0.72)',
+    headingText: colors.prussianBlue,
+    navBg: 'rgba(255,255,255,0.90)',
+    logoRing: colors.glacier,
+    ctaBg: colors.glacier,
+    ctaText: colors.prussianBlue,
+    divider: 'rgba(0,49,83,0.14)',
+  },
+  'byzantium-champagne': {
+    id: 'byzantium-champagne',
+    heroBg: `linear-gradient(135deg, ${colors.byzantium} 0%, ${colors.espresso} 100%)`,
+    heroText: '#ffffff',
+    heroSubText: 'rgba(255,255,255,0.82)',
+    accent: colors.byzantium,
+    accentHover: colors.espresso,
+    accentText: '#ffffff',
+    pageBg: '#fbf7fb',
+    cardBg: '#ffffff',
+    cardBorder: 'rgba(112,41,99,0.16)',
+    bodyText: colors.charcoal,
+    mutedText: 'rgba(54,69,79,0.72)',
+    headingText: colors.byzantium,
+    navBg: 'rgba(255,255,255,0.90)',
+    logoRing: colors.champagne,
+    ctaBg: colors.champagne,
+    ctaText: colors.espresso,
+    divider: 'rgba(112,41,99,0.14)',
   },
 }
 
-/**
- * Category → preferred theme mapping
- * Categories that share similar vibes get grouped together.
- */
-const categoryThemeMap: Record<string, ThemeId> = {
-  // Warm market: food, beauty, fashion, baby/kids — warm/vibrant
-  'food-drinks': 'warm-market',
-  'food & drink': 'warm-market',
-  'food & drinks': 'warm-market',
-  'beauty-cosmetics': 'warm-market',
-  'beauty & cosmetics': 'warm-market',
-  'wigs-hair': 'warm-market',
-  'wigs & hair': 'warm-market',
-  'fashion': 'warm-market',
-  'baby-kids': 'warm-market',
-  'baby & kids': 'warm-market',
-  'art-crafts': 'warm-market',
-  'art & crafts': 'warm-market',
-
-  // Clean studio: tech, electronics, health, books, sports — minimal/precise
-  'electronics': 'clean-studio',
-  'phones-accessories': 'clean-studio',
-  'phones & accessories': 'clean-studio',
-  'health-wellness': 'clean-studio',
-  'health & wellness': 'clean-studio',
-  'books-stationery': 'clean-studio',
-  'books & stationery': 'clean-studio',
-  'sports-fitness': 'clean-studio',
-  'sports & fitness': 'clean-studio',
-
-  // Bold Lagos: services, automotive, home/furniture, jewelry — strong/earthy
-  'services': 'bold-lagos',
-  'automotive': 'bold-lagos',
-  'home-furniture': 'bold-lagos',
-  'home & furniture': 'bold-lagos',
-  'jewelry-watches': 'bold-lagos',
-  'jewelry & watches': 'bold-lagos',
-  'shoes-bags': 'bold-lagos',
-  'shoes & bags': 'bold-lagos',
-  'others': 'bold-lagos',
+const categoryThemeMap: Record<string, ThemeId[]> = {
+  'food-drinks': ['burnt-charcoal', 'copper-espresso', 'deep-teal-champagne'],
+  'food & drink': ['burnt-charcoal', 'copper-espresso', 'deep-teal-champagne'],
+  'food & drinks': ['burnt-charcoal', 'copper-espresso', 'deep-teal-champagne'],
+  'beauty-cosmetics': ['burgundy-glacier', 'ruby-blush', 'byzantium-champagne'],
+  'beauty & cosmetics': ['burgundy-glacier', 'ruby-blush', 'byzantium-champagne'],
+  'wigs-hair': ['burgundy-glacier', 'ruby-blush', 'iris-mauve'],
+  'wigs & hair': ['burgundy-glacier', 'ruby-blush', 'iris-mauve'],
+  'fashion': ['ruby-blush', 'byzantium-champagne', 'copper-espresso'],
+  'baby-kids': ['ruby-blush', 'iris-mauve'],
+  'baby & kids': ['ruby-blush', 'iris-mauve'],
+  'art-crafts': ['copper-espresso', 'byzantium-champagne'],
+  'art & crafts': ['copper-espresso', 'byzantium-champagne'],
+  'electronics': ['sapphire-camel', 'prussian-glacier', 'iris-mauve'],
+  'phones-accessories': ['sapphire-camel', 'prussian-glacier'],
+  'phones & accessories': ['sapphire-camel', 'prussian-glacier'],
+  'health-wellness': ['moss-amazon', 'deep-teal-champagne', 'prussian-glacier'],
+  'health & wellness': ['moss-amazon', 'deep-teal-champagne', 'prussian-glacier'],
+  'books-stationery': ['prussian-glacier', 'sapphire-camel'],
+  'books & stationery': ['prussian-glacier', 'sapphire-camel'],
+  'sports-fitness': ['moss-amazon', 'sapphire-camel'],
+  'sports & fitness': ['moss-amazon', 'sapphire-camel'],
+  'services': ['deep-teal-champagne', 'moss-amazon', 'prussian-glacier'],
+  'automotive': ['burnt-charcoal', 'prussian-glacier'],
+  'home-furniture': ['copper-espresso', 'moss-amazon'],
+  'home & furniture': ['copper-espresso', 'moss-amazon'],
+  'jewelry-watches': ['byzantium-champagne', 'sapphire-camel'],
+  'jewelry & watches': ['byzantium-champagne', 'sapphire-camel'],
+  'shoes-bags': ['copper-espresso', 'burgundy-glacier'],
+  'shoes & bags': ['copper-espresso', 'burgundy-glacier'],
+  'others': ['deep-teal-champagne', 'burnt-charcoal', 'iris-mauve'],
 }
 
-/**
- * Deterministic hash from a string → 0, 1, or 2
- * Used as tiebreaker when category isn't mapped.
- */
 function slugHash(slug: string): number {
   let hash = 0
   for (let i = 0; i < slug.length; i++) {
     hash = (hash * 31 + slug.charCodeAt(i)) & 0xffffffff
   }
-  return Math.abs(hash) % 3
+  return Math.abs(hash)
 }
 
-const themeIds: ThemeId[] = ['warm-market', 'clean-studio', 'bold-lagos']
+const fallbackThemeIds: ThemeId[] = [
+  'burgundy-glacier',
+  'burnt-charcoal',
+  'deep-teal-champagne',
+  'iris-mauve',
+  'copper-espresso',
+  'sapphire-camel',
+  'moss-amazon',
+  'ruby-blush',
+  'prussian-glacier',
+  'byzantium-champagne',
+]
 
-/**
- * Get the website theme for a business.
- * Priority: category → slug hash fallback.
- */
 export function getWebsiteTheme(
   categorySlug: string | null | undefined,
   categoryName: string | null | undefined,
   businessSlug: string,
+  businessType?: string | null,
 ): WebsiteTheme {
-  // Try category slug first, then category name (lowercased)
+  if (businessType === 'both') {
+    const hybridThemes: ThemeId[] = ['iris-mauve', 'burgundy-glacier', 'sapphire-camel', 'byzantium-champagne']
+    return themes[hybridThemes[slugHash(businessSlug) % hybridThemes.length]]
+  }
+
+  if (businessType === 'services') {
+    const serviceThemes: ThemeId[] = ['deep-teal-champagne', 'moss-amazon', 'prussian-glacier']
+    return themes[serviceThemes[slugHash(businessSlug) % serviceThemes.length]]
+  }
+
   const key = (categorySlug || categoryName || '').toLowerCase().trim()
-  const themeId = categoryThemeMap[key] || themeIds[slugHash(businessSlug)]
+  const categoryThemes = categoryThemeMap[key]
+  const themeId = categoryThemes
+    ? categoryThemes[slugHash(businessSlug) % categoryThemes.length]
+    : fallbackThemeIds[slugHash(businessSlug) % fallbackThemeIds.length]
+
   return themes[themeId]
 }
 
-export { themes }
+export { colors, themes }

@@ -1,4 +1,5 @@
-﻿import { ImageResponse } from 'next/og'
+import { ImageResponse } from 'next/og'
+import { getWebsiteTheme } from '@/lib/website-theme'
 
 export const runtime = 'edge'
 
@@ -9,23 +10,29 @@ export const size = {
 }
 export const contentType = 'image/png'
 
-export default async function Image({ params }: { params: { slug: string } }) {
-    const { slug } = await params // Await params in Next.js 15
+type OgBusiness = {
+    business_name: string
+    business_slug?: string | null
+    description?: string | null
+    plan?: string | null
+    business_type?: string | null
+    category?: { name?: string | null; slug?: string | null } | Array<{ name?: string | null; slug?: string | null }>
+}
 
-    // Fetch business data directly via fetch API to avoid cookie/server client issues in Edge
-    // encoding the slug is important
+export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-    let business = null
+    let business: OgBusiness | null = null
 
     try {
-        const response = await fetch(`${supabaseUrl}/rest/v1/users?business_slug=eq.${encodeURIComponent(slug)}&select=business_name,description,location,plan,logo_url`, {
+        const response = await fetch(`${supabaseUrl}/rest/v1/users?business_slug=eq.${encodeURIComponent(slug)}&select=business_name,business_slug,description,plan,business_type,category:categories(name,slug)`, {
             headers: {
-                'apikey': supabaseKey || '',
-                'Authorization': `Bearer ${supabaseKey}`,
+                apikey: supabaseKey || '',
+                Authorization: `Bearer ${supabaseKey}`,
             },
-            next: { revalidate: 60 } // Cache for 60 seconds
+            next: { revalidate: 60 },
         })
 
         if (response.ok) {
@@ -38,13 +45,12 @@ export default async function Image({ params }: { params: { slug: string } }) {
         console.error('Failed to fetch business for OG image', e)
     }
 
-    // Fallback if not found
     if (!business) {
         return new ImageResponse(
             (
                 <div
                     style={{
-                        background: '#faf8f3',
+                        background: '#F0E68C',
                         width: '100%',
                         height: '100%',
                         display: 'flex',
@@ -53,7 +59,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
                         fontFamily: 'sans-serif',
                         fontSize: 60,
                         fontWeight: 'bold',
-                        color: '#333',
+                        color: '#36454F',
                     }}
                 >
                     Qriblo
@@ -63,11 +69,14 @@ export default async function Image({ params }: { params: { slug: string } }) {
         )
     }
 
+    const category = Array.isArray(business.category) ? business.category[0] : business.category
+    const theme = getWebsiteTheme(category?.slug, category?.name, business.business_slug || slug, business.business_type)
+
     return new ImageResponse(
         (
             <div
                 style={{
-                    background: 'linear-gradient(to bottom right, #faf8f3, #ffffff)',
+                    background: theme.heroBg,
                     width: '100%',
                     height: '100%',
                     display: 'flex',
@@ -79,7 +88,6 @@ export default async function Image({ params }: { params: { slug: string } }) {
                     textAlign: 'center',
                 }}
             >
-                {/* Logo or Initial */}
                 <div
                     style={{
                         display: 'flex',
@@ -88,27 +96,23 @@ export default async function Image({ params }: { params: { slug: string } }) {
                         width: '120px',
                         height: '120px',
                         borderRadius: '24px',
-                        backgroundColor: '#fff',
+                        backgroundColor: theme.cardBg,
                         marginBottom: '30px',
-                        boxShadow: '0 8px 30px rgba(0,0,0,0.05)',
+                        boxShadow: '0 8px 30px rgba(0,0,0,0.10)',
                         overflow: 'hidden',
-                        border: '1px solid #eee',
+                        border: `4px solid ${theme.logoRing}`,
                     }}
                 >
-                    {/* Note: Loading external images in OG generation can be flaky depending on host permissions. 
-                      Ideally we use the logo, but for reliability we default to a styled initial if fetching image is complex.
-                      For this demo we will use a nice initial. */}
-                    <div style={{ fontSize: '60px', fontWeight: 'bold', color: '#ea580c' }}>
-                        {(business.business_name || 'N')[0].toUpperCase()}
+                    <div style={{ fontSize: '60px', fontWeight: 'bold', color: theme.accent }}>
+                        {(business.business_name || 'Q')[0].toUpperCase()}
                     </div>
                 </div>
 
-                {/* Business Name */}
                 <div
                     style={{
                         fontSize: '70px',
                         fontWeight: 'bold',
-                        color: '#1a1a1a',
+                        color: theme.heroText,
                         lineHeight: '1.1',
                         marginBottom: '20px',
                         maxWidth: '1000px',
@@ -121,45 +125,37 @@ export default async function Image({ params }: { params: { slug: string } }) {
                     {business.business_name}
                 </div>
 
-                {/* Verified Badge */}
                 {business.plan === 'pro' && (
                     <div
                         style={{
                             display: 'flex',
                             alignItems: 'center',
-                            backgroundColor: '#dcfce7', // Green-100
+                            backgroundColor: theme.ctaBg,
                             padding: '10px 24px',
                             borderRadius: '50px',
                             marginBottom: '30px',
                         }}
                     >
-                        <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="#16a34a"
-                            style={{ marginRight: '10px' }}
-                        >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill={theme.ctaText} style={{ marginRight: '10px' }}>
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                         </svg>
                         <span
                             style={{
                                 fontSize: '24px',
                                 fontWeight: 'bold',
-                                color: '#15803d', // Green-700
+                                color: theme.ctaText,
                                 letterSpacing: '0.05em',
                             }}
                         >
-                            VERIFIED VENDOR
+                            VERIFIED BRAND
                         </span>
                     </div>
                 )}
 
-                {/* Description */}
                 <div
                     style={{
                         fontSize: '32px',
-                        color: '#4b5563',
+                        color: theme.heroSubText,
                         maxWidth: '900px',
                         lineHeight: '1.4',
                         display: '-webkit-box',
@@ -169,45 +165,33 @@ export default async function Image({ params }: { params: { slug: string } }) {
                         marginBottom: '40px',
                     }}
                 >
-                    {business.description || `Order from ${business.business_name} on Qriblo.`}
+                    {business.description || `Order or book with ${business.business_name} on Qriblo.`}
                 </div>
 
-                {/* Footer with AI Hook */}
                 <div
                     style={{
                         position: 'absolute',
                         bottom: '50px',
                         display: 'flex',
-                        flexDirection: 'column',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '12px',
+                        backgroundColor: theme.cardBg,
+                        border: `1px solid ${theme.cardBorder}`,
+                        borderRadius: '100px',
+                        padding: '10px 24px',
                     }}
                 >
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        backgroundColor: '#fff7ed', // Orange-50
-                        border: '1px solid #fed7aa', // Orange-200
-                        borderRadius: '100px',
-                        padding: '8px 20px',
-                    }}>
-                        <div style={{
+                    <div
+                        style={{
                             fontSize: '22px',
                             fontWeight: 'bold',
-                            color: '#ea580c', // Orange-600
-                            display: 'flex',
-                            alignItems: 'center',
+                            color: theme.accent,
                             marginRight: '12px',
-                        }}>
-                            ⚡ Powered by Qriblo AI
-                        </div>
-                        <div style={{
-                            fontSize: '20px',
-                            color: '#6b7280', // Gray-500
-                        }}>
-                            Create your own free page at <span style={{ fontWeight: 'bold', color: '#1a1a1a' }}>qriblo.com</span>
-                        </div>
+                        }}
+                    >
+                        Powered by Qriblo
+                    </div>
+                    <div style={{ fontSize: '20px', color: theme.bodyText }}>
+                        Create your own free page at <span style={{ fontWeight: 'bold', color: theme.headingText }}>qriblo.com</span>
                     </div>
                 </div>
             </div>
