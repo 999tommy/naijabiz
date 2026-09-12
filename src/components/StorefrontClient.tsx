@@ -42,8 +42,9 @@ export function StorefrontClient({
     const cartHelper = useCart(business.business_name || '')
     const productItems = products.filter(product => product.item_type !== 'service')
     const serviceItems = products.filter(product => product.item_type === 'service')
-    const showHybridBookings = business.business_type === 'both' && serviceItems.length > 0
-    const [selectedService, setSelectedService] = useState(serviceItems[0]?.name || '')
+    const showHybridBookings = business.business_type === 'both'
+    const fallbackServiceName = 'General appointment'
+    const [selectedService, setSelectedService] = useState(serviceItems[0]?.name || fallbackServiceName)
     const [preferredDate, setPreferredDate] = useState('')
     const [preferredTime, setPreferredTime] = useState('')
     const [bookingNotes, setBookingNotes] = useState('')
@@ -99,7 +100,7 @@ export function StorefrontClient({
     const submitBooking = async () => {
         if (!customerName.trim() || !customerPhone.trim() || !selectedService || !preferredDate || !preferredTime) {
             setBookingState('error')
-            setBookingError('Please add your name, phone number, service, date, and time before confirming.')
+            setBookingError('Please add your name, phone number, appointment type, date, and time before confirming.')
             return
         }
 
@@ -190,8 +191,10 @@ export function StorefrontClient({
                                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-5">
                                     <div>
                                         <p className="text-xs font-bold uppercase tracking-widest mb-2" style={theme ? { color: theme.accent } : undefined}>Bookings</p>
-                                        <h2 className="text-2xl font-black" style={theme ? { color: theme.headingText } : undefined}>Book a service</h2>
-                                        <p className="text-sm mt-1" style={theme ? { color: theme.mutedText } : undefined}>Choose one of the services from this hybrid brand and request an available slot.</p>
+                                        <h2 className="text-2xl font-black" style={theme ? { color: theme.headingText } : undefined}>Book an appointment</h2>
+                                        <p className="text-sm mt-1" style={theme ? { color: theme.mutedText } : undefined}>
+                                            {serviceItems.length > 0 ? 'Choose one of the services from this hybrid brand and request an available slot.' : 'Request an appointment with this hybrid brand. The business can add specific service listings later.'}
+                                        </p>
                                     </div>
                                     <CalendarCheck className="w-9 h-9" style={theme ? { color: theme.accent } : undefined} />
                                 </div>
@@ -206,9 +209,11 @@ export function StorefrontClient({
                                         <input id="customer-phone" value={customerPhone} onChange={event => setCustomerPhone(event.target.value)} className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="service" className="text-sm font-bold text-gray-700">Service</label>
+                                        <label htmlFor="service" className="text-sm font-bold text-gray-700">Appointment type</label>
                                         <select id="service" value={selectedService} onChange={event => setSelectedService(event.target.value)} className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium">
-                                            {serviceItems.map(service => <option key={service.id} value={service.name}>{service.name}</option>)}
+                                            {serviceItems.length > 0
+                                                ? serviceItems.map(service => <option key={service.id} value={service.name}>{service.name}</option>)
+                                                : <option value={fallbackServiceName}>{fallbackServiceName}</option>}
                                         </select>
                                     </div>
                                     <div className="grid grid-cols-2 gap-3">

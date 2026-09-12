@@ -52,6 +52,11 @@ export function UpvoteButton({ userId, initialUpvotes, size = 'default', classNa
             if (!response.ok) {
                 throw new Error('Failed to record upvote')
             }
+
+            const data = await response.json().catch(() => ({}))
+            if (typeof data.upvotes === 'number') {
+                setUpvotes(data.upvotes)
+            }
         } catch (err) {
             console.error('Upvote error:', err)
             setUpvotes(prev => prev - 1)

@@ -55,6 +55,10 @@ export async function middleware(request: NextRequest) {
     // e.g. tolas-kitchen.qriblo.com/       → /tolas-kitchen
     //      tolas-kitchen.qriblo.com/review  → /tolas-kitchen/review
     if (subdomain) {
+        if (request.nextUrl.pathname.startsWith('/api')) {
+            return NextResponse.next()
+        }
+
         const url = request.nextUrl.clone()
         const currentPath = url.pathname === '/' ? '' : url.pathname
         url.pathname = `/${subdomain}${currentPath}`

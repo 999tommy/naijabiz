@@ -135,7 +135,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
         getProducts(business.id, isPro ? undefined : 5),
         getReviews(business.id),
     ])
-    const hasBookableServices = business.business_type === 'both' && products.some(product => product.item_type === 'service')
+    const hasBookableServices = business.business_type === 'both'
     recordPageView(business.id)
 
     const whatsappLink = (business.plan === 'pro' && business.wa_whatsapp_enabled)
@@ -463,47 +463,6 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                     theme={theme}
                 />
             </section>
-
-            {/* REVIEWS */}
-            {reviews.length > 0 && (
-                <section className="py-16 px-4" style={{ borderTop: `1px solid ${theme.divider}` }}>
-                    <div className="max-w-5xl mx-auto">
-                        <div className="text-center mb-10">
-                            <p className="text-xs font-bold tracking-widest uppercase mb-3" style={{ color: theme.accent }}>Testimonials</p>
-                            <h2 className="text-3xl md:text-4xl font-black" style={{ color: theme.headingText }}>What customers say</h2>
-                            {averageRating && (
-                                <div className="flex items-center justify-center gap-2 mt-3">
-                                    <div className="flex">{[1,2,3,4,5].map(i => <Star key={i} className={`w-5 h-5 ${parseFloat(averageRating) >= i ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200'}`} />)}</div>
-                                    <span className="font-bold text-lg" style={{ color: theme.headingText }}>{averageRating}</span>
-                                    <span className="text-sm" style={{ color: theme.mutedText }}>({reviews.length} reviews)</span>
-                                </div>
-                            )}
-                        </div>
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {reviews.map((review: Review) => (
-                                <div key={review.id} className="rounded-2xl p-6 micro-lift" style={{ background: theme.cardBg, border: `1px solid ${theme.cardBorder}`, backdropFilter: 'blur(12px)' }}>
-                                    <div className="flex mb-3">{[1,2,3,4,5].map(i => <Star key={i} className={`w-4 h-4 ${i <= review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200'}`} />)}</div>
-                                    {review.comment && <p className="text-sm leading-relaxed mb-4 italic" style={{ color: theme.bodyText }}>&ldquo;{review.comment}&rdquo;</p>}
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: theme.accent }}>{review.customer_name[0].toUpperCase()}</div>
-                                        <div>
-                                            <p className="text-xs font-bold" style={{ color: theme.headingText }}>{review.customer_name}</p>
-                                            <p className="text-xs" style={{ color: theme.mutedText }}>{new Date(review.created_at).toLocaleDateString('en-NG', { month: 'short', year: 'numeric' })}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        <div className="text-center mt-8">
-                            <Link href={reviewHref}>
-                                <button className="px-6 py-2.5 rounded-xl text-sm font-bold border-2 transition-all hover:opacity-80" style={{ borderColor: theme.accent, color: theme.accent }}>
-                                    <Star className="w-4 h-4 inline mr-1.5" />Leave a Review
-                                </button>
-                            </Link>
-                        </div>
-                    </div>
-                </section>
-            )}
 
             {/* FINAL CTA */}
             <section className="py-20 px-4" style={{ borderTop: `1px solid ${theme.divider}` }}>
