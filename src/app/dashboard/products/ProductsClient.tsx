@@ -205,7 +205,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
     }
 
     const handleDelete = async (productId: string) => {
-        if (!confirm('Are you sure you want to delete this product/service?')) return
+        if (!window.confirm('Are you sure you want to delete this product/service?')) return
 
         try {
             const { error } = await supabase
@@ -213,7 +213,10 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                 .delete()
                 .eq('id', productId)
 
-            if (error) throw error
+            if (error) {
+                window.alert(`Failed to delete: ${error.message}`)
+                throw error
+            }
 
             await fetchProducts()
             router.refresh()
