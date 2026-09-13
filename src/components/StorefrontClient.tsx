@@ -249,9 +249,8 @@ export function StorefrontClient({
                         </div>
                     )}
 
-                    {/* Reviews section (Pro only, grid only) */}
-                    {isPro && (
-                        <div className="max-w-4xl mx-auto px-4 pb-8">
+                    {/* Reviews section */}
+                    <div className="max-w-4xl mx-auto px-4 pb-8">
                             <h2 className="text-xl font-semibold mb-6" style={theme ? { color: theme.headingText } : undefined}>
                                 Customer Reviews ({reviews.length})
                             </h2>
@@ -311,8 +310,7 @@ export function StorefrontClient({
                                     </Button>
                                 </Link>
                             </div>
-                        </div>
-                    )}
+                    </div>
                 </>
             )}
 
@@ -402,6 +400,7 @@ function LayoutToggle({ viewMode, onChange, dark }: LayoutToggleProps) {
     return (
         <div className="flex items-center p-1 rounded-full" style={wrapperStyle}>
             <button
+                type="button"
                 id="toggle-grid-view"
                 onClick={() => onChange('grid')}
                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold transition-all duration-200"
@@ -412,6 +411,7 @@ function LayoutToggle({ viewMode, onChange, dark }: LayoutToggleProps) {
                 Grid
             </button>
             <button
+                type="button"
                 id="toggle-reels-view"
                 onClick={() => onChange('reels')}
                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold transition-all duration-200"

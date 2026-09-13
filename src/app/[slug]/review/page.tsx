@@ -1,4 +1,4 @@
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { ReviewForm } from './ReviewForm'
@@ -19,17 +19,12 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
 
     const { data: business } = await supabase
         .from('users')
-        .select('id, business_name, business_slug, plan')
+        .select('id, business_name, business_slug')
         .eq('business_slug', slug)
         .single()
 
     if (!business || !business.business_name) {
         notFound()
-    }
-
-    // Only Pro businesses can receive reviews
-    if (business.plan !== 'pro') {
-        redirect(`/${slug}`)
     }
 
     return (

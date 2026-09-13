@@ -11,8 +11,14 @@ export async function updateAiSettings(formData: FormData) {
         return { error: 'Not authenticated' }
     }
 
+    const { data: account } = await supabase
+        .from('users')
+        .select('plan')
+        .eq('id', user.id)
+        .single()
+
     const ai_enabled = formData.get('ai_enabled') === 'on'
-    const wa_whatsapp_enabled = formData.get('wa_whatsapp_enabled') === 'on'
+    const wa_whatsapp_enabled = account?.plan === 'pro' && formData.get('wa_whatsapp_enabled') === 'on'
     const ai_instructions = formData.get('ai_instructions') as string
     const ai_welcome_msg = formData.get('ai_welcome_msg') as string
     const ai_persona = (formData.get('ai_persona') as string) || 'friendly'

@@ -68,7 +68,8 @@ export function ServiceProfileClient({
     const isVaEnabled = waWhatsappEnabled || false
     const whatsappNumber = isVaEnabled ? '2347047207012' : business.whatsapp_number
     const slug = business.business_slug
-    const [selectedService, setSelectedService] = useState(products[0]?.name || '')
+    const fallbackServiceName = 'General appointment'
+    const [selectedService, setSelectedService] = useState(products[0]?.name || fallbackServiceName)
     const [preferredDate, setPreferredDate] = useState('')
     const [preferredTime, setPreferredTime] = useState('')
     const [bookingNotes, setBookingNotes] = useState('')
@@ -92,7 +93,7 @@ export function ServiceProfileClient({
     const submitBooking = async () => {
         if (!customerName.trim() || !customerPhone.trim() || !selectedService || !preferredDate || !preferredTime) {
             setBookingState('error')
-            setBookingError('Please add your name, phone number, service, date, and time before confirming.')
+            setBookingError('Please add your name, phone number, appointment type, date, and time before confirming.')
             return
         }
         setBookingState('loading')
@@ -230,7 +231,7 @@ export function ServiceProfileClient({
                     <div className="mb-16">
                         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
                             <div>
-                                <h2 className="text-2xl font-black" style={{ color: pageTheme.headingText }}>Services & Packages</h2>
+                            <h2 className="text-2xl font-black" style={{ color: pageTheme.headingText }}>Services & Packages</h2>
                                 <p className="text-sm mt-1" style={{ color: pageTheme.mutedText }}>
                                     Choose a service, then send your preferred date and time on WhatsApp.
                                 </p>
@@ -277,14 +278,14 @@ export function ServiceProfileClient({
                 )}
 
                 {/* Booking Request */}
-                {whatsappNumber && products.length > 0 && (
+                {whatsappNumber && (
                     <div id="booking-panel" className="mb-16 rounded-3xl border shadow-sm p-5 sm:p-6" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder }}>
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-5 mb-6">
                             <div>
                                 <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: pageTheme.accent }}>Request an appointment</p>
                                 <h2 className="text-2xl font-black" style={{ color: pageTheme.headingText }}>Send a complete booking request</h2>
                                 <p className="text-sm mt-2 max-w-xl" style={{ color: pageTheme.mutedText }}>
-                                    Pick an available service slot. Your booking is confirmed instantly and the business can manage it from their dashboard.
+                                    {products.length > 0 ? 'Pick an available service slot. Your booking is confirmed instantly and the business can manage it from their dashboard.' : 'Request an available appointment slot. The business can add specific services later.'}
                                 </p>
                             </div>
                             {isPro && (
@@ -304,16 +305,18 @@ export function ServiceProfileClient({
                                 <input id="customer-phone" value={customerPhone} onChange={event => setCustomerPhone(event.target.value)} className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm" />
                             </div>
                             <div className="space-y-2">
-                                <label htmlFor="service" className="text-sm font-bold text-gray-700">Service</label>
+                                <label htmlFor="service" className="text-sm font-bold text-gray-700">Appointment type</label>
                                 <select
                                     id="service"
                                     value={selectedService}
                                     onChange={(event) => setSelectedService(event.target.value)}
                                     className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium focus:border-green-600 focus:outline-none focus:ring-2 focus:ring-green-600/20"
                                 >
-                                    {products.map(product => (
-                                        <option key={product.id} value={product.name}>{product.name}</option>
-                                    ))}
+                                    {products.length > 0
+                                        ? products.map(product => (
+                                            <option key={product.id} value={product.name}>{product.name}</option>
+                                        ))
+                                        : <option value={fallbackServiceName}>{fallbackServiceName}</option>}
                                 </select>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
@@ -368,8 +371,7 @@ export function ServiceProfileClient({
                 )}
 
                 {/* Reviews */}
-                {isPro && (
-                    <div className="mb-16">
+                <div className="mb-16">
                         <h2 className="text-2xl font-black mb-6" style={{ color: pageTheme.headingText }}>Client Reviews</h2>
                         {reviews.length > 0 ? (
                             <div className="grid sm:grid-cols-2 gap-4">
@@ -383,7 +385,7 @@ export function ServiceProfileClient({
                                                 />
                                             ))}
                                         </div>
-                                        <p className="text-gray-700 italic mb-4">"{review.comment}"</p>
+                                        {review.comment && <p className="text-gray-700 italic mb-4">&ldquo;{review.comment}&rdquo;</p>}
                                         <div className="flex items-center justify-between">
                                             <p className="font-semibold text-sm text-gray-900">{review.customer_name}</p>
                                             <span className="text-xs text-gray-400">{new Date(review.created_at).toLocaleDateString()}</span>
@@ -404,7 +406,6 @@ export function ServiceProfileClient({
                             </Link>
                         </div>
                     </div>
-                )}
             </main>
             
             <AiChatWidget business={business} />

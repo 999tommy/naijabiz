@@ -25,6 +25,8 @@ interface SandboxMessage {
 
 export function AiSettingsForm({ user }: AiSettingsFormProps) {
     const [loading, setLoading] = useState(false)
+    const [saveStatus, setSaveStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+    const [waEnabled, setWaEnabled] = useState(Boolean(user.wa_whatsapp_enabled))
     const isPro = user.plan === 'pro'
     const limit = isPro ? DAILY_AI_USAGE_LIMIT : FREE_MONTHLY_AI_USAGE_LIMIT
     const currentUsagePeriod = isPro
@@ -44,7 +46,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
     const [sandboxLoading, setSandboxLoading] = useState(false)
     const sandboxScrollRef = useRef<HTMLDivElement>(null)
 
-    const toast = (msg: string) => alert(msg)
+    const toast = (msg: string) => setSaveStatus({ type: 'success', message: msg })
 
     useEffect(() => {
         if (sandboxScrollRef.current) {
@@ -55,11 +57,23 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
         setLoading(true)
+        setSaveStatus(null)
         const formData = new FormData(event.currentTarget)
 
-        await updateAiSettings(formData)
+        const result = await updateAiSettings(formData)
         setLoading(false)
+        if (result?.error) {
+            setSaveStatus({ type: 'error', message: result.error })
+            return
+        }
         toast('Virtual Assistant settings updated successfully!')
+    }
+
+    function handleFormKeyDown(event: React.KeyboardEvent<HTMLFormElement>) {
+        const target = event.target as HTMLElement
+        if (event.key === 'Enter' && target instanceof HTMLInputElement && ['text', 'search', 'tel', 'url', 'email', 'number'].includes(target.type)) {
+            event.preventDefault()
+        }
     }
 
     // Send test chat to AI endpoint using sandbox
@@ -124,7 +138,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
             )}
 
             {/* AI Configuration Form */}
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} onChange={() => setSaveStatus(null)}>
                 <Card className="shadow-md border-gray-200">
                     <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -359,7 +373,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                     <span className="font-semibold text-base text-gray-900 flex items-center gap-2">
                                         <MessageCircle className="w-5 h-5 text-green-600" />
                                         Enable Virtual Assistant on WhatsApp
-                                        {isPro && user.wa_whatsapp_enabled && (
+                                        {isPro && waEnabled && (
                                             <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
                                         )}
                                     </span>
@@ -371,7 +385,8 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                     <Switch
                                         id="wa_whatsapp_enabled"
                                         name="wa_whatsapp_enabled"
-                                        defaultChecked={user.wa_whatsapp_enabled}
+                                        checked={waEnabled}
+                                        onChange={(event) => setWaEnabled(event.target.checked)}
                                     />
                                 ) : (
                                     <div className="flex items-center gap-2">
@@ -381,7 +396,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                 )}
                             </div>
 
-                            {user.wa_whatsapp_enabled && isPro && (
+                            {waEnabled && isPro && (
                                 <div className="bg-white border border-green-200 p-4 rounded-xl space-y-3 shadow-sm">
                                     <h4 className="font-bold text-green-900 text-sm">Your Custom WhatsApp Link</h4>
                                     <p className="text-xs text-gray-600">
@@ -418,6 +433,11 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                 </>
                             )}
                         </Button>
+                        {saveStatus && (
+                            <p className={`text-sm font-medium ${saveStatus.type === 'success' ? 'text-green-700' : 'text-red-600'}`} aria-live="polite">
+                                {saveStatus.message}
+                            </p>
+                        )}
                     </CardContent>
                 </Card>
             </form>
