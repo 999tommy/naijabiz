@@ -288,8 +288,7 @@ export function ServiceProfileClient({
 
                 {/* Booking Request */}
                 {whatsappNumber && (
-                    <div id="booking-panel" className="mb-16 rounded-3xl border shadow-sm p-5 sm:p-6 relative" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder }}>
-                        <BorderBeam colorVariant="sunset" theme="light" size="md" duration={7} strength={0.5} borderRadius={24}>{null}</BorderBeam>
+                    <BorderBeam id="booking-panel" colorVariant="sunset" theme="light" size="md" duration={7} strength={0.5} borderRadius={24} className="mb-16 rounded-3xl border shadow-sm p-5 sm:p-6" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder }}>
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-5 mb-6">
                             <div>
                                 <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: pageTheme.accent }}>Request an appointment</p>
@@ -377,7 +376,7 @@ export function ServiceProfileClient({
                         </div>
                         {bookingError && <p className="mt-3 text-sm text-red-600">{bookingError}</p>}
                         {bookingState === 'success' && <p className="mt-3 text-sm text-green-700">Your appointment is confirmed. The business has received the booking.</p>}
-                    </div>
+                    </BorderBeam>
                 )}
 
                 {/* Reviews */}

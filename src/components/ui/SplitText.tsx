@@ -50,7 +50,8 @@ const SplitText: React.FC<SplitTextProps> = ({
 
   useEffect(() => {
     let mounted = true
-    document.fonts.ready.then(() => {
+    const timeout = new Promise<void>(resolve => setTimeout(resolve, 500))
+    Promise.race([document.fonts.ready, timeout]).then(() => {
       if (mounted) setFontsLoaded(true)
     })
     return () => {

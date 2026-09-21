@@ -158,7 +158,7 @@ export default function AgentsPage() {
                         </div>
                     </div>
 
-                    <AnimatedBorderCard colorVariant="sunset" theme="light" size={110} duration={7} strength={0.5} borderRadius={24} className="relative bg-white border border-[#eadfd8] rounded-3xl p-6 shadow-[0_24px_70px_rgba(70,35,25,.10)]">
+                    <AnimatedBorderCard colorVariant="sunset" theme="light" duration={7} strength={0.5} borderRadius={24} className="relative bg-white border border-[#eadfd8] rounded-3xl p-6 shadow-[0_24px_70px_rgba(70,35,25,.10)]">
                         <div className="flex items-center justify-between mb-6">
                             <div>
                                 <p className="text-sm text-[#6B5850]">Agent earnings model</p>
@@ -340,7 +340,7 @@ export default function AgentsPage() {
                 </section>
 
                 <section className="max-w-4xl mx-auto px-4 pb-16">
-                    <AnimatedBorderCard colorVariant="sunset" theme="dark" size={140} duration={8} strength={0.45} borderRadius={24} className="relative bg-[#1E1410] text-white rounded-3xl p-8 sm:p-10 text-center">
+                    <AnimatedBorderCard colorVariant="sunset" theme="dark" duration={8} strength={0.45} borderRadius={24} className="relative bg-[#1E1410] text-white rounded-3xl p-8 sm:p-10 text-center">
                         <Repeat className="w-9 h-9 text-[#E8A87C] mx-auto mb-4" />
                         <h2 className="text-3xl font-black mb-3">Your link does the tracking.</h2>
                         <p className="text-white/65 mb-7 max-w-2xl mx-auto">

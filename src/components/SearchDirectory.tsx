@@ -180,7 +180,7 @@ export function SearchDirectory({ initialBusinesses = [], showFilters = true, li
                             />
                         )
                         return index < 3 ? (
-                            <AnimatedBorderCard key={business.id} size={70} duration={7} strength={0.55} borderRadius={18} className="relative rounded-2xl">
+                            <AnimatedBorderCard key={business.id} duration={7} strength={0.55} borderRadius={18} className="relative rounded-2xl">
                                 {card}
                             </AnimatedBorderCard>
                         ) : (

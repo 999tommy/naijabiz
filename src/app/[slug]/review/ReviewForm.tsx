@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Star, ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react'
 import SplitText from '@/components/ui/SplitText'
-import BorderBeam from 'border-beam'
+import { AnimatedBorderCard } from '@/components/ui/AnimatedBorderCard'
 
 interface ReviewFormProps {
     businessId: string
@@ -93,7 +93,8 @@ export function ReviewForm({ businessId, businessName, businessSlug, backHref }:
                     Back to {businessName}
                 </Link>
 
-                <Card className="relative">
+                <AnimatedBorderCard colorVariant="sunset" theme="light" duration={7} strength={0.5} borderRadius={12} className="relative rounded-xl">
+                <Card>
                     <CardHeader>
                         <CardTitle><SplitText tag="span" text="Leave a Review" splitType="words" delay={40} duration={0.8} textAlign="left" /></CardTitle>
                         <CardDescription>
@@ -187,8 +188,8 @@ export function ReviewForm({ businessId, businessName, businessSlug, backHref }:
                             </Button>
                         </form>
                     </CardContent>
-                    <BorderBeam colorVariant="sunset" theme="light" size="md" duration={7} strength={0.5} borderRadius={12}>{null}</BorderBeam>
                 </Card>
+                </AnimatedBorderCard>
             </div>
         </div>
     )

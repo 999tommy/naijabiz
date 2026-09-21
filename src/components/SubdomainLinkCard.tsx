@@ -36,8 +36,7 @@ export function SubdomainLinkCard({ businessSlug, isPro }: SubdomainLinkCardProp
 
     if (isPro) {
         return (
-            <div className="rounded-2xl border border-[#B84D34]/20 bg-gradient-to-br from-[#FDF8F3] to-[#fdeee8] p-4 sm:p-5 mb-6 relative">
-                <BorderBeam colorVariant="sunset" theme="light" size="sm" duration={7} strength={0.45} borderRadius={16}>{null}</BorderBeam>
+            <BorderBeam colorVariant="sunset" theme="light" size="md" duration={7} strength={0.45} borderRadius={16} className="rounded-2xl border border-[#B84D34]/20 bg-gradient-to-br from-[#FDF8F3] to-[#fdeee8] p-4 sm:p-5 mb-6">
                 <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-xl bg-[#B84D34] flex items-center justify-center flex-shrink-0">
@@ -96,7 +95,7 @@ export function SubdomainLinkCard({ businessSlug, isPro }: SubdomainLinkCardProp
                         View page <ArrowRight className="w-3 h-3" />
                     </Link>
                 </div>
-            </div>
+            </BorderBeam>
         )
     }
 

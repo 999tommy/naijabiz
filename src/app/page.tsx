@@ -183,19 +183,19 @@ export default function HomePage() {
 
           {/* Rotating value prop */}
           <p className="relative mt-4 text-xs sm:text-sm font-bold uppercase tracking-[.16em] text-[#9d4430]">
-            Your catalog. Your{' '}
+            A home for Your{' '}
             <RotatingText
               texts={['orders', 'bookings', 'reviews', 'reputation']}
               mainClassName="inline-flex text-[#B84D34] font-black lowercase tracking-[.16em]"
               rotationInterval={2400}
               staggerDuration={0.02}
             />
-            {` — one link.`}
+
           </p>
 
           {/* Subtext */}
           <BlurText
-            text="Claim one beautiful link where customers discover your story, browse your catalog, and book your services. Get a virtual assistant that understands your catalog, tone, time, convo and finds customers for you."
+            text="Claim one beautiful link where customers discover your story, browse your catalog, and book your services. Get a virtual assistant that understands your catalog, tone, time and brings customers to your doorstep."
             className="relative mx-auto max-w-lg text-base sm:text-lg leading-relaxed text-[#6B5850] mb-8 mt-5 justify-center text-center"
             delay={40}
             direction="bottom"

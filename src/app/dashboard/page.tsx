@@ -270,7 +270,7 @@ export default async function DashboardPage() {
                     <div className="min-w-0">
                         {!isPro ? (
                             <div className="md:col-span-1 space-y-8">
-                                <AnimatedBorderCard colorVariant="sunset" theme="light" size={100} duration={7} strength={0.4} borderRadius={18} className="relative rounded-2xl bg-gradient-to-br from-orange-50 to-white border border-orange-200">
+                                <AnimatedBorderCard colorVariant="sunset" theme="light" duration={7} strength={0.4} borderRadius={18} className="relative rounded-2xl bg-gradient-to-br from-orange-50 to-white border border-orange-200">
                                     <CardHeader>
                                         <CardTitle className="text-lg flex items-center gap-2">
                                             <Rocket className="w-5 h-5 text-orange-600" /> Upgrade to Pro

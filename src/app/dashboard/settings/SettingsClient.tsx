@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { VerifiedBadge } from '@/components/VerifiedBadge'
-import BorderBeam from 'border-beam'
+import { AnimatedBorderCard } from '@/components/ui/AnimatedBorderCard'
 import type { User, Category } from '@/lib/types'
 import {
     Loader2,
@@ -532,7 +532,8 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
             <BookingAvailability user={user} />
 
             {/* Subscription */}
-            <Card id="upgrade" className={`relative ${isPro ? 'border-green-200' : 'border-orange-200'}`}>
+            <AnimatedBorderCard colorVariant="sunset" theme="light" duration={7} strength={0.45} borderRadius={12} className="relative rounded-xl">
+                <Card id="upgrade" className={isPro ? 'border-green-200' : 'border-orange-200'}>
                 <CardHeader>
                     <div className="flex items-center justify-between">
                         <div>
@@ -689,8 +690,8 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                         </div>
                     )}
                 </CardContent>
-                <BorderBeam colorVariant="sunset" theme="light" size="md" duration={7} strength={0.45} borderRadius={16}>{null}</BorderBeam>
-            </Card>
+                </Card>
+            </AnimatedBorderCard>
 
 
         </div >

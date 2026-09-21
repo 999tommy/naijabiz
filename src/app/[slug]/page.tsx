@@ -472,7 +472,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
             {/* FINAL CTA */}
             <section className="py-20 px-4" style={{ borderTop: `1px solid ${theme.divider}` }}>
                 <div className="max-w-5xl mx-auto">
-                    <AnimatedBorderCard colorVariant="sunset" theme="dark" size={140} duration={8} strength={0.45} borderRadius={24} className="relative rounded-3xl p-10 md:p-16 text-center overflow-hidden animate-gentle-scale">
+                    <AnimatedBorderCard colorVariant="sunset" theme="dark" duration={8} strength={0.45} borderRadius={24} className="relative rounded-3xl p-10 md:p-16 text-center overflow-hidden animate-gentle-scale" style={{ background: theme.heroBg }}>
                         <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10 pointer-events-none" style={{ background: 'white', transform: 'translate(30%, -30%)' }} />
                         <div className="relative z-10">
                             <p className="text-xs font-bold tracking-widest uppercase mb-4" style={{ color: 'rgba(255,255,255,0.7)' }}>Ready to order?</p>
