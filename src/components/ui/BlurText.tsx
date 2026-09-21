@@ -16,6 +16,7 @@ type BlurTextProps = {
   easing?: Easing | Easing[];
   onAnimationComplete?: () => void;
   stepDuration?: number;
+  disableBlur?: boolean;
 }
 
 const buildKeyframes = (
@@ -43,7 +44,8 @@ const BlurText: React.FC<BlurTextProps> = ({
   animationTo,
   easing = (t: number) => t,
   onAnimationComplete,
-  stepDuration = 0.35
+  stepDuration = 0.35,
+  disableBlur = false
 }) => {
   const elements = animateBy === 'words' ? text.split(' ') : text.split('')
   const [inView, setInView] = useState(false)
@@ -64,23 +66,25 @@ const BlurText: React.FC<BlurTextProps> = ({
     return () => observer.disconnect()
   }, [threshold, rootMargin])
 
-  const defaultFrom = useMemo(
-    () =>
-      direction === 'top' ? { filter: 'blur(10px)', opacity: 0, y: -50 } : { filter: 'blur(10px)', opacity: 0, y: 50 },
-    [direction]
-  )
+  const defaultFrom: Record<string, string | number> = useMemo(() => {
+    const y = direction === 'top' ? -50 : 50
+    // Per-word blur() forces CPU rasterization every frame — on busy surfaces
+    // (e.g. the landing hero) animate opacity/y only, which stay composited.
+    if (disableBlur) return { opacity: 0, y } as Record<string, string | number>
+    return { filter: 'blur(10px)', opacity: 0, y } as Record<string, string | number>
+  }, [direction, disableBlur])
 
-  const defaultTo = useMemo(
-    () => [
+  const defaultTo: Array<Record<string, string | number>> = useMemo(() => {
+    if (disableBlur) return [{ opacity: 1, y: 0 }]
+    return [
       {
         filter: 'blur(5px)',
         opacity: 0.5,
         y: direction === 'top' ? 5 : -5
       },
       { filter: 'blur(0px)', opacity: 1, y: 0 }
-    ],
-    [direction]
-  )
+    ]
+  }, [direction, disableBlur])
 
   const fromSnapshot = animationFrom ?? defaultFrom
   const toSnapshots = animationTo ?? defaultTo

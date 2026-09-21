@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Renderer, Program, Mesh, Color, Triangle } from 'ogl'
 
 const VERT = `#version 300 es
@@ -139,15 +139,44 @@ export default function AuroraBackground(props: AuroraProps) {
   propsRef.current = props
 
   const ctnDom = useRef<HTMLDivElement>(null)
+  const [webglReady, setWebglReady] = useState(false)
+
+  // Defer the expensive WebGL context + shader compile until the browser is
+  // idle so hero text paints and animates first. A static CSS wash in the
+  // same palette shows meanwhile (and permanently for reduced-motion users).
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    let cancelled = false
+    const start = () => {
+      if (!cancelled) setWebglReady(true)
+    }
+    const maxId = window.setTimeout(start, 1500)
+    let idleId = 0
+    let fallbackId = 0
+    if (typeof window.requestIdleCallback === 'function') {
+      idleId = window.requestIdleCallback(start, { timeout: 1200 })
+    } else {
+      fallbackId = window.setTimeout(start, 600)
+    }
+    return () => {
+      cancelled = true
+      window.clearTimeout(maxId)
+      if (idleId && typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(idleId)
+      if (fallbackId) window.clearTimeout(fallbackId)
+    }
+  }, [])
 
   useEffect(() => {
+    if (!webglReady) return
     const ctn = ctnDom.current
     if (!ctn) return
 
     const renderer = new Renderer({
       alpha: true,
       premultipliedAlpha: true,
-      antialias: true
+      antialias: false,
+      dpr: 1
     })
     const gl = renderer.gl
     gl.clearColor(0, 0, 0, 0)
@@ -193,8 +222,23 @@ export default function AuroraBackground(props: AuroraProps) {
     ctn.appendChild(gl.canvas)
 
     let animateId = 0
+    let visible = true
+    const io =
+      typeof IntersectionObserver !== 'undefined'
+        ? new IntersectionObserver(
+            entries => {
+              visible = entries[0]?.isIntersecting ?? true
+            },
+            { threshold: 0 }
+          )
+        : null
+    io?.observe(ctn)
+
+    let lastStopsKey = ''
     const update = (t: number) => {
       animateId = requestAnimationFrame(update)
+      // Skip GPU work when the wash is offscreen or the tab is hidden.
+      if (!visible || document.hidden) return
       const { time = t * 0.01, speed = 1.0 } = propsRef.current
       if (program) {
         program.uniforms.uTime.value = time * speed * 0.1
@@ -202,10 +246,14 @@ export default function AuroraBackground(props: AuroraProps) {
         program.uniforms.uBlend.value = propsRef.current.blend ?? blend
         program.uniforms.uLightMode.value = (propsRef.current.lightMode ?? lightMode) ? 1 : 0
         const stops = propsRef.current.colorStops ?? colorStops
-        program.uniforms.uColorStops.value = stops.map((hex: string) => {
-          const c = new Color(hex)
-          return [c.r, c.g, c.b]
-        })
+        const stopsKey = stops.join('|')
+        if (stopsKey !== lastStopsKey) {
+          lastStopsKey = stopsKey
+          program.uniforms.uColorStops.value = stops.map((hex: string) => {
+            const c = new Color(hex)
+            return [c.r, c.g, c.b]
+          })
+        }
         renderer.render({ scene: mesh })
       }
     }
@@ -215,6 +263,7 @@ export default function AuroraBackground(props: AuroraProps) {
 
     return () => {
       cancelAnimationFrame(animateId)
+      io?.disconnect()
       window.removeEventListener('resize', resize)
       if (ctn && gl.canvas.parentNode === ctn) {
         ctn.removeChild(gl.canvas)
@@ -223,7 +272,9 @@ export default function AuroraBackground(props: AuroraProps) {
     }
     // Live values are read from propsRef.current inside update(); re-init only on amplitude.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amplitude])
+  }, [amplitude, webglReady])
 
-  return <div ref={ctnDom} style={{ width: '100%', height: '100%' }} />
+  const fallbackBackground = `linear-gradient(180deg, ${colorStops[0] ?? '#efd1c6'} 0%, ${colorStops[1] ?? '#f5d8a0'} 55%, ${colorStops[2] ?? '#efc9b8'} 100%)`
+
+  return <div ref={ctnDom} aria-hidden="true" style={{ width: '100%', height: '100%', background: fallbackBackground }} />
 }

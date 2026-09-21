@@ -172,6 +172,7 @@ export default function HomePage() {
                 duration={0.95}
                 threshold={0.05}
                 rootMargin="0px"
+                waitForFonts={false}
               />
             </span>
             <em className="font-serif font-bold not-italic text-[#B84D34]">
@@ -197,9 +198,10 @@ export default function HomePage() {
           <BlurText
             text="Claim one beautiful link where customers discover your story, browse your catalog, and book your services. Get a virtual assistant that understands your catalog, tone, time and brings customers to your doorstep."
             className="relative mx-auto max-w-lg text-base sm:text-lg leading-relaxed text-[#6B5850] mb-8 mt-5 justify-center text-center"
-            delay={40}
+            delay={25}
             direction="bottom"
             threshold={0.05}
+            disableBlur
           />
 
           {/* Slug input */}

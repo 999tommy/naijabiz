@@ -22,6 +22,7 @@ export interface SplitTextProps {
   tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span'
   textAlign?: React.CSSProperties['textAlign']
   onLetterAnimationComplete?: () => void
+  waitForFonts?: boolean
 }
 
 const SplitText: React.FC<SplitTextProps> = ({
@@ -37,18 +38,20 @@ const SplitText: React.FC<SplitTextProps> = ({
   rootMargin = '-100px',
   tag = 'p',
   textAlign = 'center',
-  onLetterAnimationComplete
+  onLetterAnimationComplete,
+  waitForFonts = true
 }) => {
   const ref = useRef<HTMLParagraphElement>(null)
   const animationCompletedRef = useRef(false)
   const onCompleteRef = useRef(onLetterAnimationComplete)
-  const [fontsLoaded, setFontsLoaded] = useState<boolean>(false)
+  const [fontsLoaded, setFontsLoaded] = useState<boolean>(!waitForFonts)
 
   useEffect(() => {
     onCompleteRef.current = onLetterAnimationComplete
   }, [onLetterAnimationComplete])
 
   useEffect(() => {
+    if (!waitForFonts) return
     let mounted = true
     const timeout = new Promise<void>(resolve => setTimeout(resolve, 500))
     Promise.race([document.fonts.ready, timeout]).then(() => {
@@ -57,7 +60,7 @@ const SplitText: React.FC<SplitTextProps> = ({
     return () => {
       mounted = false
     }
-  }, [])
+  }, [waitForFonts])
 
   useGSAP(
     () => {
