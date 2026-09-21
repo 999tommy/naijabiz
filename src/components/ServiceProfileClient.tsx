@@ -46,7 +46,11 @@ export function ServiceProfileClient({
     reviewHref,
     theme
 }: ServiceProfileClientProps) {
-    const pageTheme = theme || {
+    const pageTheme: WebsiteTheme = theme || {
+        id: 'deep-teal-champagne',
+        heroBg: 'linear-gradient(135deg, #004953 0%, #003153 100%)',
+        heroText: '#ffffff',
+        heroSubText: 'rgba(255,255,255,0.80)',
         pageBg: '#f5faf9',
         navBg: 'rgba(255,255,255,0.90)',
         accent: '#004953',
@@ -57,6 +61,9 @@ export function ServiceProfileClient({
         mutedText: 'rgba(54,69,79,0.72)',
         cardBg: '#ffffff',
         cardBorder: 'rgba(0,73,83,0.16)',
+        logoRing: '#F0E68C',
+        ctaBg: '#F0E68C',
+        ctaText: '#004953',
         divider: 'rgba(0,73,83,0.14)',
     }
     const formatPrice = (amount: number) => {
@@ -282,7 +289,7 @@ export function ServiceProfileClient({
                 {/* Booking Request */}
                 {whatsappNumber && (
                     <div id="booking-panel" className="mb-16 rounded-3xl border shadow-sm p-5 sm:p-6 relative" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder }}>
-                        <BorderBeam colorVariant="sunset" theme="light" size={120} duration={7} strength={0.5} borderRadius={24} />
+                        <BorderBeam colorVariant="sunset" theme="light" size="md" duration={7} strength={0.5} borderRadius={24}>{null}</BorderBeam>
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-5 mb-6">
                             <div>
                                 <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: pageTheme.accent }}>Request an appointment</p>

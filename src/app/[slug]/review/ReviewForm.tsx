@@ -187,7 +187,7 @@ export function ReviewForm({ businessId, businessName, businessSlug, backHref }:
                             </Button>
                         </form>
                     </CardContent>
-                    <BorderBeam colorVariant="sunset" theme="light" size={100} duration={7} strength={0.5} borderRadius={12} />
+                    <BorderBeam colorVariant="sunset" theme="light" size="md" duration={7} strength={0.5} borderRadius={12}>{null}</BorderBeam>
                 </Card>
             </div>
         </div>

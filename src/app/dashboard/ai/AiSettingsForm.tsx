@@ -469,7 +469,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                 mainClassName="text-xs font-bold text-emerald-300"
                             />
                             <span className="text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
-                                <BrandThinkingOrb state="searching" size={14} /> Live Testing
+                                <BrandThinkingOrb state="searching" size={20} /> Live Testing
                             </span>
                         </div>
                     </div>
@@ -490,7 +490,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                         {sandboxLoading && (
                             <div className="flex justify-start">
                                 <div className="bg-white rounded-2xl px-4 py-2.5 border border-gray-200 text-xs text-gray-500 flex items-center gap-2">
-                                    <BrandThinkingOrb state="working" size={16} />
+                                    <BrandThinkingOrb state="working" size={20} />
                                     AI is thinking...
                                 </div>
                             </div>

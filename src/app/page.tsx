@@ -83,10 +83,10 @@ export default function HomePage() {
       {/* NAV */}
       <nav className="sticky top-0 z-50 px-3 pt-3">
         <div className="max-w-5xl mx-auto h-14 px-4 rounded-2xl flex items-center justify-between border border-white/80 bg-white/80 backdrop-blur shadow-[0_4px_24px_rgba(70,35,25,.08)]">
-<Link href="/" className="flex items-center gap-2 font-black text-[#1E1410]">
-  <Image src="/smal-logo.png" alt="Qriblo" width={26} height={26} />
-  <GradientText className="font-black text-[15px] tracking-[-0.02em]">Qriblo</GradientText>
-</Link>
+          <Link href="/" className="flex items-center gap-2 font-black text-[#1E1410]">
+            <Image src="/smal-logo.png" alt="Qriblo" width={26} height={26} />
+            <GradientText className="font-black text-[15px] tracking-[-0.02em]">Qriblo</GradientText>
+          </Link>
           <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-[#6B5850]">
             {navLinks.map(link => (
               <Link key={link.href} href={link.href} className="hover:text-[#B84D34] transition-colors">{link.label}</Link>
@@ -141,7 +141,7 @@ export default function HomePage() {
 
       <main>
 
-{/* HERO */}
+        {/* HERO */}
         <section className="max-w-5xl mx-auto px-4 pt-14 pb-8 text-center relative">
           {/* Amber aurora wash */}
           <div className="absolute inset-x-0 top-0 h-[540px] z-0 pointer-events-none opacity-80">
@@ -158,7 +158,7 @@ export default function HomePage() {
 
           {/* Pill label */}
           <p className="relative inline-flex items-center gap-2 rounded-full bg-[#f5e5de] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.16em] text-[#9d4430] mb-6 micro-reveal">
-            Get your Ai virtual assistant
+            Get your virtual assistant
           </p>
 
           {/* Headline */}
@@ -195,7 +195,7 @@ export default function HomePage() {
 
           {/* Subtext */}
           <BlurText
-            text="Claim one beautiful link where customers discover your story, browse your catalog, and book your services. Train a virtual assistant that understands your catalog, tone, time, and customer conversations."
+            text="Claim one beautiful link where customers discover your story, browse your catalog, and book your services. Get a virtual assistant that understands your catalog, tone, time, convo and finds customers for you."
             className="relative mx-auto max-w-lg text-base sm:text-lg leading-relaxed text-[#6B5850] mb-8 mt-5 justify-center text-center"
             delay={40}
             direction="bottom"

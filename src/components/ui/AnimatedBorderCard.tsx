@@ -1,12 +1,12 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { BorderBeam } from 'border-beam'
+import { BorderBeam, type BorderBeamSize } from 'border-beam'
 
 interface AnimatedBorderCardProps {
     children: ReactNode
     className?: string
-    colorVariant?: 'grow' | 'sunset' | 'ghost' | 'cool' | 'ocean' | 'coral' | 'forest'
+    colorVariant?: 'colorful' | 'mono' | 'ocean' | 'sunset'
     theme?: 'dark' | 'light'
     size?: number
     duration?: number
@@ -24,17 +24,18 @@ export function AnimatedBorderCard({
     strength = 0.65,
     borderRadius = 24,
 }: AnimatedBorderCardProps) {
+    const beamSize: BorderBeamSize = size <= 90 ? 'sm' : 'md'
     return (
         <div className={className}>
             {children}
             <BorderBeam
-                size={size}
+                size={beamSize}
                 colorVariant={colorVariant}
                 theme={theme}
                 duration={duration}
                 strength={strength}
                 borderRadius={borderRadius}
-            />
+            >{null}</BorderBeam>
         </div>
     )
 }

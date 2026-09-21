@@ -495,7 +495,6 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                         </div>
                     </AnimatedBorderCard>
                 </div>
-                </div>
             </section>
 
             {/* FOOTER */}

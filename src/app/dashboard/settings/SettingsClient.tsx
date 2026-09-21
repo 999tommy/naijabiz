@@ -689,7 +689,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                         </div>
                     )}
                 </CardContent>
-                <BorderBeam colorVariant="sunset" theme="light" size={110} duration={7} strength={0.45} borderRadius={16} />
+                <BorderBeam colorVariant="sunset" theme="light" size="md" duration={7} strength={0.45} borderRadius={16}>{null}</BorderBeam>
             </Card>
 
 
