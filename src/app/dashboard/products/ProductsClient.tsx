@@ -24,7 +24,7 @@ import {
     ShoppingBag
 } from 'lucide-react'
 import { compressImage } from '@/lib/image-compression'
-import { BrandThinkingOrb } from '@/components/ui/BrandThinkingOrb'
+
 
 interface ProductsClientProps {
     user: User
@@ -441,7 +441,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
             {/* Catalog Grid */}
             {products.length === 0 ? (
                 <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
-                    <BrandThinkingOrb state="searching" size={64} />
+                    <Package className="w-12 h-12 mx-auto text-gray-300 mb-2" />
                     <h3 className="font-medium text-gray-900 mb-2 mt-2">No items listed yet</h3>
                     <p className="text-gray-500 text-sm mb-4">
                         Add your first product or service so customers can buy or book from your page.
