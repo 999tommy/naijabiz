@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { BrandThinkingOrb } from '@/components/ui/BrandThinkingOrb'
 import { Card } from '@/components/ui/card'
 import { 
     SendHorizontal, 
@@ -558,9 +559,7 @@ export function MasterChatWidget() {
                             <svg className="absolute -left-1.5 top-0 w-2 h-3 text-white fill-current" viewBox="0 0 8 13">
                                 <path d="M1.533 3.568L8 12.18V0H2.812C1.042 0 .474 2.156 1.533 3.568z" />
                             </svg>
-                            <span className="w-2 h-2 rounded-full bg-[#c65a24] animate-bounce [animation-delay:-0.3s]" />
-                            <span className="w-2 h-2 rounded-full bg-[#c65a24] animate-bounce [animation-delay:-0.15s]" />
-                            <span className="w-2 h-2 rounded-full bg-[#c65a24] animate-bounce" />
+                            <BrandThinkingOrb state="searching" size={20} />
                         </div>
                     </div>
                 )}

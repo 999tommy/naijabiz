@@ -3,6 +3,8 @@ import { SearchDirectory } from '@/components/SearchDirectory'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
+import SplitText from '@/components/ui/SplitText'
+import BlurText from '@/components/ui/BlurText'
 import { ArrowLeft } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -52,12 +54,22 @@ export default async function DirectoryPage() {
             {/* Main content */}
             <main className="max-w-7xl mx-auto px-4 py-8">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                        Business Directory
-                    </h1>
-                    <p className="text-gray-500 max-w-2xl mx-auto">
-                        Discover verified Nigerian businesses. All verified sellers have been checked for authenticity.
-                    </p>
+                    <SplitText
+                        tag="h1"
+                        text="Business Directory"
+                        splitType="words"
+                        textAlign="center"
+                        className="text-3xl font-bold text-gray-900 mb-2"
+                        delay={70}
+                        duration={0.9}
+                    />
+                    <BlurText
+                        text="Discover verified Nigerian businesses. All verified sellers have been checked for authenticity."
+                        delay={40}
+                        direction="bottom"
+                        threshold={0.05}
+                        className="text-gray-500 max-w-2xl mx-auto"
+                    />
                 </div>
 
                 <SearchDirectory

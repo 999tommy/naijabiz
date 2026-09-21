@@ -26,6 +26,9 @@ import { checkAndDowngradeUser } from '@/lib/subscription'
 import { StorefrontClient } from '@/components/StorefrontClient'
 import { ServiceProfileClient } from '@/components/ServiceProfileClient'
 import { getWebsiteTheme } from '@/lib/website-theme'
+import GradientText from '@/components/ui/GradientText'
+import SplitText from '@/components/ui/SplitText'
+import { AnimatedBorderCard } from '@/components/ui/AnimatedBorderCard'
 
 export const dynamic = 'force-dynamic'
 
@@ -222,7 +225,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-3 flex-wrap">
-                                    <h1 className="text-2xl font-bold text-gray-900">{business.business_name}</h1>
+                                    <h1 className="text-2xl font-bold text-gray-900"><GradientText>{business.business_name}</GradientText></h1>
                                     <VerifiedBadge size="md" isCommunityVerified={(business.reviewCount ?? 0) >= 5 && (business.viewCount ?? 0) >= 50} />
                                     <UpvoteButton userId={business.id} initialUpvotes={business.upvotes || 0} size="sm" />
                                 </div>
@@ -345,7 +348,9 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                 {business.category && <span className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider" style={{ background: 'rgba(255,255,255,0.15)', color: theme.heroText }}>{getCategoryIcon(business.category.name)} {business.category.name}</span>}
                                 {isVerified && <span className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider" style={{ background: 'rgba(255,255,255,0.15)', color: theme.heroText }}>✓ Verified</span>}
                             </div>
-                            <h1 className="text-4xl md:text-6xl font-black mb-3 leading-tight tracking-tight" style={{ color: theme.heroText }}>{business.business_name}</h1>
+                            <h1 className="text-4xl md:text-6xl font-black mb-3 leading-tight tracking-tight" style={{ color: theme.heroText }}>
+                                <SplitText tag="span" text={business.business_name} splitType="words" delay={50} duration={0.8} textAlign="left" />
+                            </h1>
                             {business.description && <p className="text-lg md:text-xl mb-6 max-w-lg leading-relaxed" style={{ color: theme.heroSubText }}>{business.description}</p>}
                             <div className="flex items-center justify-center md:justify-start gap-3 mb-8 flex-wrap">
                                 {business.location && <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: theme.heroSubText }}><MapPin className="w-4 h-4" />{business.location}</span>}
@@ -467,7 +472,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
             {/* FINAL CTA */}
             <section className="py-20 px-4" style={{ borderTop: `1px solid ${theme.divider}` }}>
                 <div className="max-w-5xl mx-auto">
-                    <div className="rounded-3xl p-10 md:p-16 text-center relative overflow-hidden animate-gentle-scale" style={{ background: theme.heroBg }}>
+                    <AnimatedBorderCard colorVariant="sunset" theme="dark" size={140} duration={8} strength={0.45} borderRadius={24} className="relative rounded-3xl p-10 md:p-16 text-center overflow-hidden animate-gentle-scale">
                         <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10 pointer-events-none" style={{ background: 'white', transform: 'translate(30%, -30%)' }} />
                         <div className="relative z-10">
                             <p className="text-xs font-bold tracking-widest uppercase mb-4" style={{ color: 'rgba(255,255,255,0.7)' }}>Ready to order?</p>
@@ -488,7 +493,8 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                                 )}
                             </div>
                         </div>
-                    </div>
+                    </AnimatedBorderCard>
+                </div>
                 </div>
             </section>
 

@@ -22,6 +22,8 @@ import { ReferralCard } from '@/components/ReferralCard'
 import { WhatsAppShareCenter } from '@/components/WhatsAppShareCenter'
 import { ShareRankCard } from '@/components/ShareRankCard'
 import { SubdomainLinkCard } from '@/components/SubdomainLinkCard'
+import { CountUp } from '@/components/ui/CountUp'
+import { AnimatedBorderCard } from '@/components/ui/AnimatedBorderCard'
 import { checkAndDowngradeUser } from '@/lib/subscription'
 
 export const dynamic = 'force-dynamic'
@@ -150,7 +152,7 @@ export default async function DashboardPage() {
                                 <div>
                                     <p className="text-sm text-gray-500">{catalogLabel}</p>
                                     <p className="text-2xl font-bold text-gray-900">
-                                        {stats.products} <span className="text-sm font-normal text-gray-400">/ {productLimit}</span>
+                                        <CountUp value={stats.products} /> <span className="text-sm font-normal text-gray-400">/ {productLimit}</span>
                                     </p>
                                 </div>
                                 <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
@@ -166,7 +168,7 @@ export default async function DashboardPage() {
                                 <div>
                                     <p className="text-sm text-gray-500">Page Views</p>
                                     <p className="text-2xl font-bold text-gray-900">
-                                        {isPro ? stats.views : '—'}
+                                        {isPro ? <CountUp value={stats.views} /> : '—'}
                                     </p>
                                     {!isPro && <p className="text-xs text-orange-600">Pro only</p>}
                                 </div>
@@ -182,7 +184,7 @@ export default async function DashboardPage() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm text-gray-500">{orderLabel}</p>
-                                    <p className="text-2xl font-bold text-gray-900">{stats.orders}</p>
+                                    <p className="text-2xl font-bold text-gray-900"><CountUp value={stats.orders} /></p>
                                 </div>
                                 <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
                                     <ShoppingCart className="w-6 h-6 text-green-600" />
@@ -268,7 +270,7 @@ export default async function DashboardPage() {
                     <div className="min-w-0">
                         {!isPro ? (
                             <div className="md:col-span-1 space-y-8">
-                                <Card className="bg-gradient-to-br from-orange-50 to-white border-orange-200">
+                                <AnimatedBorderCard colorVariant="sunset" theme="light" size={100} duration={7} strength={0.4} borderRadius={18} className="relative rounded-2xl bg-gradient-to-br from-orange-50 to-white border border-orange-200">
                                     <CardHeader>
                                         <CardTitle className="text-lg flex items-center gap-2">
                                             <Rocket className="w-5 h-5 text-orange-600" /> Upgrade to Pro
@@ -303,7 +305,7 @@ export default async function DashboardPage() {
                                             </Button>
                                         </Link>
                                     </CardContent>
-                                </Card>
+                                </AnimatedBorderCard>
 
                                 <Card className="bg-gradient-to-br from-blue-50 to-white border-blue-200">
                                     <CardHeader>

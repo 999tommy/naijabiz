@@ -11,6 +11,8 @@ import { updateAiSettings } from './actions'
 import { Bot, Save, Loader2, Briefcase, MessageSquareText, Send, ArrowRight, MessageCircle, Copy } from 'lucide-react'
 import { User } from '@/lib/types'
 import Link from 'next/link'
+import { BrandThinkingOrb } from '@/components/ui/BrandThinkingOrb'
+import RotatingText from '@/components/ui/RotatingText'
 import { DAILY_AI_USAGE_LIMIT, FREE_MONTHLY_AI_USAGE_LIMIT } from '@/lib/ai/usage'
 
 interface AiSettingsFormProps {
@@ -459,9 +461,17 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                 </CardDescription>
                             </div>
                         </div>
-                        <span className="text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
-                            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" /> Live Testing
-                        </span>
+                        <div className="flex items-center gap-3 shrink-0 flex-wrap">
+                            <RotatingText
+                                texts={['answering customers…', 'booking appointments…', 'collecting orders…', 'listening…']}
+                                splitBy="words"
+                                rotationInterval={2400}
+                                mainClassName="text-xs font-bold text-emerald-300"
+                            />
+                            <span className="text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
+                                <BrandThinkingOrb state="searching" size={14} /> Live Testing
+                            </span>
+                        </div>
                     </div>
                 </CardHeader>
 
@@ -480,8 +490,8 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                         {sandboxLoading && (
                             <div className="flex justify-start">
                                 <div className="bg-white rounded-2xl px-4 py-2.5 border border-gray-200 text-xs text-gray-500 flex items-center gap-2">
-                                    <Loader2 className="w-3.5 h-3.5 animate-spin text-orange-600" />
-                                    AI is typing...
+                                    <BrandThinkingOrb state="working" size={16} />
+                                    AI is thinking...
                                 </div>
                             </div>
                         )}

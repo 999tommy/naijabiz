@@ -5,6 +5,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import { ArrowRight, Bot, CheckCircle2, Globe2, ShoppingBag, Star, ShieldCheck, X, Users, BarChart2, Wrench, BadgePercent } from 'lucide-react'
+import BorderBeam from 'border-beam'
+import AuroraBackground from '@/components/ui/AuroraBackground'
+import BlurText from '@/components/ui/BlurText'
+import GradientText from '@/components/ui/GradientText'
+import RotatingText from '@/components/ui/RotatingText'
+import SplitText from '@/components/ui/SplitText'
 
 const navLinks = [
   { href: '/directory', label: 'Discover brands' },
@@ -77,10 +83,10 @@ export default function HomePage() {
       {/* NAV */}
       <nav className="sticky top-0 z-50 px-3 pt-3">
         <div className="max-w-5xl mx-auto h-14 px-4 rounded-2xl flex items-center justify-between border border-white/80 bg-white/80 backdrop-blur shadow-[0_4px_24px_rgba(70,35,25,.08)]">
-          <Link href="/" className="flex items-center gap-2 font-black text-[#1E1410]">
-            <Image src="/smal-logo.png" alt="Qriblo" width={26} height={26} />
-            Qriblo
-          </Link>
+<Link href="/" className="flex items-center gap-2 font-black text-[#1E1410]">
+  <Image src="/smal-logo.png" alt="Qriblo" width={26} height={26} />
+  <GradientText className="font-black text-[15px] tracking-[-0.02em]">Qriblo</GradientText>
+</Link>
           <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-[#6B5850]">
             {navLinks.map(link => (
               <Link key={link.href} href={link.href} className="hover:text-[#B84D34] transition-colors">{link.label}</Link>
@@ -135,11 +141,20 @@ export default function HomePage() {
 
       <main>
 
-        {/* HERO */}
+{/* HERO */}
         <section className="max-w-5xl mx-auto px-4 pt-14 pb-8 text-center relative">
+          {/* Amber aurora wash */}
+          <div className="absolute inset-x-0 top-0 h-[540px] z-0 pointer-events-none opacity-80">
+            <AuroraBackground
+              colorStops={['#efd1c6', '#f5d8a0', '#efc9b8']}
+              amplitude={1.1}
+              blend={0.5}
+              lightMode
+            />
+          </div>
           {/* Glow blobs */}
-          <div className="absolute -z-0 w-80 h-80 rounded-full bg-[#efd1c6] blur-3xl opacity-50 top-8 left-1/2 -translate-x-1/2 pointer-events-none" />
-          <div className="absolute -z-0 w-48 h-48 rounded-full bg-[#f5d8a0] blur-3xl opacity-40 top-20 right-10 pointer-events-none" />
+          <div className="absolute z-0 w-80 h-80 rounded-full bg-[#efd1c6] blur-3xl opacity-50 top-8 left-1/2 -translate-x-1/2 pointer-events-none" />
+          <div className="absolute z-0 w-48 h-48 rounded-full bg-[#f5d8a0] blur-3xl opacity-40 top-20 right-10 pointer-events-none" />
 
           {/* Pill label */}
           <p className="relative inline-flex items-center gap-2 rounded-full bg-[#f5e5de] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.16em] text-[#9d4430] mb-6 micro-reveal">
@@ -147,16 +162,45 @@ export default function HomePage() {
           </p>
 
           {/* Headline */}
-          <h1 className="relative text-[2.6rem] sm:text-6xl md:text-7xl font-black tracking-[-0.04em] leading-[1.0] mb-5 micro-reveal micro-delay-1">
-            Growing your brand<br />
-            <em className="font-serif font-bold not-italic text-[#B84D34]">has never been easier.</em>
+          <h1 className="relative text-[2.6rem] sm:text-6xl md:text-7xl font-black tracking-[-0.04em] leading-[1.0] mb-5">
+            <span className="block">
+              <SplitText
+                tag="span"
+                text="Growing your brand"
+                splitType="words"
+                delay={60}
+                duration={0.95}
+                threshold={0.05}
+                rootMargin="0px"
+              />
+            </span>
+            <em className="font-serif font-bold not-italic text-[#B84D34]">
+              <GradientText className="font-serif font-bold not-italic">
+                has never been easier.
+              </GradientText>
+            </em>
           </h1>
 
-          {/* Subtext */}
-          <p className="relative mx-auto max-w-lg text-base sm:text-lg leading-relaxed text-[#6B5850] mb-8 micro-reveal micro-delay-2">
-            Claim one beautiful link where customers discover your story, browse your catalog,
-            and book your services. Train a <span className="font-bold">virtual assistant</span> that understands your catalog, tone, time, and customer conversations.
+          {/* Rotating value prop */}
+          <p className="relative mt-4 text-xs sm:text-sm font-bold uppercase tracking-[.16em] text-[#9d4430]">
+            Your catalog. Your{' '}
+            <RotatingText
+              texts={['orders', 'bookings', 'reviews', 'reputation']}
+              mainClassName="inline-flex text-[#B84D34] font-black lowercase tracking-[.16em]"
+              rotationInterval={2400}
+              staggerDuration={0.02}
+            />
+            {` — one link.`}
           </p>
+
+          {/* Subtext */}
+          <BlurText
+            text="Claim one beautiful link where customers discover your story, browse your catalog, and book your services. Train a virtual assistant that understands your catalog, tone, time, and customer conversations."
+            className="relative mx-auto max-w-lg text-base sm:text-lg leading-relaxed text-[#6B5850] mb-8 mt-5 justify-center text-center"
+            delay={40}
+            direction="bottom"
+            threshold={0.05}
+          />
 
           {/* Slug input */}
           <form action="/signup" method="GET" className="relative mx-auto max-w-md p-2 rounded-2xl bg-white border border-[#eadfd8] shadow-[0_18px_40px_rgba(70,35,25,.10)] flex gap-2 micro-reveal micro-delay-3 micro-lift">
@@ -217,19 +261,21 @@ export default function HomePage() {
                 </p>
                 <div className="grid gap-3">
                   {demoLinks.map(([type, name, text, href, Icon, color]) => (
-                    <Link key={name} href={href} className="group flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.06] p-4 hover:bg-white/[0.1] transition-colors micro-lift">
-                      <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: color + '22' }}>
-                          <Icon className="w-5 h-5" style={{ color }} />
+                    <BorderBeam key={name} size="sm" colorVariant="sunset" theme="dark" duration={2.4} strength={0.7}>
+                      <Link href={href} className="group flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.06] p-4 hover:bg-white/[0.1] transition-colors micro-lift">
+                        <div className="flex items-center gap-3">
+                          <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: color + '22' }}>
+                            <Icon className="w-5 h-5" style={{ color }} />
+                          </div>
+                          <div>
+                            <p className="text-[11px] font-black uppercase tracking-[.14em] text-white/40">{type}</p>
+                            <p className="font-black text-white">{name}</p>
+                            <p className="text-xs text-white/50">{text}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-[11px] font-black uppercase tracking-[.14em] text-white/40">{type}</p>
-                          <p className="font-black text-white">{name}</p>
-                          <p className="text-xs text-white/50">{text}</p>
-                        </div>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-white/40 group-hover:text-white transition-colors" />
-                    </Link>
+                        <ArrowRight className="w-4 h-4 text-white/40 group-hover:text-white transition-colors" />
+                      </Link>
+                    </BorderBeam>
                   ))}
                 </div>
               </div>

@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Star, ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react'
+import SplitText from '@/components/ui/SplitText'
+import BorderBeam from 'border-beam'
 
 interface ReviewFormProps {
     businessId: string
@@ -91,9 +93,9 @@ export function ReviewForm({ businessId, businessName, businessSlug, backHref }:
                     Back to {businessName}
                 </Link>
 
-                <Card>
+                <Card className="relative">
                     <CardHeader>
-                        <CardTitle>Leave a Review</CardTitle>
+                        <CardTitle><SplitText tag="span" text="Leave a Review" splitType="words" delay={40} duration={0.8} textAlign="left" /></CardTitle>
                         <CardDescription>
                             Share your experience with {businessName}
                         </CardDescription>
@@ -185,6 +187,7 @@ export function ReviewForm({ businessId, businessName, businessSlug, backHref }:
                             </Button>
                         </form>
                     </CardContent>
+                    <BorderBeam colorVariant="sunset" theme="light" size={100} duration={7} strength={0.5} borderRadius={12} />
                 </Card>
             </div>
         </div>

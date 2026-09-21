@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { BusinessCard } from '@/components/BusinessCard'
+import { AnimatedBorderCard } from '@/components/ui/AnimatedBorderCard'
 import { Search, MapPin, Filter, X } from 'lucide-react'
 import type { User, Category } from '@/lib/types'
 
@@ -169,14 +170,23 @@ export function SearchDirectory({ initialBusinesses = [], showFilters = true, li
                         <p className="text-sm mt-1">Try adjusting your search or filters</p>
                     </div>
                 ) : (
-                    businesses.map((business, index) => (
-                        <BusinessCard
-                            key={business.id}
-                            business={business}
-                            rank={index + 1}
-                            isNew={new Date(business.created_at).getTime() > Date.now() - 7 * 24 * 60 * 60 * 1000}
-                        />
-                    ))
+                    businesses.map((business, index) => {
+                        const card = (
+                            <BusinessCard
+                                key={business.id}
+                                business={business}
+                                rank={index + 1}
+                                isNew={new Date(business.created_at).getTime() > Date.now() - 7 * 24 * 60 * 60 * 1000}
+                            />
+                        )
+                        return index < 3 ? (
+                            <AnimatedBorderCard key={business.id} size={70} duration={7} strength={0.55} borderRadius={18} className="relative rounded-2xl">
+                                {card}
+                            </AnimatedBorderCard>
+                        ) : (
+                            <div key={business.id}>{card}</div>
+                        )
+                    })
                 )}
             </div>
         </div>

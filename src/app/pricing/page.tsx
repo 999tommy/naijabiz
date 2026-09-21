@@ -5,6 +5,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { VerifiedBadge } from '@/components/VerifiedBadge'
+import BorderBeam from 'border-beam'
+import BlurText from '@/components/ui/BlurText'
+import SplitText from '@/components/ui/SplitText'
 import {
   CheckCircle2,
   ArrowRight,
@@ -288,12 +291,21 @@ export default function PricingPage() {
         {/* Hero copy */}
         <div className="text-center mb-12 max-w-2xl mx-auto">
           <p className="text-xs font-bold uppercase tracking-widest text-[#B84D34] mb-4">Pricing</p>
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight mb-4">
-            Simple, honest pricing.
-          </h1>
-          <p className="text-lg text-[#6B5850] leading-relaxed">
-            Start free. Upgrade when you&apos;re ready for the full brand experience.
-          </p>
+          <SplitText
+            tag="h1"
+            text="Simple, honest pricing."
+            splitType="words"
+            className="text-4xl sm:text-5xl font-black tracking-tight leading-tight mb-4"
+            delay={70}
+            duration={0.95}
+            rootMargin="0px"
+          />
+          <BlurText
+            text="Start free. Upgrade when you are ready for the full brand experience."
+            className="mx-auto max-w-xl text-lg text-[#6B5850] leading-relaxed justify-center text-center"
+            delay={50}
+            direction="bottom"
+          />
 
           {/* Billing Toggle */}
           <div className="mt-8 max-w-2xl mx-auto rounded-3xl border border-[#eadfd8] bg-white/90 p-2 shadow-[0_18px_45px_rgba(70,35,25,.08)]">
@@ -377,7 +389,8 @@ export default function PricingPage() {
           </div>
 
           {/* Pro Plan */}
-          <div className="rounded-3xl border-2 border-[#B84D34] p-7 bg-[#1E1410] text-white flex flex-col relative overflow-hidden">
+          <BorderBeam size="md" colorVariant="sunset" theme="dark" duration={2.2} strength={0.8} borderRadius={24} className="rounded-3xl">
+            <div className="rounded-3xl border-2 border-[#B84D34] p-7 bg-[#1E1410] text-white flex flex-col relative overflow-hidden h-full">
             {/* Glow */}
             <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-[#B84D34]/10 pointer-events-none transform translate-x-1/3 -translate-y-1/3" />
 
@@ -472,7 +485,8 @@ export default function PricingPage() {
                 ))}
               </div>
             </div>
-          </div>
+            </div>
+          </BorderBeam>
         </div>
 
         {/* Feature Comparison Highlight */}

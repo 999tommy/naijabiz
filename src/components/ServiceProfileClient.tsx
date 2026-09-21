@@ -17,6 +17,8 @@ import { VerifiedBadge } from '@/components/VerifiedBadge'
 import { UpvoteButton } from '@/components/UpvoteButton'
 import { BusinessShareButton } from '@/components/BusinessShareButton'
 import { getCategoryIcon } from '@/lib/category-icons'
+import GradientText from '@/components/ui/GradientText'
+import BorderBeam from 'border-beam'
 import type { Product, User, Review } from '@/lib/types'
 import { AiChatWidget } from '@/components/AiChatWidget'
 import type { WebsiteTheme } from '@/lib/website-theme'
@@ -174,7 +176,7 @@ export function ServiceProfileClient({
                     <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2 flex-wrap">
                             <h1 className="text-3xl md:text-5xl font-black tracking-tight" style={{ color: pageTheme.headingText }}>
-                                {business.business_name}
+                                <GradientText colors={[pageTheme.accent, pageTheme.ctaBg, pageTheme.headingText]}>{business.business_name}</GradientText>
                             </h1>
                             {(isPro || (business.reviewCount && business.reviewCount >= 5)) && (
                                 <VerifiedBadge size="md" isCommunityVerified={!isPro} />
@@ -279,7 +281,8 @@ export function ServiceProfileClient({
 
                 {/* Booking Request */}
                 {whatsappNumber && (
-                    <div id="booking-panel" className="mb-16 rounded-3xl border shadow-sm p-5 sm:p-6" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder }}>
+                    <div id="booking-panel" className="mb-16 rounded-3xl border shadow-sm p-5 sm:p-6 relative" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder }}>
+                        <BorderBeam colorVariant="sunset" theme="light" size={120} duration={7} strength={0.5} borderRadius={24} />
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-5 mb-6">
                             <div>
                                 <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: pageTheme.accent }}>Request an appointment</p>

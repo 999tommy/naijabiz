@@ -3,6 +3,10 @@ import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import { ArrowRight, BadgePercent, Banknote, CheckCircle2, ClipboardList, Copy, MessageCircle, Repeat, Share2, ShieldCheck, Target, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import SplitText from '@/components/ui/SplitText'
+import GradientText from '@/components/ui/GradientText'
+import BlurText from '@/components/ui/BlurText'
+import { AnimatedBorderCard } from '@/components/ui/AnimatedBorderCard'
 
 const steps = [
     {
@@ -124,12 +128,22 @@ export default function AgentsPage() {
                 <section className="max-w-6xl mx-auto px-4 py-16 lg:py-20 grid lg:grid-cols-[1.05fr_0.95fr] gap-10 items-center">
                     <div>
                         <p className="text-xs font-bold uppercase tracking-widest text-[#B84D34] mb-4">Qriblo Agents</p>
-                        <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-tight mb-5">
-                            Refer businesses. Earn recurring rewards.
-                        </h1>
-                        <p className="text-lg text-[#6B5850] leading-relaxed max-w-xl mb-8">
-                            Help Nigerian businesses launch verified pages, collect orders, book appointments, and activate their Virtual Assistant. You earn when your referrals upgrade and keep growing.
-                        </p>
+                        <SplitText
+                            tag="h1"
+                            text="Refer businesses. Earn recurring rewards."
+                            splitType="words"
+                            textAlign="left"
+                            className="text-4xl sm:text-6xl font-black tracking-tight leading-tight mb-5"
+                            delay={60}
+                            duration={0.95}
+                        />
+                        <BlurText
+                            text="Help Nigerian businesses launch verified pages, collect orders, book appointments, and activate their Virtual Assistant. You earn when your referrals upgrade and keep growing."
+                            delay={40}
+                            direction="bottom"
+                            threshold={0.05}
+                            className="text-lg text-[#6B5850] leading-relaxed max-w-xl mb-8"
+                        />
                         <div className="flex flex-col sm:flex-row gap-3">
                             <Link href="/agents/signup">
                                 <Button size="lg" className="h-12 px-7 bg-[#B84D34] hover:bg-[#9A3F2A] text-white font-bold">
@@ -144,11 +158,11 @@ export default function AgentsPage() {
                         </div>
                     </div>
 
-                    <div className="bg-white border border-[#eadfd8] rounded-3xl p-6 shadow-[0_24px_70px_rgba(70,35,25,.10)]">
+                    <AnimatedBorderCard colorVariant="sunset" theme="light" size={110} duration={7} strength={0.5} borderRadius={24} className="relative bg-white border border-[#eadfd8] rounded-3xl p-6 shadow-[0_24px_70px_rgba(70,35,25,.10)]">
                         <div className="flex items-center justify-between mb-6">
                             <div>
                                 <p className="text-sm text-[#6B5850]">Agent earnings model</p>
-                                <h2 className="text-2xl font-black">Earn upfront, then monthly</h2>
+                                <h2 className="text-2xl font-black"><GradientText>Earn upfront, then monthly</GradientText></h2>
                             </div>
                             <div className="w-12 h-12 rounded-2xl bg-[#f9f0ee] flex items-center justify-center">
                                 <BadgePercent className="w-6 h-6 text-[#B84D34]" />
@@ -169,7 +183,7 @@ export default function AgentsPage() {
                                 </div>
                             ))}
                         </div>
-                    </div>
+                    </AnimatedBorderCard>
                 </section>
 
                 <section className="max-w-6xl mx-auto px-4 pb-16">
@@ -186,7 +200,7 @@ export default function AgentsPage() {
                                 {retentionLadder.map(([period, amount, detail]) => (
                                     <div key={period} className="rounded-2xl border border-[#f1e5de] bg-[#FDF8F3] p-4">
                                         <p className="text-xs font-black uppercase tracking-[.14em] text-[#B84D34]">{period}</p>
-                                        <p className="text-3xl font-black mt-2">{amount}</p>
+                                        <p className="text-3xl font-black mt-2"><GradientText>{amount}</GradientText></p>
                                         <p className="text-sm text-[#6B5850] mt-1">{detail}</p>
                                     </div>
                                 ))}
@@ -207,7 +221,7 @@ export default function AgentsPage() {
                         <div className="space-y-3">
                             {milestoneBonuses.map(([amount, target]) => (
                                 <div key={amount} className="flex items-center justify-between gap-5 rounded-2xl border border-[#eadfd8] bg-[#FDF8F3] p-5">
-                                    <p className="text-3xl font-black text-[#B84D34]">{amount}</p>
+                                    <p className="text-3xl font-black"><GradientText>{amount}</GradientText></p>
                                     <p className="text-sm font-bold text-[#1E1410] text-right">{target}</p>
                                 </div>
                             ))}
@@ -326,7 +340,7 @@ export default function AgentsPage() {
                 </section>
 
                 <section className="max-w-4xl mx-auto px-4 pb-16">
-                    <div className="bg-[#1E1410] text-white rounded-3xl p-8 sm:p-10 text-center">
+                    <AnimatedBorderCard colorVariant="sunset" theme="dark" size={140} duration={8} strength={0.45} borderRadius={24} className="relative bg-[#1E1410] text-white rounded-3xl p-8 sm:p-10 text-center">
                         <Repeat className="w-9 h-9 text-[#E8A87C] mx-auto mb-4" />
                         <h2 className="text-3xl font-black mb-3">Your link does the tracking.</h2>
                         <p className="text-white/65 mb-7 max-w-2xl mx-auto">
@@ -337,7 +351,7 @@ export default function AgentsPage() {
                                 Become an Agent <Copy className="w-4 h-4 ml-2" />
                             </Button>
                         </Link>
-                    </div>
+                    </AnimatedBorderCard>
                 </section>
 
                 <section className="max-w-6xl mx-auto px-4 pb-16">
