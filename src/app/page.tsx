@@ -6,11 +6,13 @@ import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import { ArrowRight, Bot, CheckCircle2, Globe2, ShoppingBag, Star, ShieldCheck, X, Users, BarChart2, Wrench, BadgePercent } from 'lucide-react'
 import BorderBeam from 'border-beam'
-import AuroraBackground from '@/components/ui/AuroraBackground'
-import BlurText from '@/components/ui/BlurText'
 import GradientText from '@/components/ui/GradientText'
-import RotatingText from '@/components/ui/RotatingText'
-import SplitText from '@/components/ui/SplitText'
+import dynamic from 'next/dynamic'
+
+const AuroraBackground = dynamic(() => import('@/components/ui/AuroraBackground'), { ssr: false })
+const BlurText = dynamic(() => import('@/components/ui/BlurText'), { ssr: false })
+const SplitText = dynamic(() => import('@/components/ui/SplitText'), { ssr: false })
+const RotatingText = dynamic(() => import('@/components/ui/RotatingText'), { ssr: false })
 
 const navLinks = [
   { href: '/directory', label: 'Discover brands' },

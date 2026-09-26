@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Users } from 'lucide-react'
 
-import { BroadcastDialog } from './BroadcastDialog'
+
 import { CustomerDirectory } from './CustomerDirectory'
 
 export const dynamic = 'force-dynamic'
@@ -61,7 +61,7 @@ export default async function CustomersPage() {
                     <p className="text-gray-500">Manage your customer relationships and view order history.</p>
                 </div>
                 <div className="flex gap-2">
-                    <BroadcastDialog customers={customers} />
+                    {/* Broadcast feature removed in V2 */}
                 </div>
             </div>
 

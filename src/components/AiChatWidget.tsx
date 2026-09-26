@@ -35,6 +35,8 @@ function getFormattedTime() {
 }
 
 export function AiChatWidget({ business, externalOpen, onExternalOpenChange }: AiChatWidgetProps) {
+    if (business.plan !== 'pro') return null
+
     const [isOpen, setIsOpen] = useState(false)
     const isControlled = externalOpen !== undefined && onExternalOpenChange !== undefined
     const actualOpen = isControlled ? externalOpen : isOpen

@@ -13,7 +13,7 @@ import { User } from '@/lib/types'
 import Link from 'next/link'
 import { BrandThinkingOrb } from '@/components/ui/BrandThinkingOrb'
 import RotatingText from '@/components/ui/RotatingText'
-import { DAILY_AI_USAGE_LIMIT, FREE_MONTHLY_AI_USAGE_LIMIT } from '@/lib/ai/usage'
+import { PRO_MONTHLY_AI_USAGE_LIMIT } from '@/lib/ai/usage'
 
 interface AiSettingsFormProps {
     user: User
@@ -30,7 +30,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
     const [saveStatus, setSaveStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
     const [waEnabled, setWaEnabled] = useState(Boolean(user.wa_whatsapp_enabled))
     const isPro = user.plan === 'pro'
-    const limit = isPro ? DAILY_AI_USAGE_LIMIT : FREE_MONTHLY_AI_USAGE_LIMIT
+    const limit = PRO_MONTHLY_AI_USAGE_LIMIT
     const currentUsagePeriod = isPro
         ? new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 10)
         : new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 7)
@@ -127,7 +127,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                     <div className="space-y-1">
                         <h2 className="text-lg font-bold text-gray-900">Virtual Assistant is available on your page</h2>
                         <p className="text-gray-600 text-sm max-w-xl">
-                            Free plan includes {FREE_MONTHLY_AI_USAGE_LIMIT} assistant messages per month. Upgrade when you need higher daily capacity and WhatsApp routing.
+                            Pro plan includes {PRO_MONTHLY_AI_USAGE_LIMIT} assistant messages per month.
                         </p>
                     </div>
                     <Link href="/pricing">

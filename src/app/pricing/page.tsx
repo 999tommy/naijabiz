@@ -46,16 +46,7 @@ const freeFeatures = [
       'Basic service listing for bookings',
     ],
   },
-  {
-    icon: Bot,
-    section: 'Virtual Assistant Preview',
-    color: '#b45309',
-    items: [
-      'Open the Virtual Assistant page in your dashboard',
-      'Set your tone, greeting, services, and business instructions',
-      'Test responses before going live',
-    ],
-  },
+
   {
     icon: MessageCircle,
     section: 'Contact & Links',
@@ -99,14 +90,13 @@ const proFeatures = [
     section: 'Virtual Assistant',
     color: '#b45309',
     items: [
-      '24/7 Virtual Assistant on your page',
+      '24/7 Virtual Assistant on your page and WhatsApp',
+      '500 automated AI responses per month',
       'Answers product and pricing questions automatically',
       'Understands current date, time, and recent chat context',
       'Handles booking and appointment management',
-      'AI booking assistant collects preferred date, time, and notes',
       'Captures orders and sends them to WhatsApp',
       'Customizable welcome message',
-      'Catalogue-aware responses',
     ],
   },
   {
@@ -199,7 +189,7 @@ const faqs = [
   },
   {
     q: 'How does the Virtual Assistant work?',
-    a: 'Free users can open the Virtual Assistant page, configure the assistant, and test responses in the dashboard. Pro puts the assistant live on your brand page, where it uses your catalog, instructions, the current Lagos date/time, and recent chat context. Product orders and confirmed service booking requests are sent straight to your WhatsApp.',
+    a: 'Pro puts the AI assistant live on your brand page and WhatsApp, where it uses your catalog, instructions, the current Lagos date/time, and recent chat context. You get up to 500 automated responses per month. Product orders and booking requests are sent straight to your personal WhatsApp.',
   },
   {
     q: 'What does "Pro Verified" mean?',
@@ -371,7 +361,6 @@ export default function PricingPage() {
                 'Standard brand link (qriblo.com/yourbrand)',
                 'Up to 5 catalog items',
                 'WhatsApp ordering and booking enquiries',
-                'Virtual Assistant training and test mode',
                 'Listed in the directory',
                 'SEO-optimised page',
               ].map(item => (

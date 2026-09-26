@@ -104,7 +104,7 @@ export async function POST(req: Request) {
                 let business = null
                 const { data: bySlug } = await supabase
                     .from('users')
-                    .select('id, business_name, plan, ai_welcome_msg')
+                    .select('id, business_name, plan, ai_welcome_msg, business_slug')
                     .eq('business_slug', detectedName)
                     .single()
                 
@@ -113,17 +113,25 @@ export async function POST(req: Request) {
                 if (!business) {
                     const { data: byName } = await supabase
                         .from('users')
-                        .select('id, business_name, plan, ai_welcome_msg')
+                        .select('id, business_name, plan, ai_welcome_msg, business_slug')
                         .ilike('business_name', `%${detectedName}%`)
                         .limit(1)
                         .single()
                     business = byName
                 }
 
-                if (!business || business.plan !== 'pro') {
+                if (!business) {
                     await sendWhatsAppMessage(
                         customerPhone,
-                        `❌ I couldn't find an active Pro business called *${detectedName}* on Qriblo.\n\nPlease check the name and try again.`
+                        `❌ I couldn't find a business called *${detectedName}* on Qriblo.\n\nPlease check the name and try again.`
+                    )
+                    return new NextResponse('OK', { status: 200 })
+                }
+                
+                if (business.plan !== 'pro') {
+                    await sendWhatsAppMessage(
+                        customerPhone,
+                        `Hi! 👋 *${business.business_name}* will get back to you shortly.\n\nIn the meantime, you can browse their catalog at: https://qriblo.com/${business.business_slug || detectedName}`
                     )
                     return new NextResponse('OK', { status: 200 })
                 }
@@ -161,23 +169,31 @@ export async function POST(req: Request) {
             if (newSlug && newSlug !== '') {
                 const { data: newBusiness } = await supabase
                     .from('users')
-                    .select('id, business_name, plan, ai_welcome_msg')
+                    .select('id, business_name, plan, ai_welcome_msg, business_slug')
                     .eq('business_slug', newSlug)
                     .single()
 
-                if (newBusiness && newBusiness.plan === 'pro') {
-                    businessId = newBusiness.id
-                    messages = []
-                    await supabase.from('chat_sessions').upsert({
-                        business_id: businessId,
-                        customer_phone: customerPhone,
-                        messages: [],
-                        updated_at: new Date().toISOString(),
-                    }, { onConflict: 'business_id,customer_phone' })
+                if (newBusiness) {
+                    if (newBusiness.plan === 'pro') {
+                        businessId = newBusiness.id
+                        messages = []
+                        await supabase.from('chat_sessions').upsert({
+                            business_id: businessId,
+                            customer_phone: customerPhone,
+                            messages: [],
+                            updated_at: new Date().toISOString(),
+                        }, { onConflict: 'business_id,customer_phone' })
 
-                    const welcome = newBusiness.ai_welcome_msg || `Hello! Welcome to *${newBusiness.business_name}*. How can I help you today?`
-                    await sendWhatsAppMessage(customerPhone, `🏪 Switched! You're now chatting with *${newBusiness.business_name}*.\n\n${welcome}`)
-                    return new NextResponse('OK', { status: 200 })
+                        const welcome = newBusiness.ai_welcome_msg || `Hello! Welcome to *${newBusiness.business_name}*. How can I help you today?`
+                        await sendWhatsAppMessage(customerPhone, `🏪 Switched! You're now chatting with *${newBusiness.business_name}*.\n\n${welcome}`)
+                        return new NextResponse('OK', { status: 200 })
+                    } else {
+                        await sendWhatsAppMessage(
+                            customerPhone,
+                            `Hi! 👋 *${newBusiness.business_name}* will get back to you shortly.\n\nIn the meantime, you can browse their catalog at: https://qriblo.com/${newBusiness.business_slug || newSlug}`
+                        )
+                        return new NextResponse('OK', { status: 200 })
+                    }
                 }
             }
         }
@@ -189,10 +205,17 @@ export async function POST(req: Request) {
             .eq('id', businessId)
             .single()
 
-        if (!business || business.plan !== 'pro') {
+        if (!business) {
             await sendWhatsAppMessage(customerPhone, `Sorry, this business is no longer available on WhatsApp. Please type a new business name to start over.`)
-            // Clear the session so they can restart
             await supabase.from('chat_sessions').delete().eq('business_id', businessId).eq('customer_phone', customerPhone)
+            return new NextResponse('OK', { status: 200 })
+        }
+
+        if (business.plan !== 'pro') {
+            await sendWhatsAppMessage(
+                customerPhone,
+                `Hi! 👋 *${business.business_name}* will get back to you shortly.\n\nIn the meantime, you can browse their catalog at: https://qriblo.com/${business.business_slug || 'dashboard'}`
+            )
             return new NextResponse('OK', { status: 200 })
         }
 
