@@ -62,12 +62,12 @@ const freeFeatures = [
 const proFeatures = [
   {
     icon: Globe2,
-    section: 'Brand Subdomain & Website',
+    section: 'Brand Subdomain & Presence',
     color: '#7c5cbf',
     items: [
       'Personal brand subdomain (yourbrand.qriblo.com)',
       'Everything in Free',
-      'Full themed brand website (color themes per category)',
+      'Full themed brand storefront (color themes per category)',
       'Custom hero header with background',
       'Priority placement in directory',
       'Pro Verified trust badge on your page',
@@ -91,7 +91,7 @@ const proFeatures = [
     color: '#b45309',
     items: [
       '24/7 Virtual Assistant on your page and WhatsApp',
-      '500 automated AI responses per month',
+      '500 automated virtual assistant responses per month',
       'Answers product and pricing questions automatically',
       'Understands current date, time, and recent chat context',
       'Handles booking and appointment management',
@@ -189,7 +189,7 @@ const faqs = [
   },
   {
     q: 'How does the Virtual Assistant work?',
-    a: 'Pro puts the AI assistant live on your brand page and WhatsApp, where it uses your catalog, instructions, the current Lagos date/time, and recent chat context. You get up to 500 automated responses per month. Product orders and booking requests are sent straight to your personal WhatsApp.',
+    a: 'When you upgrade to Pro, your virtual assistant goes live on your page and on WhatsApp (+2347047207012). It reads your catalog, answers customer questions, checks availability, and confirms orders. It handles the entire chat, so you only get involved when it is time to collect payment and deliver.',
   },
   {
     q: 'What does "Pro Verified" mean?',
@@ -283,7 +283,7 @@ export default function PricingPage() {
           <p className="text-xs font-bold uppercase tracking-widest text-[#B84D34] mb-4">Pricing</p>
           <SplitText
             tag="h1"
-            text="Simple, honest pricing."
+            text="Sell like a pro. Priced for the hustle."
             splitType="words"
             className="text-4xl sm:text-5xl font-black tracking-tight leading-tight mb-4"
             delay={70}
@@ -291,7 +291,7 @@ export default function PricingPage() {
             rootMargin="0px"
           />
           <BlurText
-            text="Start free. Upgrade when you are ready for the full brand experience."
+            text="Start for free to get your catalog online. Upgrade when you're ready for your own 24/7 virtual assistant and a custom brand address."
             className="mx-auto max-w-xl text-lg text-[#6B5850] leading-relaxed justify-center text-center"
             delay={50}
             direction="bottom"
@@ -341,7 +341,7 @@ export default function PricingPage() {
           <div className="rounded-3xl border border-[#eadfd8] p-7 bg-white flex flex-col">
             <div className="mb-6">
               <h2 className="text-2xl font-black text-gray-900 mb-1">Free</h2>
-              <p className="text-sm text-gray-500">Your brand&apos;s first step online.</p>
+              <p className="text-sm text-gray-500">Perfect for new businesses looking to share their catalog.</p>
             </div>
 
             <div className="mb-6">
@@ -360,7 +360,7 @@ export default function PricingPage() {
               {[
                 'Standard brand link (qriblo.com/yourbrand)',
                 'Up to 5 catalog items',
-                'WhatsApp ordering and booking enquiries',
+                'Manual WhatsApp orders (Customers click to chat you)',
                 'Listed in the directory',
                 'SEO-optimised page',
               ].map(item => (
@@ -393,7 +393,7 @@ export default function PricingPage() {
                 <h2 className="text-2xl font-black text-white">Pro</h2>
                 <VerifiedBadge size="sm" />
               </div>
-              <p className="text-sm text-white/60">The full brand experience, unlocked.</p>
+              <p className="text-sm text-white/60">Everything you need to automate your sales and look like a premium brand.</p>
             </div>
 
             <div className="mb-6 relative">
@@ -417,13 +417,12 @@ export default function PricingPage() {
             {/* Top highlights */}
             <ul className="space-y-3 mb-5 relative">
               {[
-                'Personal brand subdomain (yourbrand.qriblo.com)',
-                'Everything in Free',
-                'Unlimited catalog items',
-                'Full themed brand website',
-                'Live Virtual Assistant for orders and bookings',
-                'Customer reviews & ratings',
-                'Pro Verified badge',
+                '24/7 Virtual Assistant on WhatsApp & Web',
+                'Assistant handles full conversations and closes sales',
+                'Custom domain (yourbrand.qriblo.com)',
+                'Everything in Free (unlimited items)',
+                'Full themed brand storefront',
+                'Verified trust badge',
               ].map(item => (
                 <li key={item} className="flex items-center gap-2.5 text-sm text-white/85">
                   <CheckCircle2 className="w-4 h-4 text-[#E8A87C] flex-shrink-0" />

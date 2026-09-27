@@ -4,15 +4,10 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
-import { ArrowRight, Bot, CheckCircle2, Globe2, ShoppingBag, Star, ShieldCheck, X, Users, BarChart2, Wrench, BadgePercent } from 'lucide-react'
+import { ArrowRight, Bot, CheckCircle2, Globe2, ShoppingBag, Star, ShieldCheck, X, Users, BarChart2, Wrench, BadgePercent, MessageCircle, Zap } from 'lucide-react'
 import BorderBeam from 'border-beam'
 import GradientText from '@/components/ui/GradientText'
-import dynamic from 'next/dynamic'
-
-const AuroraBackground = dynamic(() => import('@/components/ui/AuroraBackground'), { ssr: false })
-const BlurText = dynamic(() => import('@/components/ui/BlurText'), { ssr: false })
-const SplitText = dynamic(() => import('@/components/ui/SplitText'), { ssr: false })
-const RotatingText = dynamic(() => import('@/components/ui/RotatingText'), { ssr: false })
+import { MasterChatWidget } from '@/components/MasterChatWidget'
 
 const navLinks = [
   { href: '/directory', label: 'Discover brands' },
@@ -25,25 +20,23 @@ const demoLinks: Array<[string, string, string, string, LucideIcon, string]> = [
   ['Service demo', 'MusaFix Electricals', 'Repair services, appointments, quote requests', '/musafix-electricals', Wrench, '#9bd4bd'],
 ]
 
-import { MasterChatWidget } from '@/components/MasterChatWidget'
-
 export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const beforeItems = [
-    'Customers asking "what do you sell?" every day',
-    'Sending prices manually in DMs and chats',
-    'No way to show your reviews or build trust',
-    'Your brand lives nowhere — just a username',
-    'Missing orders while you sleep',
+    'Waking up to "How much?" messages you missed',
+    'Typing prices and sending pictures manually every day',
+    'Customers leaving because you replied late',
+    'Looking like just another username on Instagram',
+    'Mixing up orders and booking dates',
   ]
 
   const afterItems = [
-    'Your full catalog is always live and browsable',
-    'Customers order directly from your page',
-    'Reviews and ratings build trust automatically',
-    'Personal subdomain (yourbrand.qriblo.com) on Pro',
-    'Virtual Assistant can be trained, tested, and put live on Pro',
+    'Your virtual assistant replies to customers 24/7 on WhatsApp',
+    'Customers browse your beautiful, live catalog instantly',
+    'Orders and bookings are closed automatically while you sleep',
+    'Your own professional brand page (yourbrand.qriblo.com)',
+    'Verified customer reviews that build instant trust',
   ]
 
   const businessTypes = [
@@ -84,7 +77,7 @@ export default function HomePage() {
 
       {/* NAV */}
       <nav className="sticky top-0 z-50 px-3 pt-3">
-        <div className="max-w-5xl mx-auto h-14 px-4 rounded-2xl flex items-center justify-between border border-white/80 bg-white/80 backdrop-blur shadow-[0_4px_24px_rgba(70,35,25,.08)]">
+        <div className="max-w-6xl mx-auto h-14 px-4 rounded-2xl flex items-center justify-between border border-white/80 bg-white/80 backdrop-blur shadow-[0_4px_24px_rgba(70,35,25,.08)]">
           <Link href="/" className="flex items-center gap-2 font-black text-[#1E1410]">
             <Image src="/smal-logo.png" alt="Qriblo" width={26} height={26} />
             <GradientText className="font-black text-[15px] tracking-[-0.02em]">Qriblo</GradientText>
@@ -117,7 +110,7 @@ export default function HomePage() {
           </div>
         </div>
         {mobileMenuOpen && (
-          <div className="md:hidden max-w-5xl mx-auto mt-2 rounded-2xl border border-[#eadfd8] bg-white p-3 shadow-[0_18px_40px_rgba(70,35,25,.12)]">
+          <div className="md:hidden max-w-6xl mx-auto mt-2 rounded-2xl border border-[#eadfd8] bg-white p-3 shadow-[0_18px_40px_rgba(70,35,25,.12)]">
             <p className="px-3 py-2 text-[11px] font-black uppercase tracking-[.16em] text-[#B84D34]">Catalog</p>
             <div className="grid gap-1">
               {[
@@ -143,93 +136,197 @@ export default function HomePage() {
 
       <main>
 
-        {/* HERO */}
-        <section className="max-w-5xl mx-auto px-4 pt-14 pb-8 text-center relative">
-          {/* Amber aurora wash */}
-          <div className="absolute inset-x-0 top-0 h-[540px] z-0 pointer-events-none opacity-80">
-            <AuroraBackground
-              colorStops={['#efd1c6', '#f5d8a0', '#efc9b8']}
-              amplitude={1.1}
-              blend={0.5}
-              lightMode
-            />
-          </div>
-          {/* Glow blobs */}
-          <div className="absolute z-0 w-80 h-80 rounded-full bg-[#efd1c6] blur-3xl opacity-50 top-8 left-1/2 -translate-x-1/2 pointer-events-none" />
-          <div className="absolute z-0 w-48 h-48 rounded-full bg-[#f5d8a0] blur-3xl opacity-40 top-20 right-10 pointer-events-none" />
+        {/* HERO SECTION - HIGH CONVERTING LEFT-ALIGNED HERO */}
+        <section className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-14 pb-12 sm:pb-16 overflow-hidden">
+          {/* High performance CSS ambient background lighting - zero lag */}
+          <div className="absolute top-0 left-0 -translate-x-12 w-96 h-96 rounded-full bg-[#fde1d6] blur-3xl opacity-70 pointer-events-none -z-10" />
+          <div className="absolute top-12 right-0 translate-x-12 w-[420px] h-[420px] rounded-full bg-[#fdecd5] blur-3xl opacity-60 pointer-events-none -z-10" />
+          <div className="absolute inset-0 bg-[radial-gradient(#eadfd8_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_25%,#000_70%,transparent_100%)] opacity-35 pointer-events-none -z-10" />
 
-          {/* Pill label */}
-          <p className="relative inline-flex items-center gap-2 rounded-full bg-[#f5e5de] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.16em] text-[#9d4430] mb-6 micro-reveal">
-            Get your virtual assistant
-          </p>
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+            
+            {/* LEFT COLUMN: PUNCHY COPY, CALL TO ACTION & TRUST */}
+            <div className="lg:col-span-7 flex flex-col items-start text-left">
+              {/* Pill badge with live status beacon */}
+              <div className="inline-flex items-center gap-2 rounded-full bg-[#f8ebe5] border border-[#f0d5ca] px-3.5 py-1.5 text-xs font-bold text-[#9d4430] mb-5 shadow-xs">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#25D366] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#25D366]"></span>
+                </span>
+                <span>Stop losing sales in the DMs</span>
+                <span className="text-[#d89785]">•</span>
+                <span className="text-[#6B5850] font-semibold hidden sm:inline">24/7 WhatsApp AI Assistant</span>
+              </div>
 
-          {/* Headline */}
-          <h1 className="relative text-[2.6rem] sm:text-6xl md:text-7xl font-black tracking-[-0.04em] leading-[1.0] mb-5">
-            <span className="block">
-              <SplitText
-                tag="span"
-                text="Growing your brand"
-                splitType="words"
-                delay={60}
-                duration={0.95}
-                threshold={0.05}
-                rootMargin="0px"
-                waitForFonts={false}
-              />
-            </span>
-            <em className="font-serif font-bold not-italic text-[#B84D34]">
-              <GradientText className="font-serif font-bold not-italic">
-                has never been easier.
-              </GradientText>
-            </em>
-          </h1>
+              {/* Headline */}
+              <h1 className="text-3xl sm:text-5xl lg:text-[3.25rem] font-black tracking-[-0.035em] leading-[1.08] text-[#1E1410] mb-5">
+                Your live catalog and a 24/7 virtual assistant.
+                <span className="block mt-1 sm:mt-2 text-[#B84D34] font-serif italic font-bold">
+                  In one powerful brand link.
+                </span>
+              </h1>
 
-          {/* Rotating value prop */}
-          <p className="relative mt-4 text-xs sm:text-sm font-bold uppercase tracking-[.16em] text-[#9d4430]">
-            A home for Your{' '}
-            <RotatingText
-              texts={['orders', 'bookings', 'reviews', 'reputation']}
-              mainClassName="inline-flex text-[#B84D34] font-black lowercase tracking-[.16em]"
-              rotationInterval={2400}
-              staggerDuration={0.02}
-            />
+              {/* Subheadline */}
+              <p className="text-base sm:text-lg leading-relaxed text-[#6B5850] mb-7 max-w-xl">
+                Stop typing prices and sending pictures manually every day. Give customers one clean link to browse what you sell, while your virtual assistant answers questions, takes orders, and closes sales on WhatsApp 24/7.
+              </p>
 
-          </p>
+              {/* Brand Link Claim Form */}
+              <form action="/signup" method="GET" className="w-full max-w-lg p-2 rounded-2xl bg-white border border-[#eadfd8] shadow-[0_14px_32px_rgba(70,35,25,.08)] flex flex-col sm:flex-row gap-2 mb-3.5 focus-within:border-[#B84D34] focus-within:ring-2 focus-within:ring-[#B84D34]/15 transition-all">
+                <div className="flex items-center flex-1 px-3 py-2 sm:py-1">
+                  <span className="text-xs sm:text-sm font-semibold text-[#a8968e] select-none">qriblo.com/</span>
+                  <input
+                    required
+                    name="brand"
+                    placeholder="yourbrand"
+                    className="w-full bg-transparent font-bold outline-none text-sm sm:text-base text-[#1E1410] placeholder-[#c4aea6] ml-1"
+                  />
+                </div>
+                <button type="submit" className="shrink-0 rounded-xl px-5 py-3 bg-[#B84D34] text-white font-bold text-sm hover:bg-[#9A3F2A] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 shadow-sm">
+                  Create your link <ArrowRight className="w-4 h-4" />
+                </button>
+              </form>
 
-          {/* Subtext */}
-          <BlurText
-            text="Claim one beautiful link where customers discover your story, browse your catalog, and book your services. Get a virtual assistant that understands your catalog, tone, time and brings customers to your doorstep."
-            className="relative mx-auto max-w-lg text-base sm:text-lg leading-relaxed text-[#6B5850] mb-8 mt-5 justify-center text-center"
-            delay={25}
-            direction="bottom"
-            threshold={0.05}
-            disableBlur
-          />
+              {/* Shopper & Customer Virtual Assistant Button */}
+              <div className="flex flex-wrap items-center gap-3 mb-6">
+                <a
+                  href="https://wa.me/2347047207012?text=Hi!%20I%20want%20to%20see%20how%20the%20Qriblo%20Virtual%20Assistant%20works%20for%20my%20business."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2.5 rounded-xl border border-[#eadfd8] bg-white/90 hover:bg-white px-4 py-2.5 text-xs sm:text-sm font-bold text-[#1E1410] shadow-[0_4px_14px_rgba(70,35,25,.05)] hover:shadow-[0_6px_20px_rgba(70,35,25,.10)] hover:border-[#25D366]/40 transition-all group"
+                >
+                  <div className="w-6 h-6 rounded-full bg-[#25D366]/15 flex items-center justify-center text-[#25D366] group-hover:scale-110 transition-transform">
+                    <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                  </div>
+                  <span>Chat with Virtual Assistant</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#B84D34] group-hover:translate-x-0.5 transition-transform" />
+                </a>
+                <span className="text-[11px] sm:text-xs text-[#8a766e]">Test the assistant on WhatsApp</span>
+              </div>
 
-          {/* Slug input */}
-          <form action="/signup" method="GET" className="relative mx-auto max-w-md p-2 rounded-2xl bg-white border border-[#eadfd8] shadow-[0_18px_40px_rgba(70,35,25,.10)] flex gap-2 micro-reveal micro-delay-3 micro-lift">
-            <input
-              required
-              name="brand"
-              placeholder="Your brand name"
-              className="min-w-0 flex-1 px-3 py-3 bg-transparent font-bold outline-none text-sm placeholder-[#c4aea6]"
-            />
-            <button className="shrink-0 rounded-xl px-4 sm:px-5 py-3 bg-[#B84D34] text-white font-bold text-sm hover:bg-[#9A3F2A] transition-colors flex items-center gap-1">
-              Claim <ArrowRight className="w-4 h-4" />
-            </button>
-          </form>
+              {/* Trust Indicators */}
+              <div className="pt-5 border-t border-[#eadfd8]/80 w-full grid grid-cols-2 sm:flex sm:flex-wrap gap-y-2.5 gap-x-5 text-xs font-semibold text-[#6B5850]">
+                <span className="flex items-center gap-1.5"><Globe2 className="w-3.5 h-3.5 text-[#7c5cbf]" /> Custom brand subdomain</span>
+                <span className="flex items-center gap-1.5"><Bot className="w-3.5 h-3.5 text-[#B84D34]" /> 24/7 WhatsApp AI</span>
+                <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-[#2e7d52]" /> No card required</span>
+                <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-[#2e7d52]" /> Ready in 3 mins</span>
+              </div>
+            </div>
 
-          {/* Subdomain hint */}
-          <p className="relative mt-2 text-xs text-[#806b63]">
-            Brand domain: <span className="font-mono font-bold text-[#1E1410]">yourbrand.qriblo.com</span>
-          </p>
+            {/* RIGHT COLUMN: HIGH-IMPACT PRODUCT SHOWCASE (WHAT CUSTOMERS EXPERIENCE) */}
+            <div className="lg:col-span-5 relative mt-4 lg:mt-0">
+              <div className="relative mx-auto max-w-md lg:max-w-none">
+                {/* Floating Badge 1 - Top Left */}
+                <div className="absolute -top-4 -left-2 sm:-left-5 z-20 rounded-2xl bg-white/95 backdrop-blur border border-[#eadfd8] py-2 px-3 sm:px-4 shadow-[0_12px_28px_rgba(70,35,25,.12)] flex items-center gap-2.5 animate-soft-float">
+                  <div className="w-7 h-7 rounded-xl bg-[#25D366]/15 flex items-center justify-center text-[#25D366]">
+                    <Zap className="w-4 h-4 fill-current" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-[.1em] text-[#806b63]">Instant AI response</p>
+                    <p className="text-xs font-black text-[#1E1410]">Replied in 1.1s at 11:32 PM</p>
+                  </div>
+                </div>
 
-          {/* Trust pills */}
-          <div className="relative mt-5 flex justify-center gap-4 flex-wrap text-xs font-semibold text-[#6B5850]">
-            <span className="flex gap-1.5 items-center"><CheckCircle2 className="w-4 h-4 text-[#62ba82]" />Free to start</span>
-            <span className="flex gap-1.5 items-center"><Globe2 className="w-4 h-4 text-[#7c5cbf]" />Pro subdomain</span>
-            <span className="flex gap-1.5 items-center"><ShieldCheck className="w-4 h-4 text-[#62ba82]" />No card required</span>
-            <span className="flex gap-1.5 items-center"><Bot className="w-4 h-4 text-[#B84D34]" />Train free, go live on Pro</span>
+                {/* Floating Badge 2 - Bottom Right */}
+                <div className="absolute -bottom-4 -right-2 sm:-right-4 z-20 rounded-2xl bg-[#1E1410] text-white py-2.5 px-3.5 sm:px-4 shadow-[0_16px_36px_rgba(0,0,0,.25)] flex items-center gap-3 animate-soft-float [animation-delay:1500ms]">
+                  <div className="w-8 h-8 rounded-xl bg-[#2e7d52] flex items-center justify-center text-white font-black text-xs">
+                    ₦
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[.12em] text-white/50">Order captured</p>
+                    <p className="text-xs font-black text-[#62ba82]">₦18,500 while asleep</p>
+                  </div>
+                </div>
+
+                {/* Main Showcase Device Container */}
+                <div className="rounded-[2rem] bg-white border border-[#eadfd8] p-4 sm:p-5 shadow-[0_24px_50px_rgba(70,35,25,.10)] overflow-hidden relative">
+                  {/* Mockup Top Browser Bar */}
+                  <div className="flex items-center justify-between pb-3.5 mb-3.5 border-b border-[#f0e6e0]">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#efc9b8]" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#f5d8a0]" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#b9e2cb]" />
+                    </div>
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#FDF8F3] border border-[#eadfd8] text-[11px] font-bold text-[#6B5850]">
+                      <ShieldCheck className="w-3 h-3 text-[#2e7d52]" />
+                      <span>tolaskitchen.qriblo.com</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] animate-pulse" />
+                      <span className="text-[10px] font-bold text-[#2e7d52]">Live</span>
+                    </div>
+                  </div>
+
+                  {/* Brand Mini Header */}
+                  <div className="rounded-xl bg-[#FDF8F3] p-3 border border-[#f0e6e0] flex items-center justify-between mb-3.5">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-[#B84D34] text-white font-black flex items-center justify-center text-sm shadow-xs">
+                        T
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <p className="font-black text-xs text-[#1E1410]">Tola&apos;s Kitchen</p>
+                          <span className="px-1.5 py-0.5 rounded-full bg-[#25D366]/15 text-[#25D366] text-[9px] font-black">Verified</span>
+                        </div>
+                        <p className="text-[10px] text-[#806b63]">Lekki Phase 1 • 24/7 WhatsApp ordering</p>
+                      </div>
+                    </div>
+                    <span className="text-[11px] font-black text-[#B84D34]">4.9 ★</span>
+                  </div>
+
+                  {/* WhatsApp AI Chat Simulation */}
+                  <div className="rounded-2xl bg-[#0b141a] text-white p-3.5 space-y-2.5 text-xs shadow-inner">
+                    <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                      <div className="flex items-center gap-2">
+                        <div className="relative">
+                          <div className="w-6 h-6 rounded-full bg-[#25D366] flex items-center justify-center text-black font-black text-[10px]">
+                            <Bot className="w-3.5 h-3.5 text-white" />
+                          </div>
+                          <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-[#25D366] border border-[#0b141a]" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-[11px] text-white leading-tight">Qriblo Virtual Assistant</p>
+                          <p className="text-[9px] text-[#25D366] leading-none">Online • replies instantly</p>
+                        </div>
+                      </div>
+                      <span className="text-[9px] text-white/40">WhatsApp</span>
+                    </div>
+
+                    {/* Customer message */}
+                    <div className="flex flex-col items-end">
+                      <div className="max-w-[85%] rounded-2xl rounded-tr-xs bg-[#005c4b] text-white/95 px-3 py-2 text-[11px] leading-relaxed">
+                        <p>Hello! Is the Party Jollof & Turkey still available tonight for delivery to Lekki?</p>
+                        <span className="block text-right text-[8px] text-white/60 mt-1">11:32 PM</span>
+                      </div>
+                    </div>
+
+                    {/* Bot message */}
+                    <div className="flex flex-col items-start">
+                      <div className="max-w-[92%] rounded-2xl rounded-tl-xs bg-[#202c33] text-white/95 px-3 py-2 text-[11px] leading-relaxed border border-white/5">
+                        <p>Yes, available right now! 🔥</p>
+                        <p className="mt-1 text-white/80">₦4,500 + ₦1,200 express delivery (arrives in ~30 mins). Click below to complete your order:</p>
+                        <div className="mt-2 p-2 rounded-xl bg-white/10 flex items-center justify-between gap-2 border border-white/10">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg bg-[#c36f4d] flex items-center justify-center">
+                              <ShoppingBag className="w-3.5 h-3.5 text-white" />
+                            </div>
+                            <div>
+                              <p className="font-bold text-[10px]">Party Jollof + Turkey</p>
+                              <p className="text-[9px] text-[#25D366] font-bold">₦4,500</p>
+                            </div>
+                          </div>
+                          <span className="px-2 py-1 rounded-lg bg-[#25D366] text-black font-black text-[9px]">
+                            Order now
+                          </span>
+                        </div>
+                        <span className="block text-right text-[8px] text-white/40 mt-1">11:32 PM ✓✓</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </section>
 
@@ -237,7 +334,7 @@ export default function HomePage() {
         <section className="max-w-5xl mx-auto px-4 py-8">
           <div className="grid sm:grid-cols-3 gap-3">
             {[
-              ['yourbrand', '.qriblo.com', 'Every Pro business gets their own personal subdomain for a clean, standout web presence.'],
+              ['yourbrand', '.qriblo.com', 'Every business gets their own personal brand page for a clean, standout presence.'],
               ['24/7', 'Virtual Assistant', 'Learns your business context, handles appointments, and captures order requests while you sleep.'],
               ['100%', 'WhatsApp First', 'Turn visitors into direct chats — bookings, menu orders, and inquiries land straight in WhatsApp.'],
             ].map(([value, label, text]) => (
@@ -407,7 +504,7 @@ export default function HomePage() {
         <section className="max-w-5xl mx-auto px-4 pb-16">
           <div className="text-center mb-10">
             <p className="text-xs uppercase tracking-[.16em] font-bold text-[#B84D34] mb-3">What you get</p>
-            <h2 className="text-3xl sm:text-4xl font-black">More than a storefront. Easier than a website.</h2>
+            <h2 className="text-3xl sm:text-4xl font-black">More than a storefront. A complete home for your brand.</h2>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -418,7 +515,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-black mb-2">Personal Subdomain & Link</h3>
               <p className="text-sm text-[#5a4870] leading-relaxed">
-                Give your business its own personal subdomain (<span className="font-bold">yourbrand.qriblo.com</span>) on Pro, complete with your logo, story, catalog, and socials.
+                Give your business its own digital home (<span className="font-bold">yourbrand.qriblo.com</span>), complete with your logo, story, catalog, and socials.
               </p>
             </div>
 
@@ -440,7 +537,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-black mb-2">Always on assistant</h3>
               <p className="text-sm text-[#6b3d0c] leading-relaxed">
-                Train it for free in your dashboard. On Pro, it goes live on your page and answers with your catalog, business rules, current time, and chat history in mind.
+                Your virtual assistant lives on your page and answers with your catalog, business rules, current time, and chat history in mind.
               </p>
             </div>
 
@@ -451,7 +548,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-black mb-2">Build real trust</h3>
               <p className="text-sm text-[#6b1f3e] leading-relaxed">
-                Customer reviews, upvotes, and a Pro Verified badge signal to every visitor that you&apos;re a serious brand.
+                Customer reviews, upvotes, and a Verified badge signal to every visitor that you&apos;re a serious brand.
               </p>
             </div>
 
@@ -462,7 +559,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-black mb-2">Know your audience</h3>
               <p className="text-sm text-[#1e3570] leading-relaxed">
-                See how many people view your page. Understand what&apos;s working and grow with real data, not guesswork.
+                See how many people view your catalog. Understand what&apos;s working and grow with real data, not guesswork.
               </p>
             </div>
           </div>
@@ -535,7 +632,7 @@ export default function HomePage() {
                 bg: "#e8f5ee"
               },
               {
-                quote: "Upgrading to Pro was the best decision. Having my own themed website makes my skincare brand look so much more expensive and trustworthy.",
+                quote: "Moving to Qriblo was the best decision. Having my own themed brand page makes my skincare brand look so much more expensive and trustworthy.",
                 name: "Chioma B.",
                 business: "Beauty Store",
                 bg: "#f0e8ff"
@@ -566,14 +663,11 @@ export default function HomePage() {
                 Your next customer should meet your brand, not a confusing list of links.
               </h2>
               <p className="mt-4 max-w-lg mx-auto text-white/70 mb-8 leading-relaxed">
-                Claim your brand link free, then grow into the complete Pro experience when you&apos;re ready.
+                Claim your brand link and stop losing sales in the DMs.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link href="/signup" className="inline-flex items-center gap-2 rounded-xl bg-white text-[#B84D34] px-6 py-3.5 font-bold hover:bg-[#FDF8F3] transition-colors w-full sm:w-auto justify-center">
-                  Claim your free link <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link href="/pricing" className="inline-flex items-center gap-2 rounded-xl bg-white/10 border border-white/20 text-white px-6 py-3.5 font-bold hover:bg-white/20 transition-colors w-full sm:w-auto justify-center">
-                  See pricing
+                  Create your free link <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>
