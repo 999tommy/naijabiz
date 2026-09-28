@@ -52,7 +52,8 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
         {
             name: 'Virtual Assistant',
             href: '/dashboard/ai',
-            icon: Bot
+            icon: Bot,
+            proOnly: true
         },
         {
             name: 'Analytics',
@@ -71,7 +72,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
     const isPro = user.plan === 'pro'
 
     return (
-        <div className="min-h-screen bg-cream-50">
+        <div className="qr-dashboard-shell">
             {/* Mobile sidebar backdrop */}
             {sidebarOpen && (
                 <div
@@ -82,15 +83,14 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
 
             {/* Sidebar */}
             <aside className={cn(
-                "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform lg:translate-x-0",
+                "qr-dashboard-sidebar fixed inset-y-0 left-0 z-50 w-64 border-r transform transition-transform lg:translate-x-0",
                 sidebarOpen ? "translate-x-0" : "-translate-x-full"
             )}>
                 <div className="flex flex-col h-full">
                     {/* Logo */}
-                    <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
+                    <div className="qr-sidebar-brand flex items-center justify-between h-16 px-4 border-b">
                         <Link href="/" className="flex items-center gap-2">
-                            <Image src="/logo.png" alt="Qriblo" width={32} height={32} />
-                            <span className="font-bold text-gray-900">Qriblo</span>
+                            <Image src="/smal-logo.png" alt="Qriblo" width={32} height={32} />
                         </Link>
                         <button
                             onClick={() => setSidebarOpen(false)}
@@ -117,7 +117,13 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                                 </div>
                             )}
                             <div className="flex-1 min-w-0">
-                                <p className="font-medium text-gray-900 truncate">{user.business_name || 'Your Business'}</p>
+                                {user.business_slug ? (
+                                    <Link href={`/${user.business_slug}`} target="_blank" rel="noopener noreferrer" className="qr-business-name font-medium truncate hover:underline">
+                                        {user.business_name || 'Your Business'}
+                                    </Link>
+                                ) : (
+                                    <p className="qr-business-name font-medium truncate">{user.business_name || 'Your Business'}</p>
+                                )}
                                 <div className="flex items-center gap-1">
                                     {isPro ? (
                                         <span className="text-xs text-orange-600 font-medium flex items-center gap-1">
@@ -133,7 +139,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
 
                         {user.business_slug && (
                             <div className="mt-3 pt-3 border-t border-gray-100">
-                                <p className="text-[11px] font-mono text-gray-400 truncate mb-1">
+                                <p className="qr-business-url text-[11px] font-mono truncate mb-1">
                                     {isPro ? `${user.business_slug}.qriblo.com` : `qriblo.com/${user.business_slug}`}
                                 </p>
                                 <Link
@@ -158,11 +164,9 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                                 <Link
                                     key={item.name}
                                     href={isLocked ? '/dashboard/settings#upgrade' : item.href}
+                                    aria-current={isActive ? 'page' : undefined}
                                     className={cn(
-                                        "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                                        isActive
-                                            ? "bg-orange-100 text-orange-700"
-                                            : "text-gray-600 hover:bg-gray-100",
+                                        "qr-dashboard-navlink flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium",
                                         isLocked && "opacity-60"
                                     )}
                                 >
@@ -180,15 +184,15 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
 
                     {/* Upgrade banner (for free users) */}
                     {!isPro && (
-                        <div className="p-4 border-t border-gray-200">
-                            <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg p-4 text-white">
+                        <div className="p-4 border-t border-white/10">
+                            <div className="rounded-2xl border border-white/10 bg-white/8 p-4 text-white">
                                 <p className="font-semibold mb-1">Upgrade to Pro</p>
                                 <p className="text-xs text-orange-100 mb-3">
                                     Get your personal brand subdomain ({user.business_slug || 'brand'}.qriblo.com), verified badge & more!
                                 </p>
                                 <Link
                                     href="/dashboard/settings#upgrade"
-                                    className="block text-center bg-white text-orange-600 rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-50 transition-colors"
+                                    className="block text-center bg-[#f4c7a1] text-[#66351f] rounded-xl px-4 py-2.5 text-sm font-semibold hover:bg-[#fff4e6] transition-colors"
                                 >
                                     Upgrade Now - ₦2,500/mo
                                 </Link>
@@ -197,13 +201,13 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                     )}
 
                     {/* Feedback Button */}
-                    <div className="shrink-0 border-t border-gray-200 bg-white">
+                    <div className="qr-sidebar-footer shrink-0 border-t">
                         <div className="p-3">
                             <FeedbackModal />
                         </div>
                         <button
                             onClick={handleLogout}
-                            className="flex items-center gap-3 w-full px-6 py-3 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+                            className="flex items-center gap-3 w-full px-6 py-3 text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white transition-colors"
                         >
                             <LogOut className="w-5 h-5" />
                             Sign Out
@@ -215,7 +219,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
             {/* Main content */}
             <div className="lg:pl-64">
                 {/* Top bar */}
-                <header className="sticky top-0 z-30 h-16 bg-gradient-to-r from-gray-50 to-white backdrop-blur border-b border-gray-100 flex items-center px-4 shadow-sm">
+                <header className="qr-dashboard-topbar sticky top-0 z-30 h-16 border-b flex items-center px-4">
                     <button
                         onClick={() => setSidebarOpen(true)}
                         className="lg:hidden p-2 text-gray-600 hover:text-gray-900 flex items-center gap-2"
@@ -226,7 +230,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                 </header>
 
                 {/* Page content */}
-                <main className="p-4 sm:p-6">
+                <main className="qr-dashboard-content">
                     {children}
                 </main>
             </div>

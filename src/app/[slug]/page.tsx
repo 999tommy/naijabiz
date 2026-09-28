@@ -105,7 +105,8 @@ export async function generateMetadata({ params }: BusinessPageProps): Promise<M
     const isSubdomainRequest = hostWithoutPort === `${slug}.qriblo.com` || hostWithoutPort === `${slug}.localhost`
     const protocol = host.includes('localhost') ? 'http' : 'https'
     const origin = `${protocol}://${host}`
-    const businessUrl = isSubdomainRequest ? origin : `${origin}/${slug}`
+    const siteBaseUrl = (process.env.NEXT_PUBLIC_BASE_URL || 'https://qriblo.com').replace(/\/$/, '')
+    const businessUrl = isSubdomainRequest ? origin : `${siteBaseUrl}/${slug}`
     const isPro = business.plan === 'pro'
     const title = `${business.business_name}${isPro ? ' – Official Store' : ''} | Qriblo`
     const description = business.description || `Shop ${business.business_name} on Qriblo. View products, prices, and order via WhatsApp.`
@@ -113,7 +114,7 @@ export async function generateMetadata({ params }: BusinessPageProps): Promise<M
     return {
         title,
         description,
-        metadataBase: new URL(origin),
+        metadataBase: new URL(siteBaseUrl),
         alternates: { canonical: businessUrl },
         openGraph: { title, description, type: 'website', url: businessUrl, images: [{ url: imageUrl, width: 1200, height: 630, alt: business.business_name }] },
         twitter: { card: 'summary_large_image', title, description, images: [imageUrl] },
@@ -142,7 +143,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
     recordPageView(business.id)
 
     const whatsappLink = (business.plan === 'pro' && business.wa_whatsapp_enabled)
-        ? `https://wa.me/2347047207012?text=hi%20${business.business_slug}`
+        ? `https://wa.me/2347047027012?text=hi%20${business.business_slug}`
         : business.whatsapp_number ? `https://wa.me/${business.whatsapp_number}` : null;
 
     const isVerified = isPro
@@ -150,12 +151,14 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
         ? (reviews.reduce((sum: number, review: Review) => sum + review.rating, 0) / reviews.length).toFixed(1)
         : null
     const theme = getWebsiteTheme(business.category?.slug, business.category?.name, slug, business.business_type)
+    const siteBaseUrl = (process.env.NEXT_PUBLIC_BASE_URL || 'https://qriblo.com').replace(/\/$/, '')
+    const profileUrl = isSubdomainRequest ? `${host.includes('localhost') ? 'http' : 'https'}://${host}` : `${siteBaseUrl}/${slug}`
 
     const jsonLd = {
-        '@context': 'https://schema.org', '@type': 'Store',
+        '@context': 'https://schema.org', '@type': business.business_type === 'services' ? 'ProfessionalService' : 'Store',
         name: business.business_name, description: business.description,
-        image: business.logo_url || 'https://qriblo.com/logo.png',
-        url: `https://qriblo.com/${business.business_slug}`,
+        image: business.logo_url || `${siteBaseUrl}/logo.png`,
+        url: profileUrl,
         telephone: business.whatsapp_number ? `+${business.whatsapp_number}` : undefined,
         address: { '@type': 'PostalAddress', addressCountry: 'NG', addressLocality: business.location || 'Nigeria' },
         ...(isPro ? { priceRange: '$$', aggregateRating: reviews.length > 0 ? { '@type': 'AggregateRating', ratingValue: averageRating, reviewCount: reviews.length, bestRating: '5', worstRating: '1' } : undefined } : {})
@@ -181,9 +184,9 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
     // ── PRODUCT BUSINESSES – FREE ──────────────────────────────────────────────
     if (!isPro) {
         return (
-            <div className="min-h-screen bg-gray-50">
+            <div className="qr-brand-storefront">
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-                <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+                <header className="sticky top-0 z-50 border-b">
                     <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
                         <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
                             <Image src="/logo.png" alt="Qriblo" width={24} height={24} className="opacity-80" />
@@ -209,7 +212,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
                     </div>
                 </header>
 
-                <div className="bg-white border-b border-gray-200">
+                <div className="qr-brand-intro border-b">
                     <div className="max-w-4xl mx-auto px-4 py-8">
                         <div className="flex flex-col sm:flex-row items-start gap-6">
                             <div className="flex-shrink-0">
@@ -292,7 +295,7 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
 
     // ── PRODUCT BUSINESSES – PRO: Unified brand page + inline catalog ──────────
     return (
-        <div style={{ background: theme.pageBg, color: theme.bodyText, minHeight: '100vh' }}>
+        <div className="qr-brand-page" style={{ background: theme.pageBg, color: theme.bodyText, minHeight: '100vh' }}>
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
             {/* NAVBAR */}

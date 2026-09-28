@@ -53,18 +53,14 @@ export function SubdomainLinkCard({ businessSlug, isPro }: SubdomainLinkCardProp
                     </div>
                 </div>
 
-                <button
-                    onClick={handleCopy}
-                    className="w-full group flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-white border border-[#B84D34]/15 hover:border-[#B84D34]/40 hover:bg-[#fff8f6] transition-all duration-200 shadow-sm"
-                    title="Click to copy your subdomain link"
-                >
-                    <div className="flex items-center gap-2 min-w-0">
+                <div className="w-full group flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-white border border-[#B84D34]/15 shadow-sm">
+                    <Link href={`/${businessSlug}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 min-w-0 hover:underline" title="Open your brand page">
                         <div className="w-2 h-2 rounded-full bg-[#4ade80] flex-shrink-0 animate-pulse" />
                         <span className="font-mono text-sm font-semibold text-[#1E1410] truncate">
                             {subdomainUrl}
                         </span>
-                    </div>
-                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                    </Link>
+                    <button onClick={handleCopy} className="flex items-center gap-1.5 flex-shrink-0" title="Copy your subdomain link" aria-label="Copy your subdomain link">
                         {copied ? (
                             <>
                                 <Check className="w-4 h-4 text-[#4ade80]" />
@@ -76,8 +72,8 @@ export function SubdomainLinkCard({ businessSlug, isPro }: SubdomainLinkCardProp
                                 <span className="text-xs font-semibold text-[#6B5850] group-hover:text-[#B84D34] transition-colors hidden sm:inline">Copy link</span>
                             </>
                         )}
-                    </div>
-                </button>
+                    </button>
+                </div>
 
                 <div className="mt-3 flex items-center justify-between">
                     <p className="text-[11px] text-[#6B5850]">
@@ -114,11 +110,12 @@ export function SubdomainLinkCard({ businessSlug, isPro }: SubdomainLinkCardProp
                 </div>
             </div>
 
-            <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-gray-200">
-                <span className="font-mono text-sm font-semibold text-gray-700 truncate flex-1">
+            <Link href={`/${businessSlug}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-gray-200 hover:border-orange-300">
+                <span className="font-mono text-sm font-semibold text-gray-700 truncate flex-1 hover:underline">
                     qriblo.com/{businessSlug}
                 </span>
-            </div>
+                <ArrowRight className="w-4 h-4 shrink-0 text-gray-500" />
+            </Link>
 
             <div className="mt-3 flex items-center justify-between">
                 <p className="text-[11px] text-gray-400">

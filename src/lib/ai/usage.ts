@@ -22,7 +22,8 @@ export function getDailyAiUsageState(business: UsageTrackedBusiness, now = new D
     
     const shouldReset = !lastReset || Number.isNaN(lastReset.getTime()) || resetKey !== currentKey
     const usage = shouldReset ? 0 : business.ai_usage_count || 0
-    const limit = PRO_MONTHLY_AI_USAGE_LIMIT
+    // Free accounts do not receive customer-facing assistant messages.
+    const limit = business.plan === 'pro' ? PRO_MONTHLY_AI_USAGE_LIMIT : 0
 
     return {
         limit,

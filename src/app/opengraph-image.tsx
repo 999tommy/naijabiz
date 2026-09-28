@@ -1,110 +1,44 @@
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
-
-export const alt = 'Qriblo - AI Storefront for Nigerian Businesses'
-export const size = {
-    width: 1200,
-    height: 630,
-}
+export const alt = 'Qriblo — a professional home for your brand'
+export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
 export default async function Image() {
-    return new ImageResponse(
-        (
-            <div
-                style={{
-                    background: 'linear-gradient(to bottom right, #faf8f3, #ffffff)',
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontFamily: 'sans-serif',
-                    padding: '60px',
-                    textAlign: 'center',
-                    position: 'relative',
-                }}
-            >
-                {/* Background Decor */}
-                <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '40%', height: '40%', background: 'radial-gradient(circle, rgba(234,88,12,0.1) 0%, transparent 70%)', borderRadius: '50%' }} />
-                <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '40%', height: '40%', background: 'radial-gradient(circle, rgba(234,88,12,0.1) 0%, transparent 70%)', borderRadius: '50%' }} />
-
-                {/* Badge */}
-                <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        backgroundColor: '#fff7ed',
-                        border: '2px solid #fed7aa',
-                        borderRadius: '50px',
-                        padding: '12px 32px',
-                        marginBottom: '40px',
-                        boxShadow: '0 4px 12px rgba(234,88,12,0.1)',
-                    }}
-                >
-                    <span style={{ fontSize: '24px', marginRight: '12px' }}>🤖</span>
-                    <span
-                        style={{
-                            fontSize: '24px',
-                            fontWeight: 'bold',
-                            color: '#c2410c', // Orange-700
-                        }}
-                    >
-                        New: AI Sales Assistant Included
-                    </span>
-                </div>
-
-                {/* Headline */}
-                <div
-                    style={{
-                        fontSize: '80px',
-                        fontWeight: '800',
-                        color: '#1a1a1a',
-                        lineHeight: '1.1',
-                        marginBottom: '24px',
-                        letterSpacing: '-0.02em',
-                        backgroundClip: 'text',
-                    }}
-                >
-                    Your brand needs an <span style={{ color: '#ea580c' }}>AI-powered</span> online page.
-                </div>
-
-                {/* Subheadline */}
-                <div
-                    style={{
-                        fontSize: '32px',
-                        color: '#4b5563',
-                        maxWidth: '900px',
-                        lineHeight: '1.5',
-                        marginBottom: '50px',
-                    }}
-                >
-                    Create a free professional store for your Nigerian business.
-                    <br />
-                    Replies to WhatsApp customers while you sleep.
-                </div>
-
-                {/* URL */}
-                <div
-                    style={{
-                        fontSize: '32px',
-                        fontWeight: 'bold',
-                        color: '#1a1a1a',
-                        display: 'flex',
-                        alignItems: 'center',
-                        backgroundColor: '#ffffff',
-                        padding: '16px 40px',
-                        borderRadius: '16px',
-                        boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-                        border: '1px solid #e5e7eb',
-                    }}
-                >
-                    qriblo.com
-                </div>
-            </div>
-        ),
-        { ...size }
-    )
+  return new ImageResponse(
+    (
+      <div style={{
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        width: '100%',
+        height: '100%',
+        padding: '58px 72px',
+        overflow: 'hidden',
+        color: '#fff4e6',
+        background: 'linear-gradient(135deg, #66351f 0%, #3a2028 100%)',
+        fontFamily: 'Georgia, serif',
+      }}>
+        <div style={{ position: 'absolute', top: '-270px', right: '-70px', width: '620px', height: '620px', border: '1px solid rgba(244,199,161,.24)', borderRadius: '50%' }} />
+        <div style={{ position: 'absolute', top: '-220px', right: '-20px', width: '520px', height: '520px', border: '1px solid rgba(244,199,161,.17)', borderRadius: '50%' }} />
+        <div style={{ position: 'absolute', right: '140px', bottom: '60px', width: '180px', height: '180px', borderRadius: '50%', background: 'rgba(244,199,161,.06)' }} />
+        <div style={{ zIndex: 1, display: 'flex', alignItems: 'center', gap: '12px', fontSize: '29px', letterSpacing: '-1px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '50%', color: '#66351f', background: '#f4c7a1', fontSize: '23px' }}>Q</div>
+          Qriblo
+        </div>
+        <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', maxWidth: '920px' }}>
+          <div style={{ marginBottom: '22px', color: '#f4c7a1', fontFamily: 'Arial, sans-serif', fontSize: '15px', fontWeight: 700, letterSpacing: '3px' }}>YOUR brand, A LITTLE CLOSER</div>
+          <div style={{ fontSize: '65px', lineHeight: 1.08, letterSpacing: '-2px' }}>A professional home<br />for your brand.</div>
+          <div style={{ maxWidth: '760px', marginTop: '22px', color: 'rgba(255,244,230,.76)', fontFamily: 'Arial, sans-serif', fontSize: '23px', lineHeight: 1.45 }}>Show what you offer. Help customers browse, ask questions, place orders, and request appointments.</div>
+        </div>
+        <div style={{ zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '20px', borderTop: '1px solid rgba(255,244,230,.18)', color: 'rgba(255,244,230,.7)', fontFamily: 'Arial, sans-serif', fontSize: '16px' }}>
+          <span>Made for the brandes bringing us closer.</span>
+          <span style={{ color: '#f4c7a1', fontWeight: 700, letterSpacing: '1px' }}>QRIBLO.COM</span>
+        </div>
+      </div>
+    ),
+    { ...size },
+  )
 }

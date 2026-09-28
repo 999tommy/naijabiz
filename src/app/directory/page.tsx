@@ -6,8 +6,15 @@ import { Button } from '@/components/ui/button'
 import SplitText from '@/components/ui/SplitText'
 import BlurText from '@/components/ui/BlurText'
 import { ArrowLeft } from 'lucide-react'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+export const metadata: Metadata = {
+    title: 'Discover Nigerian businesses',
+    description: 'Search Qriblo to discover Nigerian product sellers, service providers, shops, and local businesses.',
+    alternates: { canonical: '/directory' },
+    openGraph: { title: 'Discover Nigerian businesses | Qriblo', description: 'Browse businesses, products, and services on Qriblo.', url: '/directory' },
+}
 
 async function getInitialBusinesses() {
     const supabase = await createClient()
@@ -15,6 +22,7 @@ async function getInitialBusinesses() {
         .from('users')
         .select('*, category:categories(*)')
         .not('business_name', 'is', null)
+        .not('business_slug', 'is', null)
 
         .order('plan', { ascending: false })
         .order('created_at', { ascending: false })

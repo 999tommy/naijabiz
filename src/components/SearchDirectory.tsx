@@ -46,12 +46,16 @@ export function SearchDirectory({ initialBusinesses = [], showFilters = true, li
                 .from('users')
                 .select('*, category:categories(*)')
                 .not('business_name', 'is', null)
+                .not('business_slug', 'is', null)
 
                 .order('plan', { ascending: false })
                 .order('created_at', { ascending: false })
 
             if (searchQuery) {
-                query = query.ilike('business_name', `%${searchQuery}%`)
+                const searchTerm = searchQuery.trim().replace(/[,%()]/g, ' ').slice(0, 100)
+                if (searchTerm) {
+                    query = query.or(`business_name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%`)
+                }
             }
 
             if (selectedCategory) {
@@ -93,7 +97,8 @@ export function SearchDirectory({ initialBusinesses = [], showFilters = true, li
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <Input
-                        type="text"
+                        type="search"
+                        aria-label="Search business names, products, services, or locations"
                         placeholder="Search businesses..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}

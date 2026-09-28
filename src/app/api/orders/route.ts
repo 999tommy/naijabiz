@@ -16,7 +16,7 @@ export async function POST(req: Request) {
             .insert({
                 user_id: business_id,
                 customer_name,
-                customer_contact: customer_contact || 'Via AI Chat',
+                customer_contact: customer_contact || 'Via virtual assistant chat',
                 items,
                 total_amount,
                 order_method: order_method || 'whatsapp',

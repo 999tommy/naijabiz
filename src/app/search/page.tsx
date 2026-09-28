@@ -6,16 +6,22 @@ import { VerifiedBadge } from '@/components/VerifiedBadge'
 import { UpvoteButton } from '@/components/UpvoteButton'
 import { SearchSection } from '@/components/SearchSection'
 import { ArrowLeft, MapPin } from 'lucide-react'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+export const metadata: Metadata = {
+    title: 'Search businesses',
+    description: 'Search Qriblo businesses by name, product, service, or location.',
+    robots: { index: false, follow: true },
+}
 
 export default async function SearchPage({
     searchParams,
 }: {
-    searchParams: Promise<{ q: string, c: string }>
+    searchParams: Promise<{ q?: string, c?: string }>
 }) {
     const params = await searchParams
-    const query = params.q || ''
+    const query = (params.q || '').replace(/[,%()]/g, ' ').trim().slice(0, 100)
     const categoryQuery = params.c || ''
     const supabase = await createClient()
 
@@ -28,6 +34,8 @@ export default async function SearchPage({
     let queryBuilder = supabase
         .from('users')
         .select('id, business_name, business_slug, description, logo_url, upvotes, is_verified, plan, location, category_id, category:categories(name, slug)')
+        .not('business_name', 'is', null)
+        .not('business_slug', 'is', null)
 
     if (query) {
         queryBuilder = queryBuilder.or(`business_name.ilike.%${query}%,description.ilike.%${query}%,location.ilike.%${query}%`)
@@ -70,17 +78,17 @@ export default async function SearchPage({
             </nav>
 
             <div className="max-w-3xl mx-auto px-4 py-8">
-                <SearchSection />
+                <SearchSection initialQuery={query} />
 
                 {/* Categories */}
                 <div className="flex overflow-x-auto py-4 gap-2 no-scrollbar mb-4 border-b border-gray-100">
-                    <Link href={`/search${query ? `?q=${query}` : ''}`}>
+                    <Link href={`/search${query ? `?q=${encodeURIComponent(query)}` : ''}`}>
                         <div className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${!categoryQuery ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
                             All
                         </div>
                     </Link>
                     {categories.map((cat: any) => (
-                        <Link key={cat.id} href={`/search?${query ? `q=${query}&` : ''}c=${cat.slug}`}>
+                        <Link key={cat.id} href={`/search?${query ? `q=${encodeURIComponent(query)}&` : ''}c=${encodeURIComponent(cat.slug)}`}>
                             <div className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${categoryQuery === cat.slug ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
                                 {cat.name}
                             </div>

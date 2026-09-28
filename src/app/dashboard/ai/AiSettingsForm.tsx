@@ -30,15 +30,13 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
     const [saveStatus, setSaveStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
     const [waEnabled, setWaEnabled] = useState(Boolean(user.wa_whatsapp_enabled))
     const isPro = user.plan === 'pro'
-    const limit = PRO_MONTHLY_AI_USAGE_LIMIT
-    const currentUsagePeriod = isPro
-        ? new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 10)
-        : new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 7)
+    const limit = isPro ? PRO_MONTHLY_AI_USAGE_LIMIT : 0
+    const currentUsagePeriod = new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 7)
     const hasFreshUsage = user.ai_last_reset_at
-        ? new Date(new Date(user.ai_last_reset_at).getTime() + 60 * 60 * 1000).toISOString().slice(0, isPro ? 10 : 7) === currentUsagePeriod
+        ? new Date(new Date(user.ai_last_reset_at).getTime() + 60 * 60 * 1000).toISOString().slice(0, 7) === currentUsagePeriod
         : false
     const dailyUsageCount = hasFreshUsage ? user.ai_usage_count || 0 : 0
-    const usagePercent = Math.min((dailyUsageCount / limit) * 100, 100)
+    const usagePercent = limit === 0 ? 0 : Math.min((dailyUsageCount / limit) * 100, 100)
 
     // Interactive Sandbox state
     const [sandboxMessages, setSandboxMessages] = useState<SandboxMessage[]>([
@@ -78,7 +76,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
         }
     }
 
-    // Send test chat to AI endpoint using sandbox
+    // Send a test chat to the assistant endpoint using sandbox
     const handleSandboxSend = async (e?: React.FormEvent) => {
         e?.preventDefault()
         if (!sandboxInput.trim() || sandboxLoading) return
@@ -90,7 +88,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
         setSandboxLoading(true)
 
         try {
-            // Call AI chat route using user ID
+            // Call the assistant chat route using user ID
             const res = await fetch('/api/ai/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -104,10 +102,10 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
             if (!res.ok) {
                 const data = await res.json().catch(() => ({}))
                 if (data.error === 'LIMIT_REACHED') {
-                    setSandboxMessages(prev => [...prev, { role: 'assistant', content: isPro ? "Today's chat limit has been reached. Please try again tomorrow." : 'Your 100 free Virtual Assistant messages for this month have been used.', sentAt: new Date().toISOString() }])
+                    setSandboxMessages(prev => [...prev, { role: 'assistant', content: "The virtual assistant has reached its monthly message limit. Please try again next month.", sentAt: new Date().toISOString() }])
                     return
                 }
-                throw new Error(data.error || 'Failed to reach AI')
+                throw new Error(data.error || 'Could not reach the virtual assistant')
             }
 
             const data = await res.json()
@@ -127,7 +125,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                     <div className="space-y-1">
                         <h2 className="text-lg font-bold text-gray-900">Virtual Assistant is available on your page</h2>
                         <p className="text-gray-600 text-sm max-w-xl">
-                            Pro plan includes {PRO_MONTHLY_AI_USAGE_LIMIT} assistant messages per month.
+                            Compare plans to see what each one includes.
                         </p>
                     </div>
                     <Link href="/pricing">
@@ -139,7 +137,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                 </div>
             )}
 
-            {/* AI Configuration Form */}
+            {/* Virtual Assistant Configuration Form */}
             <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} onChange={() => setSaveStatus(null)}>
                 <Card className="shadow-md border-gray-200">
                     <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100">
@@ -215,7 +213,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                             </div>
                         </div>
 
-                        {/* AI Persona Selection */}
+                        {/* Assistant Style Selection */}
                         <div className="space-y-2">
                             <Label className="flex items-center gap-2 font-bold text-gray-800">
                                 <MessageSquareText className="w-4 h-4 text-orange-600" />
@@ -344,7 +342,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                     <Briefcase className="w-4 h-4 text-orange-600" />
                                     Payment Details
                                 </Label>
-                                <p className="text-xs text-gray-500 mb-3">Provide your bank account details. The AI will use this to collect payments when finalizing an order.</p>
+                                <p className="text-xs text-gray-500 mb-3">Provide your bank account details. The virtual assistant can share these payment details after a customer confirms an order request.</p>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
@@ -368,7 +366,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                             </div>
                         </div>
 
-                        {/* WhatsApp AI Routing (Central Model) */}
+                        {/* WhatsApp Assistant Routing (Central Model) */}
                         <div className="space-y-4 pt-6 border-t border-gray-100">
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border border-green-100 p-4 rounded-xl bg-green-50/40 gap-4">
                                 <Label htmlFor="wa_whatsapp_enabled" className="flex flex-col space-y-1 cursor-pointer">
@@ -380,7 +378,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                         )}
                                     </span>
                                     <span className="font-normal text-sm text-gray-500 max-w-xl">
-                                        Allow customers to order from you directly via Qriblo's central WhatsApp AI. We provide you with a custom WhatsApp link to share on your Instagram or link-in-bio.
+                                        Customers can message Qriblo on WhatsApp and ask to connect with your business. Share your Qriblo WhatsApp link on Instagram or in your bio.
                                     </span>
                                 </Label>
                                 {isPro ? (
@@ -402,18 +400,18 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                 <div className="bg-white border border-green-200 p-4 rounded-xl space-y-3 shadow-sm">
                                     <h4 className="font-bold text-green-900 text-sm">Your Custom WhatsApp Link</h4>
                                     <p className="text-xs text-gray-600">
-                                        Share this link with your customers. When they click it, it opens WhatsApp with a pre-filled message that routes them directly to your AI assistant.
+                                        Share this link with your customers. When they click it, it opens WhatsApp with a message that helps route them to your business's virtual assistant.
                                     </p>
                                     <div className="flex gap-2 items-center">
                                         <div className="flex-1 bg-gray-50 p-3 text-sm font-mono border border-gray-200 rounded-lg text-gray-800 truncate">
-                                            https://wa.me/2347047207012?text=hi%20{user.business_slug}
+                                            https://wa.me/2347047027012?text=hi%20{user.business_slug}
                                         </div>
                                         <Button 
                                             type="button" 
                                             variant="outline"
                                             className="shrink-0 text-green-700 border-green-200 hover:bg-green-50"
                                             onClick={() => {
-                                                navigator.clipboard.writeText(`https://wa.me/2347047207012?text=hi%20${user.business_slug}`)
+                                                navigator.clipboard.writeText(`https://wa.me/2347047027012?text=hi%20${user.business_slug}`)
                                                 toast('Link copied!')
                                             }}
                                         >
@@ -491,7 +489,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                             <div className="flex justify-start">
                                 <div className="bg-white rounded-2xl px-4 py-2.5 border border-gray-200 text-xs text-gray-500 flex items-center gap-2">
                                     <BrandThinkingOrb state="working" size={20} />
-                                    AI is thinking...
+                                    Writing a reply...
                                 </div>
                             </div>
                         )}

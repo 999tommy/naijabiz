@@ -31,7 +31,7 @@ export default async function AiDashboardPage() {
             <div className="max-w-3xl mx-auto">
                 <div className="mb-6">
                     <h1 className="text-2xl font-bold text-gray-900">Virtual Assistant</h1>
-                    <p className="text-gray-500">Train your automated receptionist to answer product questions, service inquiries, orders, and booking requests.</p>
+                    <p className="text-gray-500">Set up your virtual assistant to answer product and service questions, and collect order or booking requests.</p>
                 </div>
                 <AiSettingsForm user={checkedUser} />
             </div>

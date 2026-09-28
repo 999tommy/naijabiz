@@ -78,7 +78,7 @@ export function OnboardingAssistant({ user, productCount }: OnboardingAssistantP
     // For now, let's always show it to be helpful.
 
     return (
-        <div className="mb-8 bg-white rounded-xl border border-orange-100 shadow-sm overflow-hidden">
+        <div className="qr-onboarding-card mb-8 bg-white rounded-2xl border border-orange-100 shadow-sm overflow-hidden">
             <div className="bg-gradient-to-r from-orange-50 to-white p-6 border-b border-orange-100">
                 <div className="flex items-center gap-2 mb-2">
                     <Target className="w-5 h-5 text-orange-500" />

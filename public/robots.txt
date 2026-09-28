@@ -1,7 +1,9 @@
 User-agent: *
 Allow: /
-Disallow: /dashboard/
+Disallow: /dashboard
 Disallow: /admin/
 Disallow: /api/
+Disallow: /agents/dashboard
+Disallow: /herexcellence/dashboard
 
-Sitemap: https://naijabiz.org/sitemap.xml
+Sitemap: https://www.qriblo.com/sitemap.xml

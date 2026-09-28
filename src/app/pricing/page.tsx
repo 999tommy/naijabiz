@@ -3,11 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Button } from '@/components/ui/button'
 import { VerifiedBadge } from '@/components/VerifiedBadge'
-import BorderBeam from 'border-beam'
-import BlurText from '@/components/ui/BlurText'
-import SplitText from '@/components/ui/SplitText'
 import {
   CheckCircle2,
   ArrowRight,
@@ -25,7 +21,7 @@ import {
 const freeFeatures = [
   {
     icon: Globe2,
-    section: 'Your Brand Page',
+    section: 'Your Qriblo Page',
     color: '#7c5cbf',
     items: [
       'Standard business link (qriblo.com/yourbrand)',
@@ -90,8 +86,8 @@ const proFeatures = [
     section: 'Virtual Assistant',
     color: '#b45309',
     items: [
-      '24/7 Virtual Assistant on your page and WhatsApp',
-      '500 automated virtual assistant responses per month',
+      'Virtual assistant on your page and WhatsApp',
+      '500 assistant messages per month',
       'Answers product and pricing questions automatically',
       'Understands current date, time, and recent chat context',
       'Handles booking and appointment management',
@@ -181,19 +177,19 @@ function FeatureAccordion({
 const faqs = [
   {
     q: 'Do I get my own personal brand subdomain?',
-    a: 'Yes! Pro subscribers get their own dedicated brand subdomain (e.g. yourbrand.qriblo.com), giving your business an instant, clean, professional website address. Free accounts use standard qriblo.com/yourbrand link routing. Both work out of the box with zero complex setup.',
+    a: 'Pro accounts use a subdomain such as yourbrand.qriblo.com. Free accounts use a Qriblo link such as qriblo.com/yourbrand.',
   },
   {
     q: 'What counts as a "catalog item"?',
-    a: 'Anything you sell or offer — a product, a service package, a booking slot, a digital download. If it has a name and a price, it counts.',
+    a: 'A product or service you list on your Qriblo page, with its name, details, and price.',
   },
   {
     q: 'How does the Virtual Assistant work?',
-    a: 'When you upgrade to Pro, your virtual assistant goes live on your page and on WhatsApp (+2347047207012). It reads your catalog, answers customer questions, checks availability, and confirms orders. It handles the entire chat, so you only get involved when it is time to collect payment and deliver.',
+    a: 'Message Qriblo on WhatsApp at +234 704 702 7012 to discover businesses, shop, place orders, or request appointments. Pro virtual assistants answer questions and collect request details; the business confirms availability, payment, and next steps. Pro includes 500 assistant messages per month; Free includes none.',
   },
   {
     q: 'What does "Pro Verified" mean?',
-    a: 'When you upgrade to Pro, you automatically get the green Verified badge on your page. It tells customers you\'re a serious, active brand — no extra steps needed.',
+    a: 'Pro pages display the Pro Verified badge.',
   },
   {
     q: 'Can I cancel anytime?',
@@ -244,295 +240,103 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 // ── Page ───────────────────────────────────────────────────────────────────────
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'quarterly' | 'biannual' | 'yearly'>('monthly')
+  const [proOpen, setProOpen] = useState(false)
 
   const getPrice = () => {
-    switch(billingCycle) {
-      case 'quarterly': return { amount: '₦6,975', period: '/ 3 mos', save: 'Save 7%' }
-      case 'biannual': return { amount: '₦13,500', period: '/ 6 mos', save: 'Save 10%' }
-      case 'yearly': return { amount: '₦20,000', period: '/ yr', save: 'Save 33%' }
-      default: return { amount: '₦2,500', period: '/ mo', save: null }
+    switch (billingCycle) {
+      case 'quarterly': return { amount: '₦6,975', period: 'every 3 months', monthly: '₦2,325 per month', save: 'Save 7%' }
+      case 'biannual': return { amount: '₦13,500', period: 'every 6 months', monthly: '₦2,250 per month', save: 'Save 10%' }
+      case 'yearly': return { amount: '₦20,000', period: 'per year', monthly: 'about ₦1,667 per month', save: 'Save 33%' }
+      default: return { amount: '₦2,500', period: 'per month', monthly: 'Billed monthly', save: null }
     }
   }
   const currentPrice = getPrice()
+  const freeHighlights = ['Your Qriblo page and business details', 'Up to 5 products or services', 'WhatsApp order or booking links', '0 virtual assistant messages per month', 'Listing in the Qriblo directory']
+  const proHighlights = ['500 virtual assistant messages per month', 'Assistant on your page and WhatsApp', 'Answers questions about your products and prices', 'Collects order and booking details', 'Unlimited products and services', 'Your own Qriblo subdomain', 'Pro Verified badge and visitor analytics']
 
   return (
-    <div className="min-h-screen bg-[#FDF8F3] text-[#1E1410]">
-
-      {/* Header */}
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-[#eadfd8]">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-black text-[#1E1410]">
-            <Image src="/logo.png" alt="Qriblo" width={32} height={32} />
-            Qriblo
-          </Link>
-          <div className="flex items-center gap-2">
-            <Link href="/login">
-              <Button variant="outline" size="sm" className="border-[#eadfd8] text-[#6B5850] hover:bg-[#f9f0ee]">Sign In</Button>
-            </Link>
-            <Link href="/signup">
-              <Button size="sm" className="bg-[#B84D34] hover:bg-[#9A3F2A] text-white">Get Started</Button>
-            </Link>
-          </div>
-        </div>
+    <div className="qr-pricing">
+      <header className="qr-pricing-nav">
+        <nav className="qr-pricing-nav-inner" aria-label="Main navigation">
+          <Link href="/" className="qr-pricing-logo" aria-label="Qriblo home"><Image src="/logo.png" alt="Qriblo" width={160} height={54} priority /></Link>
+          <div className="qr-pricing-nav-links"><Link href="/#platform">Platform</Link><Link href="/directory">Discover</Link><Link href="/pricing" aria-current="page">Pricing</Link><Link href="/agents">Agents</Link></div>
+          <div className="qr-pricing-nav-actions"><a className="qr-pricing-whatsapp" href="https://wa.me/2347047027012" target="_blank" rel="noopener noreferrer"><MessageCircle size={14}/>WhatsApp</a><Link href="/login">Log in</Link><Link className="qr-pricing-nav-cta" href="/signup">Create a professional site <ArrowRight size={15}/></Link></div>
+          <a className="qr-pricing-mobile-whatsapp" href="https://wa.me/2347047027012" aria-label="Chat with Qriblo on WhatsApp" target="_blank" rel="noopener noreferrer"><MessageCircle size={17}/></a>
+          <Link className="qr-pricing-mobile-cta" href="/signup">Create a professional site <ArrowRight size={14}/></Link>
+        </nav>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-16">
-
-        {/* Hero copy */}
-        <div className="text-center mb-12 max-w-2xl mx-auto">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#B84D34] mb-4">Pricing</p>
-          <SplitText
-            tag="h1"
-            text="Sell like a pro. Priced for the hustle."
-            splitType="words"
-            className="text-4xl sm:text-5xl font-black tracking-tight leading-tight mb-4"
-            delay={70}
-            duration={0.95}
-            rootMargin="0px"
-          />
-          <BlurText
-            text="Start for free to get your catalog online. Upgrade when you're ready for your own 24/7 virtual assistant and a custom brand address."
-            className="mx-auto max-w-xl text-lg text-[#6B5850] leading-relaxed justify-center text-center"
-            delay={50}
-            direction="bottom"
-          />
-
-          {/* Billing Toggle */}
-          <div className="mt-8 max-w-2xl mx-auto rounded-3xl border border-[#eadfd8] bg-white/90 p-2 shadow-[0_18px_45px_rgba(70,35,25,.08)]">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {billingOptions.map(option => {
-                const active = billingCycle === option.cycle
-                return (
-                  <button
-                    key={option.cycle}
-                    type="button"
-                    onClick={() => setBillingCycle(option.cycle)}
-                    aria-pressed={active}
-                    className={`min-h-[74px] rounded-2xl px-3 py-3 text-left transition-all focus-visible:ring-2 focus-visible:ring-[#B84D34]/40 ${
-                      active
-                        ? 'bg-[#1E1410] text-white shadow-[0_10px_24px_rgba(42,29,26,.18)]'
-                        : 'text-[#6B5850] hover:bg-[#fff6f0]'
-                    }`}
-                  >
-                    <span className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-black">{option.label}</span>
-                      {option.save && (
-                        <span className={`whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-black ${
-                          active ? 'bg-white/15 text-[#ffe0d2]' : 'bg-[#f5e5de] text-[#B84D34]'
-                        }`}>
-                          {option.save}
-                        </span>
-                      )}
-                    </span>
-                    <span className={`mt-1 block text-xs font-semibold ${active ? 'text-white/55' : 'text-[#9a8279]'}`}>
-                      {option.cadence}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
+      <main>
+        <section className="qr-pricing-hero">
+          <div className="qr-pricing-hero-orbit" aria-hidden="true" />
+          <div className="qr-pricing-hero-inner">
+            <p className="qr-pricing-eyebrow qr-pricing-eyebrow-light"><span/> PRICING</p>
+            <h1>One Qriblo page for customers.<br/><em>A virtual assistant to help.</em></h1>
+            <p>Show your products or services in one place customers can browse. Your virtual assistant can answer questions and collect details for an order or booking request.</p>
+            <a className="qr-pricing-hero-link" href="#plans">See plans <ArrowRight size={15}/></a>
           </div>
-        </div>
+        </section>
 
-        {/* Plan Cards */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-
-          {/* Free Plan */}
-          <div className="rounded-3xl border border-[#eadfd8] p-7 bg-white flex flex-col">
-            <div className="mb-6">
-              <h2 className="text-2xl font-black text-gray-900 mb-1">Free</h2>
-              <p className="text-sm text-gray-500">Perfect for new businesses looking to share their catalog.</p>
-            </div>
-
-            <div className="mb-6">
-              <div className="text-5xl font-black text-gray-900">₦0</div>
-              <p className="text-sm text-gray-400 mt-1">Forever free</p>
-            </div>
-
-            <Link href="/signup" className="block mb-6">
-              <Button variant="outline" className="w-full h-12 font-bold rounded-2xl border-[#eadfd8] hover:bg-[#f9f0ee] text-[#1E1410]" size="lg">
-                Start for free
-              </Button>
-            </Link>
-
-            {/* Top highlights */}
-            <ul className="space-y-3 mb-5">
-              {[
-                'Standard brand link (qriblo.com/yourbrand)',
-                'Up to 5 catalog items',
-                'Manual WhatsApp orders (Customers click to chat you)',
-                'Listed in the directory',
-                'SEO-optimised page',
-              ].map(item => (
-                <li key={item} className="flex items-center gap-2.5 text-sm text-gray-700">
-                  <CheckCircle2 className="w-4 h-4 text-[#62ba82] flex-shrink-0" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            {/* Accordion */}
-            <div className="mt-auto border-t border-gray-100 pt-4">
-              <FeatureAccordion sections={freeFeatures} accentColor="#62ba82" />
-            </div>
+        <section className="qr-pricing-capabilities">
+          <div className="qr-pricing-section-head"><p className="qr-pricing-eyebrow"><span/> MORE THAN A PLAN</p><h2>One place for your business<br/><em>and your customers.</em></h2><p>Bring the details customers need together, then give them a clear way to ask, browse, and take the next step.</p></div>
+          <div className="qr-pricing-capability-grid">
+            <article><Globe2/><h3>Your Qriblo page</h3><p>Share your business details, location, and one link customers can open.</p></article>
+            <article><ShoppingBag/><h3>Products and services</h3><p>Show what you offer with names, descriptions, images, and prices.</p></article>
+            <article className="qr-pricing-capability-feature"><Bot/><h3>Virtual assistant</h3><p>Answer customer questions and collect details for orders or booking requests.</p></article>
+            <article><BarChart2/><h3>Discovery and trust</h3><p>Help customers find businesses, and show reviews, verification, and visitor information.</p></article>
           </div>
+        </section>
 
-          {/* Pro Plan */}
-          <BorderBeam size="md" colorVariant="sunset" theme="dark" duration={2.2} strength={0.8} borderRadius={24} className="rounded-3xl">
-            <div className="rounded-3xl border-2 border-[#B84D34] p-7 bg-[#1E1410] text-white flex flex-col relative overflow-hidden h-full">
-            {/* Glow */}
-            <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-[#B84D34]/10 pointer-events-none transform translate-x-1/3 -translate-y-1/3" />
-
-            {/* Badge */}
-            <div className="absolute top-5 right-5 bg-[#B84D34] text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
-              <Zap className="w-2.5 h-2.5 fill-white" /> Most Popular
-            </div>
-
-            <div className="mb-6 relative">
-              <div className="flex items-center gap-2 mb-1">
-                <h2 className="text-2xl font-black text-white">Pro</h2>
-                <VerifiedBadge size="sm" />
-              </div>
-              <p className="text-sm text-white/60">Everything you need to automate your sales and look like a premium brand.</p>
-            </div>
-
-            <div className="mb-6 relative">
-              <div className="text-5xl font-black text-white">
-                {currentPrice.amount}
-              </div>
-              <p className="text-sm text-white/40 mt-1">
-                {currentPrice.period} · {currentPrice.save ? currentPrice.save : 'cancel anytime'}
-              </p>
-            </div>
-
-            <Link href={`/signup?plan=pro&billing=${billingCycle}`} className="block mb-6 relative">
-              <Button
-                className="w-full h-12 font-bold rounded-2xl bg-[#B84D34] hover:bg-[#9A3F2A] text-white border-0 shadow-lg shadow-[#B84D34]/30"
-                size="lg"
-              >
-                Upgrade to Pro <ArrowRight className="w-4 h-4 ml-1" />
-              </Button>
-            </Link>
-
-            {/* Top highlights */}
-            <ul className="space-y-3 mb-5 relative">
-              {[
-                '24/7 Virtual Assistant on WhatsApp & Web',
-                'Assistant handles full conversations and closes sales',
-                'Custom domain (yourbrand.qriblo.com)',
-                'Everything in Free (unlimited items)',
-                'Full themed brand storefront',
-                'Verified trust badge',
-              ].map(item => (
-                <li key={item} className="flex items-center gap-2.5 text-sm text-white/85">
-                  <CheckCircle2 className="w-4 h-4 text-[#E8A87C] flex-shrink-0" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            {/* Accordion */}
-            <div className="mt-auto border-t border-white/10 pt-4 relative">
-              <button
-                id="pro-see-all"
-                className="w-full flex items-center justify-between text-sm font-semibold py-2 text-white/60 hover:text-white transition-colors"
-                onClick={() => {
-                  const el = document.getElementById('pro-accordion')
-                  if (el) el.classList.toggle('hidden')
-                  const btn = document.getElementById('pro-see-all')
-                  if (btn) {
-                    const chevron = btn.querySelector('svg')
-                    if (chevron) chevron.classList.toggle('rotate-180')
-                    const span = btn.querySelector('span')
-                    if (span) span.textContent = el?.classList.contains('hidden') ? 'See all features' : 'Hide features'
-                  }
-                }}
-              >
-                <span>See all features</span>
-                <ChevronDown className="w-4 h-4 transition-transform duration-200" />
+        <section id="plans" className="qr-pricing-plans">
+          <div className="qr-pricing-section-head">
+            <p className="qr-pricing-eyebrow"><span/> PLANS FOR YOUR BUSINESS</p>
+            <h2>Choose how you want<br/><em>to show up.</em></h2>
+            <p>Start with the essentials on Free, or choose Pro for a virtual assistant with 500 messages each month.</p>
+          </div>
+          <div className="qr-pricing-billing" aria-label="Billing frequency">
+            {billingOptions.map(option => {
+              const active = billingCycle === option.cycle
+              return <button key={option.cycle} type="button" onClick={() => setBillingCycle(option.cycle)} aria-pressed={active} className={active ? 'active' : ''}>
+                <strong>{option.label}</strong><span>{option.save || option.cadence}</span>
               </button>
-
-              <div id="pro-accordion" className="hidden mt-3 space-y-5 border-t border-white/10 pt-5">
-                {proFeatures.map(({ icon: Icon, section, color, items }) => (
-                  <div key={section}>
-                    <div className="flex items-center gap-2 mb-2.5">
-                      <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: color + '33' }}>
-                        <Icon className="w-3.5 h-3.5" style={{ color }} />
-                      </div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-white/40">{section}</p>
-                    </div>
-                    <ul className="space-y-1.5 pl-8">
-                      {items.map(item => (
-                        <li key={item} className="flex items-start gap-2">
-                          <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-[#E8A87C]" />
-                          <span className="text-sm text-white/70 leading-snug">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </div>
-            </div>
-          </BorderBeam>
-        </div>
-
-        {/* Feature Comparison Highlight */}
-        <div className="mt-12 max-w-4xl mx-auto rounded-3xl bg-[#f9f0ee] border border-[#e8d5cf] p-8">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#B84D34] mb-2">The key difference</p>
-          <h3 className="text-2xl font-black mb-6">Free gives you presence. Pro gives you power.</h3>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <p className="font-bold text-sm text-gray-500 mb-3">Free</p>
-              <ul className="space-y-2">
-                {['A page to show who you are', 'Up to 5 products or services', 'Basic WhatsApp order or booking enquiry'].map(i => (
-                  <li key={i} className="flex gap-2 text-sm text-gray-600"><CheckCircle2 className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />{i}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="font-bold text-sm text-[#B84D34] mb-3">Pro</p>
-              <ul className="space-y-2">
-                {['Priority service booking display', 'Live assistant collects order and appointment details', 'Reviews, analytics, and badge build trust automatically'].map(i => (
-                  <li key={i} className="flex gap-2 text-sm text-gray-800 font-medium"><CheckCircle2 className="w-4 h-4 text-[#B84D34] flex-shrink-0 mt-0.5" />{i}</li>
-                ))}
-              </ul>
-            </div>
+            })}
           </div>
-        </div>
 
-        {/* FAQ */}
-        <div className="mt-20 max-w-3xl mx-auto">
-          <h2 className="text-3xl font-black text-center mb-10">Common questions</h2>
-          <div className="space-y-3">
-            {faqs.map(faq => <FaqItem key={faq.q} {...faq} />)}
+          <div className="qr-pricing-card-grid">
+            <article className="qr-plan-card qr-plan-card-free">
+              <div className="qr-plan-card-top"><span className="qr-plan-kicker">A clear place to begin</span><h3>Free</h3><p>Set up your Qriblo page and let customers browse what you offer.</p></div>
+              <div className="qr-plan-price"><strong>₦0</strong><span>forever</span></div>
+              <Link href="/signup" className="qr-plan-button qr-plan-button-light">Create a professional site <ArrowRight size={15}/></Link>
+              <ul>{freeHighlights.map(item => <li key={item}><CheckCircle2/>{item}</li>)}</ul>
+              <FeatureAccordion sections={freeFeatures} accentColor="#8f3c17" />
+            </article>
+
+            <article className="qr-plan-card qr-plan-card-pro">
+              <span className="qr-plan-popular"><Star size={12} fill="currentColor"/> MORE ROOM TO GROW</span>
+              <div className="qr-plan-card-top"><span className="qr-plan-kicker">More tools for daily selling</span><h3>Pro <VerifiedBadge size="sm" /></h3><p>Add room for your full catalog and a virtual assistant to answer customer questions.</p></div>
+              <div className="qr-plan-price"><strong>{currentPrice.amount}</strong><span>{currentPrice.period} · {currentPrice.save || 'cancel anytime'}</span><small>{currentPrice.monthly}</small></div>
+              <Link href={`/signup?plan=pro&billing=${billingCycle}`} className="qr-plan-button qr-plan-button-accent">Choose Pro <ArrowRight size={15}/></Link>
+              <ul>{proHighlights.map(item => <li key={item}><CheckCircle2/>{item}</li>)}</ul>
+              <button className="qr-plan-feature-toggle" type="button" onClick={() => setProOpen(!proOpen)} aria-expanded={proOpen}>{proOpen ? 'Hide full feature list' : 'See full feature list'}<ChevronDown className={proOpen ? 'rotate' : ''}/></button>
+              {proOpen && <div className="qr-pricing-full-features">{proFeatures.map(({icon: Icon,section,items}) => <div key={section}><h4><Icon/>{section}</h4><ul>{items.map(item => <li key={item}><CheckCircle2/>{item}</li>)}</ul></div>)}</div>}
+            </article>
           </div>
-        </div>
 
-        {/* Bottom CTA */}
-        <div className="mt-20 rounded-3xl bg-[#1E1410] text-white p-10 text-center max-w-3xl mx-auto">
-          <h3 className="text-3xl font-black mb-3">Ready to own your space online?</h3>
-          <p className="text-white/60 mb-8 leading-relaxed">
-            Start free today. No credit card. No commitment. Upgrade when you&apos;re ready.
-          </p>
-          <Link href="/signup">
-            <Button className="bg-[#B84D34] hover:bg-[#9A3F2A] text-white font-bold h-12 px-8 rounded-2xl shadow-lg">
-              Claim your link — it&apos;s free <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          </Link>
-        </div>
+          <div className="qr-pricing-assistant">
+            <div className="qr-pricing-assistant-icon"><MessageCircle/></div>
+            <div><p className="qr-pricing-eyebrow qr-pricing-eyebrow-light"><span/> YOUR VIRTUAL ASSISTANT</p><h3>Help for shoppers.<br/>Support for sellers.</h3><p>Message Qriblo on WhatsApp to discover businesses, shop products, place an order, or request an appointment. Pro virtual assistants answer questions and collect order or booking details; the business confirms availability and next steps. Free includes no assistant messages; Pro includes 500 each month.</p><a href="https://wa.me/2347047027012">Chat with Qriblo on WhatsApp <ArrowRight size={15}/></a></div>
+            <div className="qr-pricing-assistant-note"><Bot/><span>On your page<br/>and WhatsApp</span></div>
+          </div>
+
+          <section className="qr-pricing-faq">
+            <div className="qr-pricing-section-head"><p className="qr-pricing-eyebrow"><span/> GOOD TO KNOW</p><h2>Common<br/><em>questions.</em></h2></div>
+            <div className="qr-pricing-faq-list">{faqs.map(faq => <FaqItem key={faq.q} {...faq} />)}</div>
+          </section>
+
+          <section className="qr-pricing-bottom-cta"><p className="qr-pricing-eyebrow qr-pricing-eyebrow-light"><span/> YOUR NEXT CUSTOMER IS OUT THERE</p><h2>Give your business<br/><em>a place to grow.</em></h2><p>Create a professional site and give customers one clear place to find what you offer.</p><Link href="/signup" className="qr-plan-button qr-plan-button-accent">Create a professional site <ArrowRight size={15}/></Link></section>
+        </section>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-[#eadfd8] py-8 text-center text-sm text-[#806b63] mt-16">
-        <div className="flex justify-center gap-5 mb-3 flex-wrap">
-          <Link href="/" className="hover:text-[#B84D34] transition-colors">Home</Link>
-          <Link href="/directory" className="hover:text-[#B84D34] transition-colors">Directory</Link>
-          <Link href="/terms" className="hover:text-[#B84D34] transition-colors">Terms</Link>
-          <Link href="/privacy" className="hover:text-[#B84D34] transition-colors">Privacy</Link>
-        </div>
-        © {new Date().getFullYear()} Qriblo
-      </footer>
+      <footer className="qr-pricing-footer"><Link href="/" className="qr-pricing-logo"><Image src="/logo.png" alt="Qriblo" width={150} height={50}/></Link><div><Link href="/directory">Discover</Link><Link href="/terms">Terms</Link><Link href="/privacy">Privacy</Link><a href="mailto:qriblovirtual@gmail.com">Support: qriblovirtual@gmail.com</a></div><span>© {new Date().getFullYear()} Qriblo · Lagos, Nigeria</span></footer>
     </div>
   )
 }

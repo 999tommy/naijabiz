@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { MessageCircle, Instagram } from 'lucide-react'
 
-export function MockSocialActions({ instagramHandle = 'tolas_kitchen', tiktokHandle = 'tolas_kitchen', whatsappNumber = '2347047207012' }: { instagramHandle?: string; tiktokHandle?: string; whatsappNumber?: string }) {
+export function MockSocialActions({ instagramHandle = 'tolas_kitchen', tiktokHandle = 'tolas_kitchen', whatsappNumber = '2347047027012' }: { instagramHandle?: string; tiktokHandle?: string; whatsappNumber?: string }) {
     return (
         <div className="flex flex-wrap gap-3 mt-4">
             <Button size="sm" className="bg-green-600 hover:bg-green-700 font-semibold shadow-sm" onClick={() => window.open(`https://wa.me/${whatsappNumber}`, '_blank', 'noopener,noreferrer')}>

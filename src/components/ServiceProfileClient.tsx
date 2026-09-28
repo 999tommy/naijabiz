@@ -75,7 +75,7 @@ export function ServiceProfileClient({
     }
 
     const isVaEnabled = waWhatsappEnabled || false
-    const whatsappNumber = isVaEnabled ? '2347047207012' : business.whatsapp_number
+    const whatsappNumber = isVaEnabled ? '2347047027012' : business.whatsapp_number
     const slug = business.business_slug
     const fallbackServiceName = 'General appointment'
     const [selectedService, setSelectedService] = useState(products[0]?.name || fallbackServiceName)
@@ -132,7 +132,7 @@ export function ServiceProfileClient({
     }
 
     return (
-        <div className="min-h-screen" style={{ background: pageTheme.pageBg, color: pageTheme.bodyText }}>
+        <div className="qr-brand-page min-h-screen" style={{ background: pageTheme.pageBg, color: pageTheme.bodyText }}>
             {/* Header */}
             <header className="backdrop-blur-md sticky top-0 z-50 border-b" style={{ background: pageTheme.navBg, borderColor: pageTheme.divider }}>
                 <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -299,7 +299,7 @@ export function ServiceProfileClient({
                             </div>
                             {isPro && (
                                 <span className="inline-flex items-center gap-1.5 text-xs font-bold border rounded-full px-3 py-1 shrink-0" style={{ color: pageTheme.accent, borderColor: pageTheme.cardBorder, background: pageTheme.pageBg }}>
-                                    <CalendarCheck className="w-3.5 h-3.5" /> AI booking assistant enabled
+                                    <CalendarCheck className="w-3.5 h-3.5" /> Virtual assistant can help with booking requests
                                 </span>
                             )}
                         </div>

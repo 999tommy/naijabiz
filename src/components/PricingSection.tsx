@@ -13,7 +13,7 @@ export function PricingSection() {
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-3xl font-bold text-center text-gray-900 mb-4 font-display">Simple, Fair Pricing</h2>
                 <p className="text-gray-500 text-center mb-12 max-w-xl mx-auto">
-                    Power up your brand with an automated AI Sales Assistant that talks to customers and captures WhatsApp orders 24/7.
+                    Give customers a virtual assistant that can answer questions and collect order or booking requests.
                 </p>
 
                 {/* Billing Toggle */}
@@ -66,7 +66,7 @@ export function PricingSection() {
                         <div className="absolute top-5 right-5 bg-gradient-to-r from-orange-600 to-amber-600 text-white text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1">
                             <Zap className="w-3 h-3 text-amber-300 fill-amber-300" /> Most Popular
                         </div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2 font-display">Pro AI Sales Engine</h3>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2 font-display">Virtual assistant for your business</h3>
                         <p className="text-gray-500 mb-6 font-medium">Turn visitors into ready-to-pay orders 24/7.</p>
                         <div className="flex items-baseline gap-1 mb-6">
                             <span className="text-4xl font-extrabold text-orange-600 font-display">

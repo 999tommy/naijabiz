@@ -315,6 +315,24 @@ const fallbackThemeIds: ThemeId[] = [
   'byzantium-champagne',
 ]
 
+function applyQribloDirection(theme: WebsiteTheme): WebsiteTheme {
+  return {
+    ...theme,
+    heroBg: 'linear-gradient(135deg, #66351f 0%, #3a2028 100%)',
+    heroText: '#fff4e6',
+    heroSubText: 'rgba(255,244,230,0.76)',
+    pageBg: '#fffaf4',
+    cardBg: '#fffdfa',
+    cardBorder: 'rgba(102,53,31,0.14)',
+    bodyText: '#48332a',
+    mutedText: 'rgba(72,51,42,0.68)',
+    headingText: '#66351f',
+    navBg: 'rgba(255,250,244,0.94)',
+    logoRing: '#f4c7a1',
+    divider: 'rgba(102,53,31,0.14)',
+  }
+}
+
 export function getWebsiteTheme(
   categorySlug: string | null | undefined,
   categoryName: string | null | undefined,
@@ -322,12 +340,12 @@ export function getWebsiteTheme(
   businessType?: string | null,
 ): WebsiteTheme {
   if (businessType === 'both') {
-    return themes['burgundy-glacier']
+    return applyQribloDirection(themes['burgundy-glacier'])
   }
 
   if (businessType === 'services') {
     const serviceThemes: ThemeId[] = ['deep-teal-champagne', 'moss-amazon', 'prussian-glacier']
-    return themes[serviceThemes[slugHash(businessSlug) % serviceThemes.length]]
+    return applyQribloDirection(themes[serviceThemes[slugHash(businessSlug) % serviceThemes.length]])
   }
 
   const key = (categorySlug || categoryName || '').toLowerCase().trim()
@@ -336,7 +354,7 @@ export function getWebsiteTheme(
     ? categoryThemes[slugHash(businessSlug) % categoryThemes.length]
     : fallbackThemeIds[slugHash(businessSlug) % fallbackThemeIds.length]
 
-  return themes[themeId]
+  return applyQribloDirection(themes[themeId])
 }
 
 export { colors, themes }

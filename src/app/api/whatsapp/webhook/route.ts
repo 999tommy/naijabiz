@@ -5,7 +5,7 @@
  * One Qriblo-owned WhatsApp number handles all vendors.
  * Buyers start a conversation and say the vendor's slug (e.g. "hi, tolas-kitchen")
  * or send it as their first message. The bot identifies the vendor and routes
- * all subsequent messages to that vendor's AI assistant.
+ * all subsequent messages to that vendor's virtual assistant.
  *
  * Session state is stored in `chat_sessions` table:
  *   - business_id links to the vendor
@@ -90,7 +90,7 @@ export async function POST(req: Request) {
             try {
                 aiReply = await qribloMasterReply([{ role: 'user', content: incomingText }])
             } catch (e: any) {
-                console.error('[WhatsApp Master AI Error]', e)
+                console.error('[WhatsApp Master Assistant Error]', e)
                 await sendWhatsAppMessage(customerPhone, "Sorry, I'm having trouble right now. Please try again! 😊")
                 return new NextResponse('OK', { status: 200 })
             }
@@ -141,7 +141,7 @@ export async function POST(req: Request) {
                 messages = []
                 const welcome = business.ai_welcome_msg || `Hello! Welcome to *${business.business_name}*. How can I help you today?`
                 
-                // Strip the tag from the AI reply and prepend the switch message
+                // Strip the tag from the assistant reply and prepend the switch message
                 const cleanReply = aiReply.replace(/\[(?:CONNECT_VENDOR|ROUTE_TO_VENDOR):[\s\S]*?\]/gi, '').trim()
                 let finalMsg = `🏪 Switched! You're now chatting with *${business.business_name}*.\n\n${welcome}`
                 if (cleanReply) finalMsg = `${cleanReply}\n\n${finalMsg}`
@@ -222,11 +222,11 @@ export async function POST(req: Request) {
         // ── Step 5: Rate limit check ─────────────────────────────────────────
         const usageState = getDailyAiUsageState(business)
         if (usageState.limitReached) {
-            await sendWhatsAppMessage(customerPhone, `⚠️ ${business.business_name}'s AI assistant has reached today's chat limit. Please contact them directly at their Qriblo page.`)
+            await sendWhatsAppMessage(customerPhone, `⚠️ ${business.business_name}'s virtual assistant has reached its monthly message limit. Please contact the business through its Qriblo page.`)
             return new NextResponse('OK', { status: 200 })
         }
 
-        // ── Step 6: Build message history + call AI ──────────────────────────
+        // ── Step 6: Build message history + call assistant ──────────────────────────
         messages.push({ role: 'user', content: incomingText })
 
         let aiReply: string
@@ -235,7 +235,7 @@ export async function POST(req: Request) {
             aiReply = await generateReply(business, normalizeCustomerConversation(messages))
             generatedReply = true
         } catch (e: any) {
-            console.error('[WhatsApp AI Error]', e)
+            console.error('[WhatsApp Assistant Error]', e)
             aiReply = "Sorry, I'm having trouble right now. Please try again in a moment! 🙏"
         }
 

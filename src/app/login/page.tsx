@@ -95,8 +95,15 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-cream-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-md">
+        <div className="qr-auth-screen min-h-screen flex items-center justify-center p-4 sm:p-8">
+            <div className="qr-auth-layout">
+            <section className="qr-auth-story">
+                <span className="qr-auth-kicker">YOUR BUSINESS, A LITTLE CLOSER</span>
+                <h2>Everything your customers need, <em>in one place.</em></h2>
+                <p>Sign in to keep your Qriblo page, catalog, and customer conversations moving.</p>
+                <div className="qr-auth-story-note"><span>01</span><b>Your business, ready to be found.</b></div>
+            </section>
+            <div className="qr-auth-form w-full max-w-md">
                 <div className="text-center mb-8">
                     <Link href="/" className="inline-block">
                         <Image
@@ -111,7 +118,7 @@ export default function LoginPage() {
                     <p className="text-gray-600 mt-1">Sign in to manage your business</p>
                 </div>
 
-                <Card className="shadow-xl border-0">
+                <Card className="qr-auth-card">
                     <CardHeader className="space-y-1 pb-4">
                         <CardTitle className="text-xl">Sign In</CardTitle>
                         <CardDescription>
@@ -244,6 +251,7 @@ export default function LoginPage() {
                     By signing in, you agree to our <Link href="/terms" className="underline hover:text-gray-600">Terms</Link> and <Link href="/privacy" className="underline hover:text-gray-600">Privacy Policy</Link>.
                     Your data is secure and encrypted.
                 </p>
+            </div>
             </div>
         </div>
     )

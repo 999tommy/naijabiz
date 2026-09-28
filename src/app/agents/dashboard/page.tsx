@@ -70,7 +70,7 @@ export default async function AgentDashboardPage() {
     const monthThreeProgress = Math.min(activeClients, 10)
 
     return (
-        <div className="min-h-screen bg-[#FDF8F3] text-[#1E1410]">
+        <div className="qr-agent-dashboard min-h-screen bg-[#FDF8F3] text-[#1E1410]">
             <header className="bg-white border-b border-[#eadfd8]">
                 <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2 font-black">

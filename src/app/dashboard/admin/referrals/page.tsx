@@ -85,7 +85,8 @@ export default async function AdminReferralsPage() {
     enrichedParticipants.sort((a, b) => b.eligiblePending - a.eligiblePending)
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
+        <div className="min-h-screen bg-[#fffaf4] px-4 py-8 text-[#3a251f] sm:px-6">
+        <div className="max-w-6xl mx-auto space-y-8">
             <div>
                 <h1 className="text-3xl font-bold tracking-tight text-gray-900">Referral Payouts Admin</h1>
                 <p className="text-gray-500 mt-2">Manage and pay out users who have referred 5 or more paying businesses.</p>
@@ -154,6 +155,7 @@ export default async function AdminReferralsPage() {
                     </Card>
                 ))}
             </div>
+        </div>
         </div>
     )
 }

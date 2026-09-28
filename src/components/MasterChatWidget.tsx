@@ -64,7 +64,6 @@ export function MasterChatWidget() {
     const [loading, setLoading] = useState(false)
     const [processingOrder, setProcessingOrder] = useState<number | null>(null)
     const scrollRef = useRef<HTMLDivElement>(null)
-    const touchStartY = useRef<number | null>(null)
 
     // Load persisted chat on mount
     useEffect(() => {
@@ -108,20 +107,6 @@ export function MasterChatWidget() {
             console.error('Error saving active vendor:', e)
         }
     }, [activeVendor])
-
-    const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
-        touchStartY.current = event.touches[0]?.clientY ?? null
-    }
-
-    const handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
-        if (touchStartY.current === null) return
-
-        const touchEndY = event.changedTouches[0]?.clientY ?? touchStartY.current
-        const swipeDistance = touchEndY - touchStartY.current
-        touchStartY.current = null
-
-        if (swipeDistance > 70) setIsOpen(false)
-    }
 
     // Initialize greeting if empty
     useEffect(() => {
@@ -307,9 +292,7 @@ export function MasterChatWidget() {
 
     return (
         <Card
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-            className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 w-[calc(100vw-1.5rem)] sm:w-[390px] h-[min(620px,calc(100vh-5.5rem))] shadow-[0_24px_60px_rgba(102,53,31,0.30)] flex flex-col overflow-hidden z-50 border border-[#f4c7a1]/40 rounded-[28px] animate-in slide-in-from-bottom-6 fade-in duration-200 touch-pan-y"
+            className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 w-[calc(100vw-1.5rem)] sm:w-[380px] h-[min(440px,calc(100dvh-5rem))] shadow-[0_24px_60px_rgba(102,53,31,0.30)] flex flex-col overflow-hidden z-50 border border-[#f4c7a1]/40 rounded-[26px] animate-in slide-in-from-bottom-6 fade-in duration-200"
         >
             {/* WhatsApp App-Bar Header */}
             <div className="bg-gradient-to-r from-[#66351f] via-[#753c23] to-[#c65a24] text-white px-3.5 py-3 flex items-center justify-between shrink-0 shadow-sm relative z-10">
@@ -388,7 +371,7 @@ export function MasterChatWidget() {
                     backgroundColor: '#fff4e6',
                     backgroundImage: `radial-gradient(circle at 50% 50%, rgba(244, 199, 161, 0.22) 0%, rgba(255, 244, 230, 0.95) 100%), url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 16a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm24 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm24 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4zM20 32a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm24 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm-36 16a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm24 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm24 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4zM32 4a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm-16 28a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm32 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM32 54a3 3 0 1 0 0 6 3 3 0 0 0 0-6z' fill='%2366351f' fill-opacity='0.04' fill-rule='evenodd'/%3E%3C/svg%3E")`,
                 }}
-                className="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3.5 scroll-smooth"
+                className="flex-1 min-h-0 overflow-y-auto overscroll-contain touch-pan-y p-3.5 sm:p-4 space-y-3.5 scroll-smooth"
             >
                 {/* WhatsApp Encryption & Today Notice */}
                 <div className="flex justify-center my-1">

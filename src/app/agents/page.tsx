@@ -1,12 +1,19 @@
 ﻿import Image from 'next/image'
 import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
+import type { Metadata } from 'next'
 import { ArrowRight, BadgePercent, Banknote, CheckCircle2, ClipboardList, Copy, MessageCircle, Repeat, Share2, ShieldCheck, Target, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import SplitText from '@/components/ui/SplitText'
 import GradientText from '@/components/ui/GradientText'
 import BlurText from '@/components/ui/BlurText'
 import { AnimatedBorderCard } from '@/components/ui/AnimatedBorderCard'
+
+export const metadata: Metadata = {
+    title: 'Earn by helping Nigerian businesses grow',
+    description: 'Join the Qriblo agent programme, refer Nigerian businesses, and earn commissions as they grow on Qriblo.',
+    alternates: { canonical: '/agents' },
+}
 
 const steps = [
     {
@@ -80,7 +87,7 @@ const milestoneBonuses = [
 
 const expectations = [
     'Represent Qriblo honestly and never promise features we do not offer.',
-    'Refer businesses that genuinely need a storefront, booking page, or AI sales assistant.',
+    'Refer businesses that genuinely need a storefront, booking page, or virtual assistant.',
     'Never create a business account for someone without their knowledge and consent.',
     'Help prospects understand the product, then let the tracked link handle signup and attribution.',
 ]
@@ -465,7 +472,7 @@ export default function AgentsPage() {
                                     'Ask if the business has one link that shows what they sell or offer.',
                                     'Show the Tola\'s Kitchen or MusaFix demo depending on their business type.',
                                     'Explain that free pages list up to 5 products or services.',
-                                    'Explain that Pro adds verification, reviews, AI assistant, analytics, and priority display.',
+                                    'Explain that Pro adds verification, reviews, virtual assistant, analytics, and priority display.',
                                     'Send your referral link and follow up after they create their page.',
                                 ].map(item => (
                                     <div key={item} className="flex gap-3 rounded-2xl bg-white border border-[#eadfd8] p-4">

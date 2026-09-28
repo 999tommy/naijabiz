@@ -237,8 +237,15 @@ export default function SignupPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-cream-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-lg">
+        <div className="qr-auth-screen min-h-screen flex items-center justify-center p-4 sm:p-8">
+            <div className="qr-auth-layout qr-auth-layout-signup">
+            <section className="qr-auth-story">
+                <span className="qr-auth-kicker">START WITH A CLEAR LINK</span>
+                <h2>Bring your brand closer to <em>the people looking for it.</em></h2>
+                <p>Set up your page, add what you offer, and give customers an easy next step.</p>
+                <div className="qr-auth-story-note"><span>01</span><b>A home for your products, services, and bookings.</b></div>
+            </section>
+            <div className="qr-auth-form w-full max-w-lg">
                 <div className="text-center mb-8">
                     <Link href="/" className="inline-block hover:opacity-80 transition-opacity">
                         <Image
@@ -269,7 +276,7 @@ export default function SignupPage() {
                     </div>
                 </div>
 
-                <Card className="shadow-2xl border-0 ring-1 ring-gray-100 overflow-hidden">
+                <Card className="qr-auth-card overflow-hidden">
                     <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-6">
                         <CardTitle className="text-xl flex items-center gap-2">
                             {step === 'business' ? (
@@ -582,6 +589,7 @@ export default function SignupPage() {
                     By clicking continue, you agree to our <Link href="/terms" className="underline hover:text-gray-600">Terms</Link> and <Link href="/privacy" className="underline hover:text-gray-600">Privacy Policy</Link>.
                     Your data is secure and encrypted.
                 </p>
+            </div>
             </div>
         </div>
     )

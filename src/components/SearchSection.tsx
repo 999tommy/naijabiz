@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation'
 import { Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-export function SearchSection() {
+export function SearchSection({ initialQuery = '' }: { initialQuery?: string }) {
     const router = useRouter()
-    const [query, setQuery] = useState('')
+    const [query, setQuery] = useState(initialQuery)
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault()
@@ -31,14 +31,15 @@ export function SearchSection() {
                     </h3>
                 </div>
 
-                <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
+                <form onSubmit={handleSearch} role="search" aria-label="Search Qriblo businesses" className="flex flex-col sm:flex-row gap-2">
                     <div className="relative flex-1">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                         <input
-                            type="text"
+                            type="search"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            placeholder="'Cakes in Lekki', 'Gagdets in Benin'"
+                            aria-label="Search for a business, product, service, or location"
+                            placeholder="Try “cakes in Lekki” or “phones in Ikeja”"
                             className="w-full pl-12 pr-4 h-12 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-gray-900 placeholder:text-gray-400"
                         />
                     </div>
