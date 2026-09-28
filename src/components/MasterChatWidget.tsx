@@ -126,6 +126,34 @@ export function MasterChatWidget() {
         }
     }, [messages, loading])
 
+    useEffect(() => {
+        if (!isOpen) return
+
+        const scrollY = window.scrollY
+        const body = document.body
+        const root = document.documentElement
+        const previousBodyPosition = body.style.position
+        const previousBodyTop = body.style.top
+        const previousBodyWidth = body.style.width
+        const previousBodyOverflow = body.style.overflow
+        const previousRootOverflow = root.style.overflow
+
+        body.style.position = 'fixed'
+        body.style.top = `-${scrollY}px`
+        body.style.width = '100%'
+        body.style.overflow = 'hidden'
+        root.style.overflow = 'hidden'
+
+        return () => {
+            body.style.position = previousBodyPosition
+            body.style.top = previousBodyTop
+            body.style.width = previousBodyWidth
+            body.style.overflow = previousBodyOverflow
+            root.style.overflow = previousRootOverflow
+            window.scrollTo(0, scrollY)
+        }
+    }, [isOpen])
+
     const parseOrderSummary = (text: string): { cleanText: string; summary: OrderSummary | null } => {
         const match = text.match(/\[ORDER_SUMMARY:\s*({[\s\S]*?})\]/)
         if (!match) return { cleanText: text, summary: null }
@@ -292,7 +320,7 @@ export function MasterChatWidget() {
 
     return (
         <Card
-            className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 w-[calc(100vw-1.5rem)] sm:w-[380px] h-[min(440px,calc(100dvh-5rem))] shadow-[0_24px_60px_rgba(102,53,31,0.30)] flex flex-col overflow-hidden z-50 border border-[#f4c7a1]/40 rounded-[26px] animate-in slide-in-from-bottom-6 fade-in duration-200"
+            className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 w-[calc(100vw-1.5rem)] sm:w-[380px] h-[min(440px,calc(100dvh-5rem))] shadow-[0_24px_60px_rgba(102,53,31,0.30)] flex flex-col overflow-hidden overscroll-none z-50 border border-[#f4c7a1]/40 rounded-[26px] animate-in slide-in-from-bottom-6 fade-in duration-200"
         >
             {/* WhatsApp App-Bar Header */}
             <div className="bg-gradient-to-r from-[#66351f] via-[#753c23] to-[#c65a24] text-white px-3.5 py-3 flex items-center justify-between shrink-0 shadow-sm relative z-10">
