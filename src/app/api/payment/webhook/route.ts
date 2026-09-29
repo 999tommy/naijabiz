@@ -112,6 +112,7 @@ export async function POST(request: NextRequest) {
                     .from('users')
                     .update({
                         plan: 'pro',
+                        ai_enabled: true,
                         subscription_id: subscriptionId,
                         subscription_ends_at: subscriptionEndsAt.toISOString(),
                         is_verified: true, // Auto-verify on purchase

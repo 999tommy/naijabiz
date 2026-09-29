@@ -16,10 +16,10 @@ import {
     ExternalLink,
     Menu,
     X,
-    Crown,
     Bot,
-    Users
-    ,CalendarDays
+    CheckCircle2,
+    Users,
+    CalendarDays,
 } from 'lucide-react'
 import type { User } from '@/lib/types'
 import { FeedbackModal } from './FeedbackModal'
@@ -54,11 +54,10 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
         {
             name: 'Virtual Assistant',
             href: '/dashboard/ai',
-            icon: Bot,
-            proOnly: true
+            icon: Bot
         },
         {
-            name: 'Business activity',
+            name: 'Brand activity',
             href: '/dashboard/analytics',
             icon: BarChart2,
             proOnly: true
@@ -72,6 +71,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
     ]
 
     const isPro = user.plan === 'pro'
+    const isVaLive = isPro && user.ai_enabled
 
     return (
         <div className="qr-dashboard-shell">
@@ -121,20 +121,16 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                             <div className="flex-1 min-w-0">
                                 {user.business_slug ? (
                                     <Link href={`/${user.business_slug}`} target="_blank" rel="noopener noreferrer" className="qr-business-name font-medium truncate hover:underline">
-                                        {user.business_name || 'Your Business'}
+                                        {user.business_name || 'Your brand'}
                                     </Link>
                                 ) : (
-                                    <p className="qr-business-name font-medium truncate">{user.business_name || 'Your Business'}</p>
+                                    <p className="qr-business-name font-medium truncate">{user.business_name || 'Your brand'}</p>
                                 )}
                                 <div className="flex items-center gap-1">
-                                    {isPro ? (
-                                        <span className="text-xs text-orange-600 font-medium flex items-center gap-1">
-                                            <Crown className="w-3 h-3" />
-                                            Pro
-                                        </span>
-                                    ) : (
-                                        <span className="text-xs text-gray-500">Free Plan</span>
-                                    )}
+                                    <span className={`text-xs font-medium flex items-center gap-1 ${isVaLive ? 'text-green-700' : 'text-gray-500'}`}>
+                                        {isVaLive ? <CheckCircle2 className="w-3 h-3" /> : <Bot className="w-3 h-3" />}
+                                        {isVaLive ? 'VA live' : 'VA offline'}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -165,7 +161,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                             return (
                                 <Link
                                     key={item.name}
-                                    href={isLocked ? '/dashboard/settings#upgrade' : item.href}
+                                    href={isLocked ? '/dashboard/ai' : item.href}
                                     aria-current={isActive ? 'page' : undefined}
                                     className={cn(
                                         "qr-dashboard-navlink flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium",
@@ -176,31 +172,13 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                                     {item.name}
                                     {isLocked && (
                                         <span className="ml-auto text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded">
-                                            PRO
+                                            Go live
                                         </span>
                                     )}
                                 </Link>
                             )
                         })}
                     </nav>
-
-                    {/* Upgrade banner (for free users) */}
-                    {!isPro && (
-                        <div className="p-4 border-t border-white/10">
-                            <div className="rounded-2xl border border-white/10 bg-white/8 p-4 text-white">
-                                <p className="font-semibold mb-1">Upgrade to Pro</p>
-                                <p className="text-xs text-orange-100 mb-3">
-                                    Get your own Qriblo link, a verified badge, and a virtual assistant.
-                                </p>
-                                <Link
-                                    href="/dashboard/settings#upgrade"
-                                    className="block text-center bg-[#f4c7a1] text-[#66351f] rounded-xl px-4 py-2.5 text-sm font-semibold hover:bg-[#fff4e6] transition-colors"
-                                >
-                                    Upgrade Now - ₦2,500/mo
-                                </Link>
-                            </div>
-                        </div>
-                    )}
 
                     {/* Feedback Button */}
                     <div className="qr-sidebar-footer shrink-0 border-t">

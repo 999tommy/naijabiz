@@ -4,7 +4,6 @@ import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { DashboardLayout } from '@/components/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { VerifiedBadge } from '@/components/VerifiedBadge'
 import {
     Package,
     Eye,
@@ -13,9 +12,7 @@ import {
     Plus,
     ArrowRight,
     Hand,
-    Rocket,
     Lightbulb,
-    Check,
 } from 'lucide-react'
 import { OnboardingAssistant } from '@/components/OnboardingAssistant'
 import { ReferralCard } from '@/components/ReferralCard'
@@ -23,7 +20,6 @@ import { WhatsAppShareCenter } from '@/components/WhatsAppShareCenter'
 import { ShareRankCard } from '@/components/ShareRankCard'
 import { SubdomainLinkCard } from '@/components/SubdomainLinkCard'
 import { CountUp } from '@/components/ui/CountUp'
-import { AnimatedBorderCard } from '@/components/ui/AnimatedBorderCard'
 import { checkAndDowngradeUser } from '@/lib/subscription'
 
 export const dynamic = 'force-dynamic'
@@ -105,6 +101,7 @@ export default async function DashboardPage() {
     }
 
     const isPro = user.plan === 'pro'
+    const isVaLive = isPro && user.ai_enabled
     const productLimit = isPro ? '∞' : '5'
     const catalogLabel = user.business_type === 'services'
         ? 'Services'
@@ -122,7 +119,7 @@ export default async function DashboardPage() {
         <DashboardLayout user={user}>
             <div className="max-w-6xl mx-auto">
 
-                {/* Subdomain Link — Pro users get slug.qriblo.com, free get regular link */}
+                {/* Share the brand page link and keep the VA activation path in view. */}
                 {user.business_slug && (
                     <SubdomainLinkCard
                         businessSlug={user.business_slug}
@@ -138,7 +135,7 @@ export default async function DashboardPage() {
                         Welcome back, {user.business_name || 'there'}! <Hand className="w-6 h-6 text-yellow-500" />
                     </h1>
                     <p className="text-gray-500 mt-1">
-                        Here&apos;s what&apos;s happening with your business today.
+                        Here&apos;s what your brand is working on today.
                     </p>
                 </div>
 
@@ -170,7 +167,7 @@ export default async function DashboardPage() {
                                     <p className="text-2xl font-bold text-gray-900">
                                         {isPro ? <CountUp value={stats.views} /> : '—'}
                                     </p>
-                                    {!isPro && <p className="text-xs text-orange-600">Pro only</p>}
+                                    {!isPro && <p className="text-xs text-orange-600">Available when your VA is live</p>}
                                 </div>
                                 <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
                                     <Eye className="w-6 h-6 text-blue-600" />
@@ -197,13 +194,11 @@ export default async function DashboardPage() {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-500">Status</p>
-                                    {isPro ? (
-                                        <VerifiedBadge size="sm" className="mt-1" />
+                                    <p className="text-sm text-gray-500">Virtual Assistant</p>
+                                    {isVaLive ? (
+                                        <p className="text-sm font-medium text-green-700">Live for customers</p>
                                     ) : (
-                                        <p className="text-sm font-medium text-gray-600">
-                                            Upgrade to Pro to verify
-                                        </p>
+                                        <p className="text-sm font-medium text-gray-600">Train it to get it ready</p>
                                     )}
                                 </div>
                                 <div className="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
@@ -236,7 +231,7 @@ export default async function DashboardPage() {
                                     <Button variant="outline" className="w-full justify-between">
                                         <span className="flex items-center gap-2">
                                             <TrendingUp className="w-4 h-4" />
-                                            Update Business Info
+                                            Update Brand Info
                                         </span>
                                         <ArrowRight className="w-4 h-4" />
                                     </Button>
@@ -270,43 +265,6 @@ export default async function DashboardPage() {
                     <div className="min-w-0">
                         {!isPro ? (
                             <div className="md:col-span-1 space-y-8">
-                                <AnimatedBorderCard colorVariant="sunset" theme="light" duration={7} strength={0.4} borderRadius={18} className="relative rounded-2xl bg-gradient-to-br from-orange-50 to-white border border-orange-200">
-                                    <CardHeader>
-                                        <CardTitle className="text-lg flex items-center gap-2">
-                                            <Rocket className="w-5 h-5 text-orange-600" /> Upgrade to Pro
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <ul className="space-y-2 text-sm text-gray-600 mb-4">
-                                            <li className="flex items-center gap-2">
-                                                <Check className="w-4 h-4 text-green-500" />
-                                                Your own subdomain: {user.business_slug}.qriblo.com
-                                            </li>
-                                            <li className="flex items-center gap-2">
-                                                <Check className="w-4 h-4 text-green-500" />
-                                                Green verified badge for trust
-                                            </li>
-                                            <li className="flex items-center gap-2">
-                                                <Check className="w-4 h-4 text-green-500" />
-                                                Unlimited {user.business_type === 'services' ? 'service listings' : 'product and service listings'}
-                                            </li>
-                                            <li className="flex items-center gap-2">
-                                                <Check className="w-4 h-4 text-green-500" />
-                                                Customer reviews &amp; ratings
-                                            </li>
-                                            <li className="flex items-center gap-2">
-                                                <Check className="w-4 h-4 text-green-500" />
-                                                Virtual Assistant runs 24/7
-                                            </li>
-                                        </ul>
-                                        <Link href="/dashboard/settings#upgrade">
-                                            <Button className="w-full">
-                                                Upgrade Now
-                                            </Button>
-                                        </Link>
-                                    </CardContent>
-                                </AnimatedBorderCard>
-
                                 <Card className="bg-gradient-to-br from-blue-50 to-white border-blue-200">
                                     <CardHeader>
                                         <CardTitle className="text-lg flex items-center gap-2">

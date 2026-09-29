@@ -1,18 +1,9 @@
 'use client'
 
-import React from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import {
-    CheckCircle2,
-    Circle,
-    ArrowRight,
-    Target,
-    ShoppingBag,
-    UserCircle,
-    Share2
-} from 'lucide-react'
-
+import { ArrowRight, CheckCircle2, Circle, MessageCircle, Package, UserCircle, WandSparkles } from 'lucide-react'
 import { User } from '@/lib/types'
 
 interface OnboardingAssistantProps {
@@ -21,133 +12,71 @@ interface OnboardingAssistantProps {
 }
 
 export function OnboardingAssistant({ user, productCount }: OnboardingAssistantProps) {
-    // Determine completed steps
-    const hasAddedProduct = productCount > 0
-    const hasCompletedProfile = !!(user.business_name && user.whatsapp_number && user.location && user.description && user.logo_url)
+    const [successfulTests, setSuccessfulTests] = useState(0)
 
-    // We can't easily track "shared link" without more state, so we'll assume it's the last step
-    // and show it if the others are done.
-
-    // Determine current active step
-    let activeStep = 0 // 0: Add Product, 1: Complete Profile, 2: Share Link
-
-    if (!hasAddedProduct) {
-        activeStep = 0
-    } else if (!hasCompletedProfile) {
-        activeStep = 1
-    } else {
-        activeStep = 2
-    }
-
-    const isService = user.business_type === 'services'
-
-    const steps = [
-        {
-            id: 'product',
-            title: isService ? 'Add your first service' : 'Add your first product',
-            description: isService ? 'Add a name and price so customers know what you offer.' : 'Add a photo, name, and price so customers know what you sell.',
-            cta: isService ? 'Add a service' : 'Add a product',
-            href: '/dashboard/products',
-            icon: <ShoppingBag className="w-5 h-5" />,
-            isComplete: hasAddedProduct
-        },
-        {
-            id: 'profile',
-            title: 'Add your business details',
-            description: 'Add your logo, area, and a short description so customers know who you are.',
-            cta: 'Edit business details',
-            href: '/dashboard/settings',
-            icon: <UserCircle className="w-5 h-5" />,
-            isComplete: hasCompletedProfile
-        },
-        {
-            id: 'share',
-            title: 'Share your link',
-            description: 'Send your page link to customers on WhatsApp.',
-            cta: 'Copy page link',
-            href: `/${user.business_slug}`,
-            icon: <Share2 className="w-5 h-5" />,
-            isComplete: false // Always show as final step action
+    useEffect(() => {
+        try {
+            const count = Number(window.localStorage.getItem(`qriblo-va-tests-${user.id}`) || 0)
+            if (Number.isFinite(count) && count > 0) setSuccessfulTests(count)
+        } catch {
+            // The checklist remains usable when browser storage is unavailable.
         }
+    }, [user.id])
+
+    const hasPage = Boolean(user.business_name && user.business_slug)
+    const hasOffer = productCount > 0
+    const hasTrainedVa = Boolean(user.ai_instructions?.trim())
+    const isLive = user.plan === 'pro' && user.ai_enabled
+    const steps = [
+        { title: 'Create your brand page', description: 'Add your brand name and page link.', cta: 'Build your page', href: '/dashboard/settings', done: hasPage, icon: UserCircle },
+        { title: user.business_type === 'services' ? 'Add a service' : 'Add a product or service', description: 'Add what you offer so your VA can give useful answers.', cta: 'Add what you offer', href: '/dashboard/products', done: hasOffer, icon: Package },
+        { title: 'Try real customer questions', description: 'Test a few questions customers may ask.', cta: 'Test your VA', href: '/dashboard/ai#va-tests', done: successfulTests >= 5, icon: MessageCircle },
+        { title: 'Train your VA', description: 'Tell your VA how to answer in your brand’s voice.', cta: 'Train your VA', href: '/dashboard/ai#va-training', done: hasTrainedVa, icon: WandSparkles },
     ]
-
-    const currentStep = steps[activeStep]
-
-    // If all major steps are "visually" done (product + profile), we just show the share step as the active one.
-    // If the user has been here for a long time (e.g. > 7 days) maybe we don't show this? 
-    // For now, let's always show it to be helpful.
+    const activeStep = steps.findIndex(step => !step.done)
+    const allReady = steps.every(step => step.done)
+    const currentStep = activeStep === -1 ? steps[steps.length - 1] : steps[activeStep]
+    const CurrentIcon = currentStep.icon
 
     return (
-        <div className="qr-onboarding-card mb-8 bg-white rounded-2xl border border-orange-100 shadow-sm overflow-hidden">
-            <div className="bg-gradient-to-r from-orange-50 to-white p-6 border-b border-orange-100">
-                <div className="flex items-center gap-2 mb-2">
-                    <Target className="w-5 h-5 text-orange-500" />
-                    <h2 className="font-bold text-gray-900 text-lg">Get your business ready</h2>
+        <section className="qr-onboarding-card mb-8 overflow-hidden rounded-2xl border border-orange-100 bg-white shadow-sm">
+            <div className="border-b border-orange-100 bg-gradient-to-r from-orange-50 to-white p-6">
+                <div className="mb-2 flex items-center gap-2">
+                    <WandSparkles className="h-5 w-5 text-orange-600" />
+                    <h2 className="text-lg font-bold text-gray-900">Set up your brand VA</h2>
                 </div>
-                <p className="text-gray-600 text-sm">
-                    Do these 3 things to help customers find and contact you.
-                </p>
+                <p className="text-sm text-gray-600">Follow these simple steps. Your VA will be ready to help your customers.</p>
             </div>
 
-            <div className="p-6">
-                <div className="flex flex-col md:flex-row gap-8">
-                    {/* Active Step Focus */}
-                    <div className="flex-1">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold mb-4">
-                            STEP {activeStep + 1} OF 3
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">
-                            {currentStep.title}
-                        </h3>
-                        <p className="text-gray-500 mb-6 leading-relaxed">
-                            {currentStep.description}
-                        </p>
-
-                        <Link href={currentStep.href}>
-                            <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white shadow-lg shadow-orange-100 font-semibold group">
-                                {currentStep.cta}
-                                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                            </Button>
-                        </Link>
+            <div className="grid gap-6 p-6 md:grid-cols-[1fr_280px]">
+                <div>
+                    <div className="mb-4 inline-flex rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-800">
+                        {isLive ? 'YOUR VA IS LIVE' : activeStep === -1 ? 'READY TO GO LIVE' : `STEP ${activeStep + 1} OF ${steps.length}`}
                     </div>
-
-                    {/* Progress List */}
-                    <div className="w-full md:w-80 border-t md:border-t-0 md:border-l border-gray-100 pt-6 md:pt-0 md:pl-8 flex flex-col justify-center">
-                        <div className="space-y-4">
-                            {steps.map((step, index) => (
-                                <div
-                                    key={step.id}
-                                    className={`flex items-center gap-3 ${index === activeStep
-                                        ? 'opacity-100'
-                                        : index < activeStep
-                                            ? 'opacity-50'
-                                            : 'opacity-40'
-                                        }`}
-                                >
-                                    <div className={`
-                                        flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors
-                                        ${step.isComplete
-                                            ? 'bg-green-100 border-green-100 text-green-600'
-                                            : index === activeStep
-                                                ? 'bg-orange-50 border-orange-500 text-orange-600'
-                                                : 'bg-transparent border-gray-200 text-gray-300'
-                                        }
-                                    `}>
-                                        {step.isComplete ? (
-                                            <CheckCircle2 className="w-5 h-5" />
-                                        ) : (
-                                            <span className="font-bold text-sm">{index + 1}</span>
-                                        )}
-                                    </div>
-                                    <span className={`font-medium ${index === activeStep ? 'text-gray-900' : 'text-gray-500'}`}>
-                                        {step.title}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
+                    <div className="mb-2 flex items-center gap-2">
+                        <CurrentIcon className="h-5 w-5 text-orange-600" />
+                        <h3 className="text-xl font-bold text-gray-900">{isLive ? 'Your VA is helping customers' : allReady ? 'Your VA is ready' : currentStep.title}</h3>
                     </div>
+                    <p className="mb-5 leading-relaxed text-gray-600">
+                        {isLive ? 'Customers can now get answers from your VA.' : allReady ? 'Your VA is ready. It is currently offline to customers.' : currentStep.description}
+                    </p>
+                    {!isLive && <Link href={allReady ? '/dashboard/ai#va-launch' : currentStep.href}>
+                        <Button size="lg" className="bg-orange-600 font-semibold text-white shadow-lg shadow-orange-100 hover:bg-orange-700">
+                            {allReady ? 'Go live for ₦2,500/month' : currentStep.cta}
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                    </Link>}
                 </div>
+
+                <ol className="space-y-3 border-t border-gray-100 pt-5 md:border-l md:border-t-0 md:pl-6 md:pt-1">
+                    {steps.map((step, index) => (
+                        <li key={step.title} className="flex items-center gap-3 text-sm">
+                            {step.done ? <CheckCircle2 className="h-5 w-5 shrink-0 text-green-600" /> : <Circle className={`h-5 w-5 shrink-0 ${index === activeStep ? 'text-orange-600' : 'text-gray-300'}`} />}
+                            <span className={step.done ? 'text-gray-500' : index === activeStep ? 'font-semibold text-gray-900' : 'text-gray-400'}>{step.title}</span>
+                        </li>
+                    ))}
+                </ol>
             </div>
-        </div>
+        </section>
     )
 }

@@ -43,13 +43,13 @@ export function SubdomainLinkCard({ businessSlug, isPro }: SubdomainLinkCardProp
                             <Globe className="w-4 h-4 text-white" />
                         </div>
                         <div>
-                            <p className="text-xs font-bold uppercase tracking-wider text-[#B84D34]">Your Pro Link</p>
+                            <p className="text-xs font-bold uppercase tracking-wider text-[#B84D34]">Your branded link</p>
                             <p className="text-[11px] text-[#6B5850]">Your own branded subdomain — share this with customers</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-[#B84D34] flex-shrink-0">
                         <Crown className="w-3 h-3 text-white" />
-                        <span className="text-[10px] font-black text-white uppercase tracking-wider">Pro</span>
+                        <span className="text-[10px] font-black text-white uppercase tracking-wider">Custom</span>
                     </div>
                 </div>
 
@@ -95,7 +95,7 @@ export function SubdomainLinkCard({ businessSlug, isPro }: SubdomainLinkCardProp
         )
     }
 
-    // Free user — show regular link with upgrade nudge
+    // Keep the shareable brand page link visible while the VA is being prepared.
     return (
         <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4 sm:p-5 mb-6">
             <div className="flex items-start justify-between gap-3 mb-3">
@@ -119,14 +119,14 @@ export function SubdomainLinkCard({ businessSlug, isPro }: SubdomainLinkCardProp
 
             <div className="mt-3 flex items-center justify-between">
                 <p className="text-[11px] text-gray-400">
-                    Upgrade to Pro to get{' '}
+                    Go live with your VA to get{' '}
                     <span className="font-semibold text-[#B84D34]">{businessSlug}.qriblo.com</span>
                 </p>
                 <Link
-                    href="/pricing"
+                    href="/dashboard/ai"
                     className="flex items-center gap-1 text-[11px] font-bold text-[#B84D34] hover:underline"
                 >
-                    <Crown className="w-3 h-3" /> Upgrade
+                    <Crown className="w-3 h-3" /> Get started
                 </Link>
             </div>
         </div>

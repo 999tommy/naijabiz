@@ -25,15 +25,19 @@ export default async function AiDashboardPage() {
     }
 
     const checkedUser = await checkAndDowngradeUser(user)
+    const { count: productCount } = await supabase
+        .from('products')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', authUser.id)
 
     return (
         <DashboardLayout user={checkedUser}>
             <div className="max-w-3xl mx-auto">
                 <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-gray-900">Virtual Assistant</h1>
-                    <p className="text-gray-500">Set up your virtual assistant to answer product and service questions, and collect order or booking requests.</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Get your VA ready to go live</h1>
+                    <p className="text-gray-500">Build its knowledge from your brand page, then rehearse the real questions customers ask.</p>
                 </div>
-                <AiSettingsForm user={checkedUser} />
+                <AiSettingsForm user={checkedUser} productCount={productCount || 0} />
             </div>
         </DashboardLayout>
     )

@@ -98,7 +98,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
         let cancelled = false
         const startedAt = Date.now()
 
-        setMessage({ type: 'success', text: 'Payment received. Activating Pro...' })
+        setMessage({ type: 'success', text: 'Payment received. Activating your virtual assistant...' })
 
         const interval = window.setInterval(async () => {
             if (cancelled) return
@@ -113,7 +113,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                 window.clearInterval(interval)
                 if (!cancelled) {
                     await fetchUser()
-                    setMessage({ type: 'success', text: 'Upgrade successful! You are now on Pro.' })
+                    setMessage({ type: 'success', text: 'Your virtual assistant is now live for customers.' })
                     router.replace('/dashboard/settings#upgrade')
                     router.refresh()
                 }
@@ -123,7 +123,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
             if (Date.now() - startedAt > 20000) {
                 window.clearInterval(interval)
                 if (!cancelled) {
-                    setMessage({ type: 'error', text: 'Payment received but upgrade is still pending. Please refresh in a minute.' })
+                    setMessage({ type: 'error', text: 'Payment received, but your assistant is still activating. Please refresh in a minute.' })
                 }
             }
         }, 2000)
@@ -303,7 +303,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                 throw new Error(data.error || 'Failed to create checkout')
             }
         } catch (err: unknown) {
-            const errorMessage = err instanceof Error ? err.message : 'Failed to start upgrade'
+            const errorMessage = err instanceof Error ? err.message : 'Failed to start checkout'
             setMessage({ type: 'error', text: errorMessage })
         } finally {
             setLoading(false)
@@ -342,7 +342,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
         <div className="max-w-4xl mx-auto space-y-6">
             <div>
                 <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-                <p className="text-gray-500">Manage your business profile and subscription</p>
+                <p className="text-gray-500">Manage your brand page and virtual assistant</p>
             </div>
 
             {message.text && (
@@ -369,7 +369,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
             <details className="group rounded-xl border border-gray-200 bg-white shadow-sm">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-6">
                     <div>
-                        <h2 className="text-lg font-semibold text-gray-900">Business Profile</h2>
+                        <h2 className="text-lg font-semibold text-gray-900">Brand Profile</h2>
                         <p className="text-sm text-gray-500">Update your logo, contact details, category, and public page copy.</p>
                     </div>
                     <ChevronDown className="h-5 w-5 shrink-0 text-gray-400 transition-transform group-open:rotate-180" />
@@ -564,20 +564,20 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                 {isPro ? (
                                     <>
                                         <Crown className="w-5 h-5 text-orange-500" />
-                                        Pro Plan
+                                        Customer-facing VA
                                     </>
                                 ) : (
-                                    'Free Plan'
+                                    'VA setup'
                                 )}
                             </CardTitle>
                             <CardDescription>
-                                {isPro ? 'You have access to all features' : 'Upgrade to unlock more features'}
+                                {isPro ? 'Your assistant is active for customers' : 'Build and test your assistant before taking it live'}
                             </CardDescription>
                         </div>
                         {isPro ? (
                             <Badge variant="pro">Active</Badge>
                         ) : (
-                            <Badge variant="outline">Free</Badge>
+                            <Badge variant="outline">Offline</Badge>
                         )}
                     </div>
                 </CardHeader>
@@ -599,32 +599,30 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                             <details className="group rounded-xl border border-gray-200 bg-white">
                                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-4">
                                     <div>
-                                        <h4 className="font-bold text-gray-900">Compare Free and Pro</h4>
-                                        <p className="text-sm text-gray-500">Open this if you want the feature details.</p>
+                                        <h4 className="font-bold text-gray-900">What goes live with your VA?</h4>
+                                        <p className="text-sm text-gray-500">See what your customers can use once it’s active.</p>
                                     </div>
                                     <ChevronDown className="h-5 w-5 text-gray-400 transition-transform group-open:rotate-180" />
                                 </summary>
                                 <div className="grid gap-4 border-t border-gray-100 p-4 sm:grid-cols-2">
                                     <div className="space-y-2">
-                                        <h4 className="font-medium">Free Plan includes:</h4>
+                                        <h4 className="font-medium">Your brand page</h4>
                                         <ul className="text-sm text-gray-500 space-y-1">
-                                            <li>• Standard link (qriblo.com/{user.business_slug || 'yourbrand'})</li>
-                                            <li>• Basic business page</li>
-                                            <li>• Up to 5 products or services</li>
-                                            <li>• WhatsApp order and booking links</li>
-                                            <li>• 0 virtual assistant messages</li>
+                                            <li>• Shareable Qriblo link and brand details</li>
+                                            <li>• Products, services, prices, and WhatsApp links</li>
+                                            <li>• Build and privately test your virtual assistant</li>
                                         </ul>
                                     </div>
                                     <div className="space-y-2">
-                                        <h4 className="font-medium text-orange-600">Pro Plan includes:</h4>
+                                        <h4 className="font-medium text-orange-600">When your VA is live</h4>
                                         <ul className="text-sm text-gray-600 space-y-1">
                                             <li className="flex items-center gap-1 font-bold text-orange-700">
                                                 <CheckCircle2 className="w-4 h-4 text-orange-600" />
-                                                Your own Qriblo link ({user.business_slug || 'yourbrand'}.qriblo.com)
+                                                Answers customers on your page and WhatsApp
                                             </li>
                                             <li className="flex items-center gap-1">
                                                 <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                                Green verified badge
+                                                500 assistant replies each month
                                             </li>
                                             <li className="flex items-center gap-1">
                                                 <CheckCircle2 className="w-4 h-4 text-green-500" />
@@ -632,11 +630,11 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                             </li>
                                             <li className="flex items-center gap-1">
                                                 <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                                Customer reviews and analytics
+                                                Reviews, a branded link, and visitor analytics
                                             </li>
                                             <li className="flex items-center gap-1 font-bold text-orange-700">
                                                 <CheckCircle2 className="w-4 h-4 text-orange-600" />
-                                                Virtual assistant for orders and bookings (500 messages/month)
+                                                Captures order and booking requests
                                             </li>
                                         </ul>
                                     </div>
@@ -646,7 +644,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                             <div className="flex flex-col gap-6 p-6 rounded-2xl bg-orange-50/50 border border-orange-100">
                                 <div>
                                     <h4 className="font-bold text-gray-900">Select your billing cycle</h4>
-                                    <p className="text-sm text-gray-500">Choose how you want to pay</p>
+                                    <p className="text-sm text-gray-500">Go live monthly or choose a longer billing period</p>
                                 </div>
 
                                 <div className="grid sm:grid-cols-2 gap-3">
@@ -686,7 +684,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                     ) : (
                                         <>
                                             <Crown className="w-4 h-4 mr-2" />
-                                            Upgrade {billingOptions.find(option => option.cycle === upgradeBillingCycle)?.label} - {billingOptions.find(option => option.cycle === upgradeBillingCycle)?.price}
+                                            Go live {billingOptions.find(option => option.cycle === upgradeBillingCycle)?.label} — {billingOptions.find(option => option.cycle === upgradeBillingCycle)?.price}
                                         </>
                                     )}
                                 </Button>

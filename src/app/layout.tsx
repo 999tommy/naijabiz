@@ -6,12 +6,12 @@ const siteUrl = (process.env.NEXT_PUBLIC_BASE_URL || 'https://qriblo.com').repla
 
 export const metadata: Metadata = {
   title: {
-    default: "Qriblo | We deliver customers to your doorstep",
+    default: "Qriblo | A virtual assistant for your brand",
     template: "%s | Qriblo"
   },
   applicationName: "Qriblo",
-  description: "Give your brand a platform that delivers customers straight to your doorstep. Handle inquiries, showcase products or services, and receive orders on WhatsApp.",
-  keywords: ["Qriblo", "customer delivery Nigeria", "professional business site Nigeria","online business page Nigeria", "WhatsApp business catalog", "Nigerian business directory", "product catalog", "service bookings", "appointment requests", "online store for small business"],
+  description: "Give your brand a virtual assistant that answers customer questions and captures order or booking requests, backed by your brand page, catalog, and instructions.",
+  keywords: ["Qriblo", "virtual assistant for brands Nigeria", "brand page Nigeria","brand page with virtual assistant", "WhatsApp brand assistant", "Nigerian brand directory", "product catalog", "service bookings", "appointment requests", "online storefront for growing brands"],
   authors: [{ name: "Qriblo Team" }],
   creator: "Qriblo",
   metadataBase: new URL(siteUrl),
@@ -20,13 +20,13 @@ export const metadata: Metadata = {
     locale: "en_NG",
     url: siteUrl,
     siteName: "Qriblo",
-    title: "Qriblo | We deliver customers to your doorstep",
-    description: "Give customers one place to discover your business, browse products or services, and message you to place an order or request an appointment.",
+    title: "Qriblo | A virtual assistant for your brand",
+    description: "Give your brand a virtual assistant that answers questions and captures order or booking requests, supported by a page with your products, services, and brand details.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Qriblo | We deliver customers to your doorstep",
-    description: "Give customers a page to browse your products or services, ask questions, and send order or appointment requests.",
+    title: "Qriblo | A virtual assistant for your brand",
+    description: "Give your brand a virtual assistant to answer questions and capture order or booking requests, backed by your page, catalog, and brand details.",
     creator: "@qriblo",
   },
   icons: {

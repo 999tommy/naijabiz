@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServiceClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 export const runtime = 'nodejs'
 
@@ -36,6 +36,12 @@ export async function POST(request: NextRequest) {
 
         if (!userId) {
             return NextResponse.json({ error: 'User ID required' }, { status: 400 })
+        }
+
+        const authClient = await createClient()
+        const { data: { user: authUser } } = await authClient.auth.getUser()
+        if (!authUser || authUser.id !== userId) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
         const billingCycle = normalizeBillingCycle(billing)

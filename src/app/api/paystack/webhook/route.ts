@@ -311,6 +311,7 @@ export async function POST(request: NextRequest) {
             .from('users')
             .update({
                 plan: 'pro',
+                ai_enabled: true,
                 subscription_id: getSubscriptionCode(data) || reference || eventReference,
                 subscription_ends_at: subscriptionEndsAt.toISOString(),
                 is_verified: true,

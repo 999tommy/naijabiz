@@ -94,7 +94,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
 
         try {
             if (!editingProduct && !isPro && activeProductCount >= 5) {
-                throw new Error('Free accounts can have up to 5 active catalog items. Deactivate an item or upgrade to Pro.')
+                throw new Error('Your page can hold up to 5 active items while your VA is in preparation. Remove an item or finish getting your VA ready.')
             }
             const compressedFile = await compressImage(file)
             setImageFile(compressedFile)
@@ -243,8 +243,8 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                         Add product or service
                     </Button>
                 ) : (
-                    <Button variant="outline" onClick={() => router.push('/dashboard/settings#upgrade')} className="w-full sm:w-auto">
-                        Upgrade to add more
+                    <Button variant="outline" onClick={() => router.push('/dashboard/ai')} className="w-full sm:w-auto">
+                        Prepare your VA for customers
                     </Button>
                 )}
             </div>
@@ -259,7 +259,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                             {activeProductCount >= 5 ? 'You have reached your 5-item limit.' : 'You are close to your 5-item limit.'}
                         </p>
                         <p className="text-sm text-orange-700 mt-1">
-                            Free includes up to 5 products or services and no assistant messages. Pro includes unlimited items and 500 assistant messages each month.
+                            You can list up to 5 products or services while your VA is in preparation. Once it goes live, your page supports unlimited items and your VA can answer customers on your page and WhatsApp.
                         </p>
                     </div>
                 </div>

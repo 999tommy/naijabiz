@@ -116,9 +116,9 @@ export default async function AnalyticsPage() {
         redirect('/signup?step=business')
     }
 
-    // Redirect free users
+    // Route inactive subscriptions to the VA preparation flow.
     if (user.plan !== 'pro') {
-        redirect('/dashboard/settings#upgrade')
+        redirect('/dashboard/ai')
     }
 
     const analytics = await getAnalytics(authUser.id)

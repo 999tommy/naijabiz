@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { updateAiSettings } from './actions'
-import { Bot, Save, Loader2, Briefcase, MessageSquareText, Send, ArrowRight, MessageCircle, Copy } from 'lucide-react'
+import { Bot, Save, Loader2, Briefcase, MessageSquareText, Send, MessageCircle, Copy, CheckCircle2, Circle, Rocket } from 'lucide-react'
 import { User } from '@/lib/types'
 import Link from 'next/link'
 import { BrandThinkingOrb } from '@/components/ui/BrandThinkingOrb'
@@ -17,6 +17,7 @@ import { PRO_MONTHLY_AI_USAGE_LIMIT } from '@/lib/ai/usage'
 
 interface AiSettingsFormProps {
     user: User
+    productCount: number
 }
 
 interface SandboxMessage {
@@ -25,10 +26,20 @@ interface SandboxMessage {
     sentAt?: string
 }
 
-export function AiSettingsForm({ user }: AiSettingsFormProps) {
+interface TestOutcome {
+    question: string
+    answer: string
+}
+
+export function AiSettingsForm({ user, productCount }: AiSettingsFormProps) {
     const [loading, setLoading] = useState(false)
+    const [checkoutLoading, setCheckoutLoading] = useState(false)
+    const [checkoutError, setCheckoutError] = useState<string | null>(null)
     const [saveStatus, setSaveStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
     const [waEnabled, setWaEnabled] = useState(Boolean(user.wa_whatsapp_enabled))
+    const [successfulTests, setSuccessfulTests] = useState(0)
+    const [testOutcomes, setTestOutcomes] = useState<TestOutcome[]>([])
+    const [hasSavedKnowledge, setHasSavedKnowledge] = useState(productCount > 0 || Boolean(user.ai_instructions?.trim()))
     const isPro = user.plan === 'pro'
     const limit = isPro ? PRO_MONTHLY_AI_USAGE_LIMIT : 0
     const currentUsagePeriod = new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 7)
@@ -37,6 +48,11 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
         : false
     const dailyUsageCount = hasFreshUsage ? user.ai_usage_count || 0 : 0
     const usagePercent = limit === 0 ? 0 : Math.min((dailyUsageCount / limit) * 100, 100)
+    const hasPage = Boolean(user.business_name && user.business_slug)
+    const hasKnowledge = hasSavedKnowledge
+    const hasEnoughTests = successfulTests >= 5
+    const readyToGoLive = hasPage && hasKnowledge && hasEnoughTests
+    const isLive = isPro && user.ai_enabled
 
     // Interactive Sandbox state
     const [sandboxMessages, setSandboxMessages] = useState<SandboxMessage[]>([
@@ -45,6 +61,17 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
     const [sandboxInput, setSandboxInput] = useState('')
     const [sandboxLoading, setSandboxLoading] = useState(false)
     const sandboxScrollRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        try {
+            const savedTests = Number(window.localStorage.getItem(`qriblo-va-tests-${user.id}`) || 0)
+            if (Number.isFinite(savedTests) && savedTests > 0) setSuccessfulTests(savedTests)
+            const savedOutcomes = window.localStorage.getItem(`qriblo-va-outcomes-${user.id}`)
+            if (savedOutcomes) setTestOutcomes(JSON.parse(savedOutcomes))
+        } catch {
+            // Testing progress still works for this visit when browser storage is unavailable.
+        }
+    }, [user.id])
 
     const toast = (msg: string) => setSaveStatus({ type: 'success', message: msg })
 
@@ -66,7 +93,26 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
             setSaveStatus({ type: 'error', message: result.error })
             return
         }
+        setHasSavedKnowledge(productCount > 0 || Boolean(String(formData.get('ai_instructions') || '').trim()))
         toast('Virtual Assistant settings updated successfully!')
+    }
+
+    async function handleGoLive() {
+        setCheckoutLoading(true)
+        setCheckoutError(null)
+        try {
+            const response = await fetch('/api/paystack/initialize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: user.id, billing: 'monthly' }),
+            })
+            const data = await response.json()
+            if (!response.ok || !data.url) throw new Error(data.error || 'Could not start checkout')
+            window.location.assign(data.url)
+        } catch (error) {
+            setCheckoutError(error instanceof Error ? error.message : 'Could not start checkout')
+            setCheckoutLoading(false)
+        }
     }
 
     function handleFormKeyDown(event: React.KeyboardEvent<HTMLFormElement>) {
@@ -109,7 +155,23 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
             }
 
             const data = await res.json()
-            setSandboxMessages(prev => [...prev, { role: 'assistant', content: data.reply || 'No response.', sentAt: new Date().toISOString() }])
+            const answer = data.reply || 'No response.'
+            setSandboxMessages(prev => [...prev, { role: 'assistant', content: answer, sentAt: new Date().toISOString() }])
+            const nextSuccessfulTest = successfulTests + 1
+            try {
+                window.localStorage.setItem(`qriblo-va-tests-${user.id}`, String(nextSuccessfulTest))
+            } catch {
+                // Keep the current page's progress even when browser storage is unavailable.
+            }
+            const outcome = { question: userMsg, answer }
+            const nextOutcomes = [...testOutcomes, outcome].slice(-10)
+            try {
+                window.localStorage.setItem(`qriblo-va-outcomes-${user.id}`, JSON.stringify(nextOutcomes))
+            } catch {
+                // Keep the current page's answer examples even when browser storage is unavailable.
+            }
+            setTestOutcomes(nextOutcomes)
+            setSuccessfulTests(nextSuccessfulTest)
         } catch (err: any) {
             setSandboxMessages(prev => [...prev, { role: 'assistant', content: `I hear you. Add your catalog, booking rules, delivery details, and payment notes above so I can answer customers more clearly.`, sentAt: new Date().toISOString() }])
         } finally {
@@ -119,26 +181,50 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
 
     return (
         <div className="space-y-6">
-            {/* Free Tier Usage Banner */}
-            {!isPro && (
-                <div className="p-5 rounded-xl bg-white border border-orange-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="space-y-1">
-                        <h2 className="text-lg font-bold text-gray-900">Virtual Assistant is available on your page</h2>
-                        <p className="text-gray-600 text-sm max-w-xl">
-                            Compare plans to see what each one includes.
-                        </p>
+            <Card id="va-launch" className={`border shadow-sm ${isLive ? 'border-green-200 bg-green-50/60' : readyToGoLive ? 'border-orange-300 bg-orange-50/60' : 'border-orange-100 bg-white'}`}>
+                <CardContent className="p-5 space-y-5">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-wider text-orange-700">Your VA launch path</p>
+                            <h2 className="mt-1 text-lg font-bold text-gray-900">{isLive ? 'Your VA is live for customers.' : readyToGoLive ? 'Your VA is ready. It’s currently offline to customers.' : 'Build it. Train it. Test it.'}</h2>
+                            <p className="mt-1 text-sm text-gray-600">Add the details it needs, then rehearse 5–10 questions customers really ask.</p>
+                        </div>
+                        {!isLive && <span className="w-fit shrink-0 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-semibold text-gray-600">Offline to customers</span>}
+                        {isLive && <span className="w-fit shrink-0 rounded-full border border-green-200 bg-white px-3 py-1 text-xs font-semibold text-green-700">Live</span>}
                     </div>
-                    <Link href="/pricing">
-                        <Button className="bg-orange-600 hover:bg-orange-700 font-bold h-11 px-5 rounded-lg shrink-0 flex items-center gap-2">
-                            Upgrade for more
-                            <ArrowRight className="w-4 h-4" />
-                        </Button>
-                    </Link>
-                </div>
-            )}
+                    <div className="grid gap-3 sm:grid-cols-3">
+                        {[
+                            { title: 'Build your brand page', detail: hasPage ? 'Your brand page is in place.' : 'Add your brand name and page details.', done: hasPage },
+                            { title: 'Train your VA', detail: hasKnowledge ? productCount > 0 ? `Your catalog and saved notes inform its answers.` : 'Your saved notes inform its answers.' : 'Add products or services, prices, and useful notes.', done: hasKnowledge },
+                            { title: 'Test real questions', detail: `${Math.min(successfulTests, 5)} of 5 questions tested. Try 5–10.`, done: hasEnoughTests },
+                        ].map(step => (
+                            <div key={step.title} className="flex gap-2.5 rounded-xl border border-gray-200 bg-white p-3">
+                                {step.done ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-600" /> : <Circle className="mt-0.5 h-4 w-4 shrink-0 text-gray-300" />}
+                                <div><p className="text-sm font-semibold text-gray-900">{step.title}</p><p className="mt-1 text-xs leading-relaxed text-gray-500">{step.detail}</p></div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
+                        <Link href="/dashboard/settings" className="text-orange-700 hover:text-orange-800 hover:underline">Edit brand page</Link>
+                        <Link href="/dashboard/products" className="text-orange-700 hover:text-orange-800 hover:underline">Add products or services</Link>
+                        <a href="#va-training" className="text-orange-700 hover:text-orange-800 hover:underline">Train your VA</a>
+                    </div>
+                    {!isLive && !isPro && readyToGoLive && (
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-orange-200 pt-4">
+                            <p className="text-sm text-gray-700">Put your VA in front of customers on your brand page. WhatsApp routing can be switched on after activation.</p>
+                            <Button onClick={handleGoLive} disabled={checkoutLoading} className="h-11 bg-orange-600 px-5 font-bold text-white hover:bg-orange-700">
+                                {checkoutLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Starting checkout…</> : <><Rocket className="mr-2 h-4 w-4" />Go live for ₦2,500/month</>}
+                            </Button>
+                        </div>
+                    )}
+                    {!isLive && isPro && readyToGoLive && <p className="border-t border-orange-200 pt-4 text-sm font-medium text-gray-700">Your VA is ready. Save its settings below to put it in front of customers.</p>}
+                    {!isLive && !readyToGoLive && <p className="border-t border-gray-100 pt-3 text-sm font-medium text-gray-700">Finish the steps above to get your VA ready for customers.</p>}
+                    {checkoutError && <p className="text-sm font-medium text-red-600" role="alert">{checkoutError}</p>}
+                </CardContent>
+            </Card>
 
             {/* Virtual Assistant Configuration Form */}
-            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} onChange={() => setSaveStatus(null)}>
+            <form id="va-training" onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} onChange={() => setSaveStatus(null)}>
                 <Card className="shadow-md border-gray-200">
                     <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -152,9 +238,9 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-orange-200 shadow-sm shrink-0">
-                                <span className="text-xs font-medium text-gray-600">{isPro ? 'Today:' : 'This month:'}</span>
+                                <span className="text-xs font-medium text-gray-600">{isPro ? 'Customer replies this month:' : 'Private test chats'}</span>
                                 <span className={`text-xs font-bold ${usagePercent >= 100 ? 'text-red-600' : 'text-orange-700'}`}>
-                                    {dailyUsageCount}/{limit} messages
+                                    {isPro ? `${dailyUsageCount}/${limit}` : 'No monthly limit'}
                                 </span>
                             </div>
                         </div>
@@ -322,7 +408,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
 
                         {/* Business Instructions */}
                         <div className="space-y-2">
-                            <Label htmlFor="ai_instructions" className="font-semibold">Business notes and instructions</Label>
+                            <Label htmlFor="ai_instructions" className="font-semibold">Brand notes and instructions</Label>
                             <Textarea
                                 id="ai_instructions"
                                 name="ai_instructions"
@@ -378,7 +464,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                         )}
                                     </span>
                                     <span className="font-normal text-sm text-gray-500 max-w-xl">
-                                        Customers can message Qriblo on WhatsApp and ask to connect with your business. Share your Qriblo WhatsApp link on Instagram or in your bio.
+                                        Customers can message Qriblo on WhatsApp and ask to connect with your brand. Share your Qriblo WhatsApp link on Instagram or in your bio.
                                     </span>
                                 </Label>
                                 {isPro ? (
@@ -390,7 +476,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                     />
                                 ) : (
                                     <div className="flex items-center gap-2">
-                                        <span className="text-xs font-semibold text-orange-600 bg-orange-100 px-2.5 py-1 rounded-md shrink-0">Pro Feature</span>
+                                        <span className="text-xs font-semibold text-orange-600 bg-orange-100 px-2.5 py-1 rounded-md shrink-0">Available when your VA goes live</span>
                                         <Switch id="wa_whatsapp_enabled" disabled defaultChecked={false} />
                                     </div>
                                 )}
@@ -443,7 +529,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
             </form>
 
             {/* Interactive Assistant Playground */}
-            <Card className="border-orange-200 bg-white shadow-lg overflow-hidden">
+            <Card id="va-tests" className="border-orange-200 bg-white shadow-lg overflow-hidden">
                 <CardHeader className="bg-gradient-to-r from-gray-900 to-gray-800 text-white p-5">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div className="flex items-center gap-3">
@@ -455,7 +541,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                     Interactive Virtual Assistant
                                 </CardTitle>
                                 <CardDescription className="text-gray-300 text-xs">
-                                    Test real customer questions with your current catalog. Owner tests do not use your visitor message allowance.
+                                    Try 5–10 real customer questions. These private tests show what your VA knows before you put it in front of customers.
                                 </CardDescription>
                             </div>
                         </div>
@@ -467,7 +553,7 @@ export function AiSettingsForm({ user }: AiSettingsFormProps) {
                                 mainClassName="text-xs font-bold text-emerald-300"
                             />
                             <span className="text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
-                                <BrandThinkingOrb state="searching" size={20} /> Live Testing
+                                <BrandThinkingOrb state="searching" size={20} /> {successfulTests} questions tested
                             </span>
                         </div>
                     </div>
