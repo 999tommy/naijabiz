@@ -968,14 +968,13 @@ button:focus-visible {
 }
 
 .qr-hero-scroll {
-  position: absolute;
-  bottom: 12px;
-  left: 50%;
+  position: static;
+  width: max-content;
   display: flex;
-  transform: translateX(-50%);
   gap: 8px;
   align-items: center;
-  color: rgba(255, 244, 230, .4);
+  margin: 24px auto 0;
+  color: rgba(102, 53, 31, .56);
   font-size: 8px;
   letter-spacing: .14em;
   white-space: nowrap;
