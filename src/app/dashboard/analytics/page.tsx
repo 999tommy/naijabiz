@@ -18,7 +18,9 @@ async function getAnalytics(userId: string) {
         { count: weekViews },
         { count: monthViews },
         { data: recentViews },
-        { data: orders }
+        { data: orders },
+        { data: assistantEvents },
+        { data: bookings }
     ] = await Promise.all([
         supabase.from('page_views').select('*', { count: 'exact', head: true }).eq('business_id', userId),
         supabase.from('page_views').select('*', { count: 'exact', head: true })
@@ -31,7 +33,9 @@ async function getAnalytics(userId: string) {
             .eq('business_id', userId)
             .order('created_at', { ascending: false })
             .limit(20),
-        supabase.from('orders').select('*').eq('user_id', userId)
+        supabase.from('orders').select('*').eq('user_id', userId),
+        supabase.from('assistant_events').select('event_type, query_text, created_at').eq('business_id', userId).gte('created_at', monthAgo.toISOString()).order('created_at', { ascending: false }).limit(300),
+        supabase.from('bookings').select('id, service_name, booking_date, booking_time, status').eq('business_id', userId).in('status', ['confirmed', 'rescheduled']).gte('booking_date', now.toISOString().slice(0, 10)).order('booking_date').limit(30)
     ])
 
     const totalOrders = orders?.length || 0
@@ -61,6 +65,14 @@ async function getAnalytics(userId: string) {
         .sort((a, b) => b.revenue - a.revenue)
         .slice(0, 5)
 
+    const events = assistantEvents || []
+    const queryCounts = new Map<string, number>()
+    events.filter((event: any) => event.event_type === 'no_result_search').forEach((event: any) => {
+        const query = String(event.query_text || '').trim()
+        if (query) queryCounts.set(query, (queryCounts.get(query) || 0) + 1)
+    })
+    const popularUnmatchedSearches = Array.from(queryCounts.entries()).map(([query, count]) => ({ query, count })).sort((a, b) => b.count - a.count).slice(0, 5)
+
     return {
         total: totalViews || 0,
         week: weekViews || 0,
@@ -68,7 +80,12 @@ async function getAnalytics(userId: string) {
         recent: recentViews || [],
         totalOrders,
         totalRevenue,
-        topProducts
+        topProducts,
+        inquiryCount: events.filter((event: any) => event.event_type === 'inquiry').length,
+        unansweredCount: events.filter((event: any) => event.event_type === 'unanswered').length,
+        popularUnmatchedSearches,
+        attentionOrders: (orders || []).filter((order: any) => order.status === 'pending').length,
+        attentionBookings: (bookings || []).length,
     }
 }
 
@@ -204,6 +221,22 @@ export default async function AnalyticsPage() {
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
+                    <Card className="md:col-span-2">
+                        <CardHeader>
+                            <CardTitle>Assistant demand & follow-ups</CardTitle>
+                            <CardDescription>Customer questions from the last 30 days. Search text is shortened and contact details are removed.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div className="rounded-xl bg-orange-50 p-4"><p className="text-sm text-gray-600">Assistant inquiries</p><p className="mt-1 text-2xl font-bold">{analytics.inquiryCount}</p></div>
+                            <div className="rounded-xl bg-amber-50 p-4"><p className="text-sm text-gray-600">Questions needing follow-up</p><p className="mt-1 text-2xl font-bold">{analytics.unansweredCount}</p></div>
+                            <div className="rounded-xl bg-blue-50 p-4"><p className="text-sm text-gray-600">Pending orders</p><p className="mt-1 text-2xl font-bold">{analytics.attentionOrders}</p><a className="text-xs font-semibold text-blue-700" href="/dashboard/orders">Review orders →</a></div>
+                            <div className="rounded-xl bg-violet-50 p-4"><p className="text-sm text-gray-600">Upcoming bookings</p><p className="mt-1 text-2xl font-bold">{analytics.attentionBookings}</p><a className="text-xs font-semibold text-violet-700" href="/dashboard/bookings">Review bookings →</a></div>
+                            <div className="sm:col-span-2 lg:col-span-4">
+                                <h3 className="mb-2 text-sm font-semibold text-gray-800">Popular searches not found in your catalog</h3>
+                                {analytics.popularUnmatchedSearches.length ? <ul className="flex flex-wrap gap-2">{analytics.popularUnmatchedSearches.map((item, index) => <li key={`${item.query}-${index}`} className="rounded-full border border-gray-200 px-3 py-1.5 text-sm">{item.query} <span className="font-semibold text-orange-700">· {item.count}</span></li>)}</ul> : <p className="text-sm text-gray-500">No unmatched product searches recorded yet.</p>}
+                            </div>
+                        </CardContent>
+                    </Card>
                     {/* Top Products */}
                     <Card>
                         <CardHeader>

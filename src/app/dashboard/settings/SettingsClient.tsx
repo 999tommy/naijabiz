@@ -68,6 +68,8 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
     const [tiktokHandle, setTiktokHandle] = useState(user.tiktok_handle || '')
     const [businessType, setBusinessType] = useState<'products' | 'services' | 'both'>(user.business_type || 'products')
     const [location, setLocation] = useState(user.location || '')
+    const [serviceArea, setServiceArea] = useState(user.service_area || '')
+    const [paymentMethods, setPaymentMethods] = useState<string[]>(user.payment_methods || [])
     const [categoryId, setCategoryId] = useState(user.category_id || '')
 
     const router = useRouter()
@@ -226,6 +228,8 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                     instagram_handle: instagramHandle.replace('@', ''),
                     tiktok_handle: tiktokHandle.replace('@', ''),
                     location,
+                    service_area: serviceArea,
+                    payment_methods: paymentMethods,
                     category_id: categoryId || null,
                     logo_url: logoUrl,
                 })
@@ -515,6 +519,25 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                             />
                         </div>
 
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">Delivery / service area</label>
+                            <Input value={serviceArea} onChange={(e) => setServiceArea(e.target.value)} placeholder="e.g. Lekki, Victoria Island, and Yaba; nationwide shipping" />
+                            <p className="text-xs text-gray-500">Customers will see this area. Leave blank if you need to confirm each request.</p>
+                        </div>
+
+                        <fieldset className="space-y-2">
+                            <legend className="text-sm font-medium text-gray-700">Accepted payment methods</legend>
+                            <div className="grid sm:grid-cols-2 gap-2">
+                                {['Bank transfer', 'Cash on delivery', 'Card / payment link', 'Cash on pickup'].map(method => (
+                                    <label key={method} className="flex items-center gap-2 rounded-lg border border-gray-200 p-3 text-sm text-gray-700">
+                                        <input type="checkbox" checked={paymentMethods.includes(method)} onChange={event => setPaymentMethods(current => event.target.checked ? [...current, method] : current.filter(item => item !== method))} />
+                                        {method}
+                                    </label>
+                                ))}
+                            </div>
+                            <p className="text-xs text-gray-500">Your bank account details stay private. Customers can ask you for transfer instructions on WhatsApp.</p>
+                        </fieldset>
+
                         <Button type="submit" disabled={loading}>
                             {loading ? (
                                 <>
@@ -589,7 +612,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                             <li>• Basic business page</li>
                                             <li>• Up to 5 products or services</li>
                                             <li>• WhatsApp order and booking links</li>
-                                            <li>• 100 Virtual Assistant messages/month</li>
+                                            <li>• 0 virtual assistant messages</li>
                                         </ul>
                                     </div>
                                     <div className="space-y-2">
@@ -597,7 +620,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                         <ul className="text-sm text-gray-600 space-y-1">
                                             <li className="flex items-center gap-1 font-bold text-orange-700">
                                                 <CheckCircle2 className="w-4 h-4 text-orange-600" />
-                                                Personal brand subdomain ({user.business_slug || 'yourbrand'}.qriblo.com)
+                                                Your own Qriblo link ({user.business_slug || 'yourbrand'}.qriblo.com)
                                             </li>
                                             <li className="flex items-center gap-1">
                                                 <CheckCircle2 className="w-4 h-4 text-green-500" />
@@ -613,7 +636,7 @@ export default function SettingsClient({ user: initialUser, initialCategories }:
                                             </li>
                                             <li className="flex items-center gap-1 font-bold text-orange-700">
                                                 <CheckCircle2 className="w-4 h-4 text-orange-600" />
-                                                Virtual Assistant for orders and bookings (40 chats/day)
+                                                Virtual assistant for orders and bookings (500 messages/month)
                                             </li>
                                         </ul>
                                     </div>

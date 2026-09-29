@@ -6,12 +6,12 @@ const siteUrl = (process.env.NEXT_PUBLIC_BASE_URL || 'https://qriblo.com').repla
 
 export const metadata: Metadata = {
   title: {
-    default: "Qriblo | Create a professional site for your business",
+    default: "Qriblo | We deliver customers to your doorstep",
     template: "%s | Qriblo"
   },
   applicationName: "Qriblo",
-  description: "Create a professional Qriblo site for your Nigerian business. Show products or services, help customers browse, and receive order or appointment requests on WhatsApp.",
-  keywords: ["Qriblo", "professional business site Nigeria", "online business page Nigeria", "WhatsApp business catalog", "Nigerian business directory", "product catalog", "service bookings", "appointment requests", "online store for small business"],
+  description: "Give your brand a platform that delivers customers straight to your doorstep. Handle inquiries, showcase products or services, and receive orders on WhatsApp.",
+  keywords: ["Qriblo", "customer delivery Nigeria", "professional business site Nigeria","online business page Nigeria", "WhatsApp business catalog", "Nigerian business directory", "product catalog", "service bookings", "appointment requests", "online store for small business"],
   authors: [{ name: "Qriblo Team" }],
   creator: "Qriblo",
   metadataBase: new URL(siteUrl),
@@ -20,23 +20,14 @@ export const metadata: Metadata = {
     locale: "en_NG",
     url: siteUrl,
     siteName: "Qriblo",
-    title: "Qriblo | Create a professional site for your business",
+    title: "Qriblo | We deliver customers to your doorstep",
     description: "Give customers one place to discover your business, browse products or services, and message you to place an order or request an appointment.",
-    images: [
-      {
-        url: '/opengraph-image',
-        width: 1200,
-        height: 630,
-        alt: 'Qriblo — a professional home for your business',
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Qriblo | Create a professional site for your business",
+    title: "Qriblo | We deliver customers to your doorstep",
     description: "Give customers a page to browse your products or services, ask questions, and send order or appointment requests.",
     creator: "@qriblo",
-    images: ['/opengraph-image'],
   },
   icons: {
     icon: [{ url: "/logo.png", sizes: "512x512", type: "image/png" }],

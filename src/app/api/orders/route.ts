@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createServiceClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 export async function POST(req: Request) {
     try {
@@ -35,4 +35,17 @@ export async function POST(req: Request) {
         console.error('API Order Error:', error)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
+}
+
+export async function PATCH(req: Request) {
+    const authClient = await createClient()
+    const { data: { user } } = await authClient.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const { id, status } = await req.json()
+    if (!id || !['confirmed', 'completed', 'cancelled'].includes(status)) return NextResponse.json({ error: 'Invalid order update' }, { status: 400 })
+    const supabase = await createServiceClient()
+    const update = { status, ...(status === 'confirmed' ? { seller_responded_at: new Date().toISOString() } : {}) }
+    const { data, error } = await supabase.from('orders').update(update).eq('id', id).eq('user_id', user.id).select('id, status').maybeSingle()
+    if (error || !data) return NextResponse.json({ error: 'Could not update this order' }, { status: 404 })
+    return NextResponse.json({ order: data })
 }

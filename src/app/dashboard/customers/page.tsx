@@ -56,9 +56,9 @@ export default async function CustomersPage() {
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                         <Users className="w-6 h-6 text-orange-600" />
-                        Customers & CRM
+                        Customers
                     </h1>
-                    <p className="text-gray-500">Manage your customer relationships and view order history.</p>
+                    <p className="text-gray-500">See who has ordered and view their order history.</p>
                 </div>
                 <div className="flex gap-2">
                     {/* Broadcast feature removed in V2 */}

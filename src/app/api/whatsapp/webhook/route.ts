@@ -17,10 +17,12 @@
 import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { generateReply } from '@/lib/ai/generateReply'
-import { qribloMasterReply } from '@/lib/ai/qribloMasterReply'
+import { qribloMasterResponse } from '@/lib/ai/qribloMasterReply'
+import type { MasterAssistantResponse } from '@/lib/ai/qribloMasterReply'
 import { getDailyAiUsageState } from '@/lib/ai/usage'
 import { normalizeCustomerConversation } from '@/lib/ai/customerConversation'
 import { extractOrderSummary, stripOrderSummaries } from '@/lib/ai/orderSummary'
+import { hasShoppingIntent } from '@/lib/marketplace/search'
 
 export const maxDuration = 30
 
@@ -86,9 +88,9 @@ export async function POST(req: Request) {
 
         // ── Step 2: If no active session, route to Qriblo Master VA ───
         if (!businessId) {
-            let aiReply: string
+            let masterResponse: MasterAssistantResponse
             try {
-                aiReply = await qribloMasterReply([{ role: 'user', content: incomingText }])
+                masterResponse = await qribloMasterResponse([{ role: 'user', content: incomingText }])
             } catch (e: any) {
                 console.error('[WhatsApp Master Assistant Error]', e)
                 await sendWhatsAppMessage(customerPhone, "Sorry, I'm having trouble right now. Please try again! 😊")
@@ -96,6 +98,7 @@ export async function POST(req: Request) {
             }
 
             // Check if Master VA wants to route to a vendor
+            const aiReply = masterResponse.reply
             const routeMatch = aiReply.match(/\[(?:CONNECT_VENDOR|ROUTE_TO_VENDOR):\s*(.+?)\]/i)
             if (routeMatch) {
                 const detectedName = routeMatch[1].trim()
@@ -159,7 +162,7 @@ export async function POST(req: Request) {
             }
 
             // No routing tag found, send the normal Master VA reply
-            await sendWhatsAppMessage(customerPhone, aiReply)
+            await sendWhatsAppMasterResponse(customerPhone, aiReply, masterResponse.recommendations)
             return new NextResponse('OK', { status: 200 })
         }
 
@@ -241,6 +244,20 @@ export async function POST(req: Request) {
 
         // A provider failure is not a customer conversation and must not use allowance.
         if (generatedReply) {
+            const catalogNames = (business.products || []).map((item: any) => String(item.name || '').toLowerCase())
+            const normalizedQuestion = incomingText.toLowerCase()
+            const hasCatalogMatch = catalogNames.some((name: string) => name.length > 2 && normalizedQuestion.includes(name))
+            const eventType = hasShoppingIntent(incomingText) && !hasCatalogMatch
+                ? 'no_result_search'
+                : /\b(i don't know|not sure|please contact|check with|ask the seller|could you clarify|can you provide|not listed)\b/i.test(aiReply)
+                    ? 'unanswered'
+                    : 'inquiry'
+            const safeQuery = incomingText.replace(/[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/g, '[email]')
+                .replace(/(?:\+?\d[\d\s()-]{7,}\d)/g, '[phone]').replace(/\s+/g, ' ').trim().slice(0, 160)
+            if (safeQuery) {
+                const { error: eventError } = await supabase.from('assistant_events').insert({ business_id: businessId, event_type: eventType, query_text: safeQuery })
+                if (eventError) console.warn('[Assistant insights] WhatsApp event was not recorded:', eventError.message)
+            }
             await supabase
                 .from('users')
                 .update({
@@ -342,4 +359,68 @@ async function sendWhatsAppMessage(to: string, text: string): Promise<void> {
         const err = await res.text()
         console.error('[WhatsApp Send Error]', err)
     }
+}
+
+async function sendWhatsAppMasterResponse(
+    to: string,
+    text: string,
+    recommendations: MasterAssistantResponse['recommendations'],
+): Promise<void> {
+    const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || 'https://www.qriblo.com').replace(/\/$/, '')
+    const linkSummary = recommendations.slice(0, 3).map(product => {
+        if (product.external) return `\n• ${product.title}${product.price ? ` — ${product.price}` : ''} (${product.source}; external listing)\n${product.link}\nStock and price may change.`
+        const storeUrl = `${baseUrl}${product.link}`
+        const confirmedAt = product.availabilityConfirmedAt ? new Date(product.availabilityConfirmedAt).getTime() : 0
+        const confirmationAge = Date.now() - confirmedAt
+        const stockIsFresh = product.availability === 'in_stock' && Number.isFinite(confirmedAt) && confirmationAge >= 0 && confirmationAge <= 14 * 24 * 60 * 60 * 1000
+        const nextStepUrl = product.availability === 'out_of_stock' || !stockIsFresh
+            ? storeUrl
+            : product.itemType === 'service'
+                ? `${storeUrl}#booking-panel`
+                : `${storeUrl}?addToOrder=${encodeURIComponent(product.id.replace(/^qriblo-/, ''))}`
+        const phone = (product.sellerWhatsapp || '').replace(/\D/g, '').replace(/^0/, '234')
+        const askUrl = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(`Hello, I found ${product.title} on Qriblo. Can you confirm current availability, delivery to my area, and payment options?`)}` : storeUrl
+        const availability = stockIsFresh ? 'Recently seller-confirmed in stock; reconfirm before paying.' : 'Availability needs seller confirmation.'
+        const facts = [product.serviceArea ? `Area: ${product.serviceArea}` : 'Area: ask seller', product.paymentMethods?.length ? `Payment: ${product.paymentMethods.join(', ')}` : 'Payment: ask seller']
+        if (product.sellerMedianResponseHours != null) facts.push(`Typical response: about ${product.sellerMedianResponseHours}h`)
+        if (product.sellerCompletedRate != null) facts.push(`${product.sellerCompletedRate}% completed from ${product.sellerOrderSampleSize} recent resolved orders`)
+        const action = !stockIsFresh ? 'Check with seller:' : product.itemType === 'service' ? 'Book/request:' : 'Add to order:'
+        return `\n• ${product.title}${product.price ? ` — ${product.price}` : ''} (${product.source})\n${availability} ${facts.join(' · ')}\n${action} ${nextStepUrl}\nAsk seller: ${askUrl}`
+    }).join('\n')
+    await sendWhatsAppMessage(to, `${text}${linkSummary ? `\n\nMatching listings:${linkSummary}` : ''}`)
+    for (const product of recommendations.slice(0, 3)) {
+        if (!product.imageUrl || !isHttpsUrl(product.imageUrl)) continue
+        const availability = product.external
+            ? 'External listing; price and availability may change.'
+            : product.availability === 'in_stock' ? 'Listed in stock; confirm with seller.' : 'Please confirm availability with seller.'
+        const caption = [
+            product.title,
+            product.price || 'See listing for price',
+            product.source,
+            availability,
+            product.link.startsWith('/') ? `${baseUrl}${product.link}` : product.link,
+        ].join('\n')
+        try {
+            await sendWhatsAppImageMessage(to, product.imageUrl, caption.slice(0, 1024))
+        } catch (error) {
+            console.error('[WhatsApp Product Image Error]', error)
+        }
+    }
+}
+
+async function sendWhatsAppImageMessage(to: string, imageUrl: string, caption: string): Promise<void> {
+    if (!QRIBLO_WA_TOKEN || !QRIBLO_WA_PHONE_ID) return
+    const response = await fetch(`https://graph.facebook.com/v19.0/${QRIBLO_WA_PHONE_ID}/messages`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${QRIBLO_WA_TOKEN}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            messaging_product: 'whatsapp', recipient_type: 'individual', to, type: 'image',
+            image: { link: imageUrl, caption },
+        }),
+    })
+    if (!response.ok) throw new Error(await response.text())
+}
+
+function isHttpsUrl(value: string): boolean {
+    try { return new URL(value).protocol === 'https:' } catch { return false }
 }

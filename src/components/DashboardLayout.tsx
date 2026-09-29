@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import {
     LayoutDashboard,
     Package,
+    ShoppingBag,
     Settings,
     BarChart2,
     LogOut,
@@ -48,6 +49,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
         { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
         { name: catalogLabel, href: '/dashboard/products', icon: Package },
         { name: 'Bookings', href: '/dashboard/bookings', icon: CalendarDays },
+        { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBag },
         { name: 'Settings', href: '/dashboard/settings', icon: Settings },
         {
             name: 'Virtual Assistant',
@@ -56,13 +58,13 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
             proOnly: true
         },
         {
-            name: 'Analytics',
+            name: 'Business activity',
             href: '/dashboard/analytics',
             icon: BarChart2,
             proOnly: true
         },
         {
-            name: 'Customers & CRM',
+            name: 'Customers',
             href: '/dashboard/customers',
             icon: Users,
             proOnly: true
@@ -188,7 +190,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                             <div className="rounded-2xl border border-white/10 bg-white/8 p-4 text-white">
                                 <p className="font-semibold mb-1">Upgrade to Pro</p>
                                 <p className="text-xs text-orange-100 mb-3">
-                                    Get your personal brand subdomain ({user.business_slug || 'brand'}.qriblo.com), verified badge & more!
+                                    Get your own Qriblo link, a verified badge, and a virtual assistant.
                                 </p>
                                 <Link
                                     href="/dashboard/settings#upgrade"

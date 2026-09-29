@@ -27,6 +27,7 @@ interface OrderCartProps {
     waWhatsappEnabled?: boolean
     businessSlug?: string
     extraBottomSpacing?: boolean
+    openCartOnLoad?: boolean
     // Shared cart props
     cart?: CartItem[]
     addToCart?: (product: Product) => void
@@ -46,6 +47,7 @@ export function OrderCart({
     waWhatsappEnabled,
     businessSlug,
     extraBottomSpacing = false,
+    openCartOnLoad = false,
     theme,
     ...props
 }: OrderCartProps) {
@@ -71,6 +73,10 @@ export function OrderCart({
     const [customerAddress, setCustomerAddress] = useState('')
     const [orderMethod, setOrderMethod] = useState<'whatsapp' | 'instagram'>('whatsapp')
     const [step, setStep] = useState<'cart' | 'details'>('cart')
+
+    useEffect(() => {
+        if (openCartOnLoad) setIsOpen(true)
+    }, [openCartOnLoad])
 
     // Restore checkout info from localStorage on mount
     useEffect(() => {

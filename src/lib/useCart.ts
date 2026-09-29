@@ -88,6 +88,7 @@ Please confirm my order. Thank you!`
 
     return {
         cart,
+        isLoaded,
         addToCart,
         updateQuantity,
         removeFromCart,

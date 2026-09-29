@@ -1,0 +1,1 @@
+Make WhatsApp collections easy to browse. Group matches into small sets such as Under ₦20,000, Available in Lagos, or Appointment slots. The current image-and-link replies can be a first step; an interactive catalog experience could follow, subject to Meta’s catalog setup and API requirements. Meta WhatsApp product message example

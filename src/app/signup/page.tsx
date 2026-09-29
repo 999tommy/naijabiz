@@ -240,10 +240,10 @@ export default function SignupPage() {
         <div className="qr-auth-screen min-h-screen flex items-center justify-center p-4 sm:p-8">
             <div className="qr-auth-layout qr-auth-layout-signup">
             <section className="qr-auth-story">
-                <span className="qr-auth-kicker">START WITH A CLEAR LINK</span>
-                <h2>Bring your brand closer to <em>the people looking for it.</em></h2>
-                <p>Set up your page, add what you offer, and give customers an easy next step.</p>
-                <div className="qr-auth-story-note"><span>01</span><b>A home for your products, services, and bookings.</b></div>
+                <span className="qr-auth-kicker">CREATE YOUR BUSINESS PAGE</span>
+                <h2>Help customers find <em>your business.</em></h2>
+                <p>Add your business details and what you sell or do. Then share your page with customers.</p>
+                <div className="qr-auth-story-note"><span>01</span><b>Show your products or services and take requests.</b></div>
             </section>
             <div className="qr-auth-form w-full max-w-lg">
                 <div className="text-center mb-8">
@@ -256,7 +256,7 @@ export default function SignupPage() {
                             className="mx-auto mb-4"
                         />
                     </Link>
-                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Claim Your Brand</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Create your business page</h1>
                     <p className="text-gray-600 mt-2 text-sm sm:text-base">
                         Claim <span className="font-mono font-bold bg-orange-100 text-orange-800 px-2 py-0.5 rounded-md">qriblo.com/{businessName ? businessName.toLowerCase().replace(/[\s\W-]+/g, '-') : 'your-brand'}</span>
                         <span className="block text-xs text-gray-500 mt-1">Pro members also get their own personal subdomain: <span className="font-mono font-semibold text-orange-600">{businessName ? businessName.toLowerCase().replace(/[\s\W-]+/g, '-') : 'your-brand'}.qriblo.com</span></span>
@@ -272,7 +272,7 @@ export default function SignupPage() {
                     <div className={`w-12 h-0.5 ${step === 'business' ? 'bg-orange-600' : 'bg-gray-200'}`}></div>
                     <div className={`flex items-center gap-2 ${step === 'business' ? 'text-orange-600 font-medium' : 'text-gray-400'}`}>
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${step === 'business' ? 'border-orange-600 bg-orange-50' : 'border-gray-200'}`}>2</div>
-                        <span className="text-sm">Business Info</span>
+                        <span className="text-sm">Business details</span>
                     </div>
                 </div>
 
@@ -287,13 +287,13 @@ export default function SignupPage() {
                             ) : (
                                 <>
                                     <ShieldCheck className="w-5 h-5 text-green-500" />
-                                    Secure Sign Up
+                                    Create your account
                                 </>
                             )}
                         </CardTitle>
                         <CardDescription className="text-base text-gray-500">
-                            {step === 'auth' && 'Create your account with email and password.'}
-                            {step === 'business' && 'This information will appear on your public page.'}
+                            {step === 'auth' && 'Enter your email and choose a password.'}
+                            {step === 'business' && 'Customers will see these details on your page.'}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="pt-6">
@@ -301,12 +301,12 @@ export default function SignupPage() {
                             <form onSubmit={handlePasswordSignup} className="space-y-5">
                                 <div className="space-y-2">
                                     <label htmlFor="emailOrPhone" className="text-sm font-medium text-gray-700">
-                                        Email
+                                        Email or phone number
                                     </label>
                                     <Input
                                         id="emailOrPhone"
                                         type="text"
-                                        placeholder="you@business.com"
+                                        placeholder="Enter your email or phone number"
                                         value={emailOrPhone}
                                         onChange={(e) => setEmailOrPhone(e.target.value)}
                                         className="h-11"
@@ -320,7 +320,7 @@ export default function SignupPage() {
                                     <Input
                                         id="password"
                                         type="password"
-                                        placeholder="Create a strong password"
+                                        placeholder="Create a password (at least 6 characters)"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         className="h-11"

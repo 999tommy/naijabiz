@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { generateReply } from '@/lib/ai/generateReply'
-import { qribloMasterReply } from '@/lib/ai/qribloMasterReply'
+import { qribloMasterResponse } from '@/lib/ai/qribloMasterReply'
 import { getDailyAiUsageState } from '@/lib/ai/usage'
 import { normalizeCustomerConversation } from '@/lib/ai/customerConversation'
+import { hasShoppingIntent } from '@/lib/marketplace/search'
 
 export const maxDuration = 30
 
@@ -18,7 +19,7 @@ export async function POST(req: Request) {
 
         // Handle Qriblo Master VA request
         if (!businessId || businessId === 'qriblo-master') {
-            const reply = await qribloMasterReply(conversation)
+            const { reply, recommendations } = await qribloMasterResponse(conversation)
             
             // Check for in-chat vendor takeover tag
             const vendorTagMatch = reply.match(/\[(?:CONNECT_VENDOR|ROUTE_TO_VENDOR):\s*(.+?)\]/i)
@@ -51,7 +52,7 @@ export async function POST(req: Request) {
                     reply: cleanReply || `I could not find ${targetVendor} on Qriblo yet. Try the exact store name or ask me for similar vendors.`
                 })
             }
-            return NextResponse.json({ reply })
+            return NextResponse.json({ reply, recommendations })
         }
 
         const supabase = await createServiceClient()
@@ -83,6 +84,30 @@ export async function POST(req: Request) {
         }
 
         const reply = await generateReply(business, conversation)
+
+        const latestQuestion = conversation.filter(message => message.role === 'user').pop()?.content || ''
+        const catalogNames = (business.products || []).map((item: any) => String(item.name || '').toLowerCase())
+        const normalizedQuestion = latestQuestion.toLowerCase()
+        const hasCatalogMatch = catalogNames.some((name: string) => name.length > 2 && normalizedQuestion.includes(name))
+        const eventType = hasShoppingIntent(latestQuestion) && !hasCatalogMatch
+            ? 'no_result_search'
+            : /\b(i don't know|not sure|please contact|check with|could you clarify|can you provide)\b/i.test(reply)
+                ? 'unanswered'
+                : 'inquiry'
+        const safeQuery = latestQuestion
+            .replace(/[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/g, '[email]')
+            .replace(/(?:\+?\d[\d\s()-]{7,}\d)/g, '[phone]')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .slice(0, 160)
+        if (safeQuery && !isSandbox) {
+            const { error: eventError } = await supabase.from('assistant_events').insert({
+                business_id: businessId,
+                event_type: eventType,
+                query_text: safeQuery,
+            })
+            if (eventError) console.warn('[Assistant insights] Event was not recorded:', eventError.message)
+        }
 
         // Do not charge a business for a failed provider call or an owner test.
         if (!isSandbox) {

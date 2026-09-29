@@ -13,6 +13,8 @@ export interface User {
     business_slug: string | null
     description: string | null
     location: string | null
+    service_area?: string | null
+    payment_methods?: string[] | null
     category_id: string | null
     whatsapp_number: string | null
     instagram_handle: string | null
@@ -61,6 +63,7 @@ export interface Product {
     image_url: string | null
     is_active: boolean
     in_stock?: boolean
+    availability_confirmed_at?: string | null
     item_type?: 'product' | 'service'
     created_at: string
     updated_at: string

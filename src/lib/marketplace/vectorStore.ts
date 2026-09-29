@@ -72,6 +72,7 @@ export async function searchVectorProducts(
             source: item.source || 'Verified Storefront',
             link: item.url,
             snippet: item.description || '',
+            updatedAt: item.updated_at || undefined,
         }))
     } catch (err) {
         console.error('[VectorStore] Vector search error:', err)

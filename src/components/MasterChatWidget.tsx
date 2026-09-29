@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { BrandThinkingOrb } from '@/components/ui/BrandThinkingOrb'
+import type { ProductRecommendation } from '@/lib/ai/types'
 import { Card } from '@/components/ui/card'
 import { 
     SendHorizontal, 
@@ -24,6 +25,7 @@ interface Message {
     isTakeoverAnnouncement?: boolean
     vendorSlug?: string
     vendorName?: string
+    recommendations?: ProductRecommendation[]
 }
 
 interface ActiveVendor {
@@ -45,6 +47,8 @@ interface OrderSummary {
 function getFormattedTime() {
     return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
+
+function isCatalogStale(confirmedAt?: string) { const age = confirmedAt ? Date.now() - new Date(confirmedAt).getTime() : Number.POSITIVE_INFINITY; return !Number.isFinite(age) || age < 0 || age > 14 * 24 * 60 * 60 * 1000 }
 
 const MASTER_CHAT_STORAGE_KEY = 'qriblo_master_chat_messages'
 const MASTER_CHAT_VENDOR_KEY = 'qriblo_master_chat_vendor'
@@ -282,7 +286,7 @@ export function MasterChatWidget() {
                     }
                 ])
             } else {
-                setMessages(prev => [...prev, { role: 'assistant', content: data.reply, timestamp: replyTime, sentAt: new Date().toISOString() }])
+                setMessages(prev => [...prev, { role: 'assistant', content: data.reply, recommendations: data.recommendations, timestamp: replyTime, sentAt: new Date().toISOString() }])
             }
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : "Sorry, I'm having trouble connecting."
@@ -506,6 +510,47 @@ export function MasterChatWidget() {
                                             {msg.timestamp || 'Just now'}
                                         </span>
                                     </div>
+                                </div>
+                            )}
+
+                            {!!msg.recommendations?.length && (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-[96%]">
+                                    {msg.recommendations.slice(0, 6).map((product) => (
+                                        <div key={product.id} className="overflow-hidden rounded-xl border border-[#f4c7a1]/60 bg-white shadow-sm">
+                                            {product.imageUrl ? (
+                                                <img src={product.imageUrl} alt="" loading="lazy" referrerPolicy="no-referrer"
+                                                    onError={(event) => { event.currentTarget.style.display = 'none' }}
+                                                    className="h-32 w-full object-cover bg-[#fff4e6]" />
+                                            ) : <div className="h-20 flex items-center justify-center bg-[#fff4e6] text-[#c65a24]"><ShoppingBag className="w-6 h-6" /></div>}
+                                            <div className="p-2.5 space-y-1">
+                                                <div className="text-xs font-semibold text-[#222] line-clamp-2">{product.title}</div>
+                                                <div className="text-xs font-bold text-[#66351f]">{product.price || 'Check listing'}</div>
+                                                <div className="text-[10px] text-[#66351f]/75">{product.source}{product.external ? ' · External listing' : ' · Qriblo seller'}</div>
+                                                <div className="text-[10px] text-[#66351f]/70">{product.external ? 'Price and availability may change' : product.availability === 'in_stock' ? 'Seller-listed in stock · reconfirm before paying' : product.availability === 'out_of_stock' ? 'Seller-listed unavailable' : 'Availability not confirmed'}</div>
+                                                {!product.external && <div className="text-[10px] text-[#66351f]/70">{product.availabilityConfirmedAt ? `Seller last confirmed ${new Date(product.availabilityConfirmedAt).toLocaleDateString()}` : 'Seller has not reconfirmed availability yet'}{isCatalogStale(product.availabilityConfirmedAt) ? ' · please reconfirm' : ''}</div>}
+                                                {!product.external && product.serviceArea && <div className="text-[10px] text-[#66351f]/70">Service area: {product.serviceArea}</div>}
+                                                {!product.external && <div className="text-[10px] text-[#66351f]/70">Payment: {product.paymentMethods?.length ? product.paymentMethods.join(', ') : 'Ask seller'}</div>}
+                                                {!product.external && product.sellerMedianResponseHours != null && <div className="text-[10px] text-[#66351f]/70">Typical seller response: about {product.sellerMedianResponseHours} hours</div>}
+                                                {!product.external && product.sellerCompletedRate != null && <div className="text-[10px] text-[#66351f]/70">{product.sellerCompletedRate}% completed among {product.sellerOrderSampleSize} recent resolved orders</div>}
+                                                <div className="mt-2 flex flex-wrap gap-1.5">
+                                                    {product.external ? (
+                                                        <a href={product.link} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-[#66351f] px-2.5 py-1.5 text-[10px] font-bold text-white">View listing</a>
+                                                    ) : (
+                                                        <>
+                                                            {product.availability === 'out_of_stock' || product.availability === 'unknown' || isCatalogStale(product.availabilityConfirmedAt) ? (
+                                                                <a href={product.link} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-gray-600 px-2.5 py-1.5 text-[10px] font-bold text-white">Confirm with seller</a>
+                                                            ) : product.itemType === 'service' ? (
+                                                                <a href={`${product.link}#booking-panel`} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-[#66351f] px-2.5 py-1.5 text-[10px] font-bold text-white">Book appointment</a>
+                                                            ) : (
+                                                                <a href={`${product.link}?addToOrder=${encodeURIComponent(product.id.replace(/^qriblo-/, ''))}`} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-[#66351f] px-2.5 py-1.5 text-[10px] font-bold text-white">Add to order</a>
+                                                            )}
+                                                            <a href={product.sellerWhatsapp ? `https://wa.me/${product.sellerWhatsapp.replace(/\D/g, '').replace(/^0/, '234')}?text=${encodeURIComponent(`Hello, I found ${product.title} on Qriblo. Can you confirm current availability, delivery to my area, and payment options?`)}` : product.link} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-[#66351f]/30 px-2.5 py-1.5 text-[10px] font-bold text-[#66351f]">Ask seller</a>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             )}
 

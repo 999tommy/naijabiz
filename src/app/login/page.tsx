@@ -120,9 +120,9 @@ export default function LoginPage() {
 
                 <Card className="qr-auth-card">
                     <CardHeader className="space-y-1 pb-4">
-                        <CardTitle className="text-xl">Sign In</CardTitle>
+                        <CardTitle className="text-xl">Sign in</CardTitle>
                         <CardDescription>
-                            Choose your preferred sign-in method
+                            Choose how you want to sign in
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -141,7 +141,7 @@ export default function LoginPage() {
                                 onClick={() => setAuthMethod('magic-link')}
                             >
                                 <Mail className="w-4 h-4 mr-2" />
-                                Magic Link
+                                Email link
                             </Button>
                         </div>
 
@@ -149,12 +149,12 @@ export default function LoginPage() {
                             <form onSubmit={handlePasswordLogin} className="space-y-4">
                                 <div className="space-y-2">
                                     <label htmlFor="emailOrPhone" className="text-sm font-medium text-gray-700">
-                                        Email
+                                        Email or phone number
                                     </label>
                                     <Input
                                         id="emailOrPhone"
                                         type="text"
-                                        placeholder="you@example.com or 08012345678"
+                                        placeholder="Enter your email or phone number"
                                         value={emailOrPhone}
                                         onChange={(e) => setEmailOrPhone(e.target.value)}
                                         required
@@ -187,7 +187,7 @@ export default function LoginPage() {
                                             Signing in...
                                         </>
                                     ) : (
-                                        'Sign In'
+                                        'Sign in'
                                     )}
                                 </Button>
                             </form>
@@ -195,7 +195,7 @@ export default function LoginPage() {
                             <form onSubmit={handleMagicLink} className="space-y-4">
                                 <div className="space-y-2">
                                     <label htmlFor="email" className="text-sm font-medium text-gray-700">
-                                        Email Address
+                                        Email address
                                     </label>
                                     <Input
                                         id="email"
@@ -229,7 +229,7 @@ export default function LoginPage() {
                                     ) : (
                                         <>
                                             <Mail className="w-4 h-4 mr-2" />
-                                            Send Magic Link
+                                            Send sign-in link
                                         </>
                                     )}
                                 </Button>
@@ -238,9 +238,9 @@ export default function LoginPage() {
 
                         <div className="mt-6 text-center">
                             <p className="text-sm text-gray-600">
-                                Don&apos;t have an account?{' '}
+                                New to Qriblo?{' '}
                                 <Link href="/signup" className="text-orange-600 font-medium hover:underline">
-                                    Create one
+                                    Create a business page
                                 </Link>
                             </p>
                         </div>

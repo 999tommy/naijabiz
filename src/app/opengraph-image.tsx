@@ -29,12 +29,12 @@ export default async function Image() {
           Qriblo
         </div>
         <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', maxWidth: '920px' }}>
-          <div style={{ marginBottom: '22px', color: '#f4c7a1', fontFamily: 'Arial, sans-serif', fontSize: '15px', fontWeight: 700, letterSpacing: '3px' }}>YOUR brand, A LITTLE CLOSER</div>
-          <div style={{ fontSize: '65px', lineHeight: 1.08, letterSpacing: '-2px' }}>A professional home<br />for your brand.</div>
-          <div style={{ maxWidth: '760px', marginTop: '22px', color: 'rgba(255,244,230,.76)', fontFamily: 'Arial, sans-serif', fontSize: '23px', lineHeight: 1.45 }}>Show what you offer. Help customers browse, ask questions, place orders, and request appointments.</div>
+          <div style={{ marginBottom: '22px', color: '#f4c7a1', fontFamily: 'Arial, sans-serif', fontSize: '15px', fontWeight: 700, letterSpacing: '3px' }}>YOUR BRAND, A LITTLE CLOSER</div>
+          <div style={{ fontSize: '65px', lineHeight: 1.08, letterSpacing: '-2px' }}>Delivering customers<br />to your doorstep.</div>
+          <div style={{ maxWidth: '760px', marginTop: '22px', color: 'rgba(255,244,230,.76)', fontFamily: 'Arial, sans-serif', fontSize: '23px', lineHeight: 1.45 }}>Handle inquiries, showcase products or services, and receive orders on WhatsApp.</div>
         </div>
         <div style={{ zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '20px', borderTop: '1px solid rgba(255,244,230,.18)', color: 'rgba(255,244,230,.7)', fontFamily: 'Arial, sans-serif', fontSize: '16px' }}>
-          <span>Made for the brandes bringing us closer.</span>
+          <span>Made for the brands bringing us closer.</span>
           <span style={{ color: '#f4c7a1', fontWeight: 700, letterSpacing: '1px' }}>QRIBLO.COM</span>
         </div>
       </div>

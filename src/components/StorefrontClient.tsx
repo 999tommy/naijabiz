@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { ArrowRight, CalendarCheck, LayoutGrid, Film, Star, Package } from 'lucide-react'
 import Link from 'next/link'
 import { OrderCart } from '@/components/OrderCart'
@@ -40,6 +40,8 @@ export function StorefrontClient({
     // Default to Grid for all businesses
     const [viewMode, setViewMode] = useState<'grid' | 'reels'>('grid')
     const cartHelper = useCart(business.business_name || '')
+    const [openCartOnLoad, setOpenCartOnLoad] = useState(false)
+    const handledAddToOrder = useRef(false)
     const productItems = products.filter(product => product.item_type !== 'service')
     const serviceItems = products.filter(product => product.item_type === 'service')
     const showHybridBookings = business.business_type === 'both'
@@ -53,6 +55,21 @@ export function StorefrontClient({
     const [availableSlots, setAvailableSlots] = useState<string[]>([])
     const [bookingState, setBookingState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
     const [bookingError, setBookingError] = useState('')
+
+    useEffect(() => {
+        if (handledAddToOrder.current || !cartHelper.isLoaded) return
+        const requestedId = new URLSearchParams(window.location.search).get('addToOrder')
+        if (!requestedId) return
+        handledAddToOrder.current = true
+        const requestedProduct = productItems.find(product => product.id === requestedId)
+        if (requestedProduct && requestedProduct.is_active && requestedProduct.in_stock !== false) {
+            cartHelper.addToCart(requestedProduct)
+            setOpenCartOnLoad(true)
+        }
+        const url = new URL(window.location.href)
+        url.searchParams.delete('addToOrder')
+        window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`)
+    }, [business.id, cartHelper.isLoaded, cartHelper.addToCart, productItems])
 
     // Restore saved preference on mount
     useEffect(() => {
@@ -180,6 +197,7 @@ export function StorefrontClient({
                                 clearCart={cartHelper.clearCart}
                                 totalItems={cartHelper.totalItems}
                                 totalAmount={cartHelper.totalAmount}
+                                openCartOnLoad={openCartOnLoad}
                                 theme={theme}
                             />
                         )}

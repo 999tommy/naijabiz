@@ -45,17 +45,17 @@ export function OnboardingAssistant({ user, productCount }: OnboardingAssistantP
         {
             id: 'product',
             title: isService ? 'Add your first service' : 'Add your first product',
-            description: isService ? 'Customers need to know what you offer. Add a service and price.' : 'Customers need to see what you sell. Add a photo and price.',
-            cta: isService ? 'Add a Service' : 'Add a Product',
+            description: isService ? 'Add a name and price so customers know what you offer.' : 'Add a photo, name, and price so customers know what you sell.',
+            cta: isService ? 'Add a service' : 'Add a product',
             href: '/dashboard/products',
             icon: <ShoppingBag className="w-5 h-5" />,
             isComplete: hasAddedProduct
         },
         {
             id: 'profile',
-            title: 'Complete your profile',
-            description: 'Add your logo, location, and description to build trust.',
-            cta: 'Update Profile',
+            title: 'Add your business details',
+            description: 'Add your logo, area, and a short description so customers know who you are.',
+            cta: 'Edit business details',
             href: '/dashboard/settings',
             icon: <UserCircle className="w-5 h-5" />,
             isComplete: hasCompletedProfile
@@ -63,8 +63,8 @@ export function OnboardingAssistant({ user, productCount }: OnboardingAssistantP
         {
             id: 'share',
             title: 'Share your link',
-            description: 'Send your link to customers on WhatsApp to get your first order.',
-            cta: 'Copy Link',
+            description: 'Send your page link to customers on WhatsApp.',
+            cta: 'Copy page link',
             href: `/${user.business_slug}`,
             icon: <Share2 className="w-5 h-5" />,
             isComplete: false // Always show as final step action
@@ -82,10 +82,10 @@ export function OnboardingAssistant({ user, productCount }: OnboardingAssistantP
             <div className="bg-gradient-to-r from-orange-50 to-white p-6 border-b border-orange-100">
                 <div className="flex items-center gap-2 mb-2">
                     <Target className="w-5 h-5 text-orange-500" />
-                    <h2 className="font-bold text-gray-900 text-lg">Let&apos;s get you your first customer</h2>
+                    <h2 className="font-bold text-gray-900 text-lg">Get your business ready</h2>
                 </div>
                 <p className="text-gray-600 text-sm">
-                    Complete these steps to set up your shop for success.
+                    Do these 3 things to help customers find and contact you.
                 </p>
             </div>
 

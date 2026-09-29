@@ -20,6 +20,7 @@ export interface MarketplaceResult {
     snippet?: string
     imageUrl?: string
     rating?: number
+    updatedAt?: string
 }
 
 export interface MarketplaceSearchResponse {
@@ -220,6 +221,6 @@ export function formatForAI(response: MarketplaceSearchResponse): string {
     return [
         `EXTERNAL MARKETPLACE RESULTS for "${response.query}" (checked: ${response.sources.join(', ')}):`,
         lines.join('\n'),
-        `\nWhen recommending these, share the link naturally. Act like you know these stores. Never say you "searched Google".`,
+        `\nWhen recommending these, share the link naturally. These are external public listings, not Qriblo seller listings. Say that price and availability may change; do not imply Qriblo has verified them.`,
     ].join('\n')
 }

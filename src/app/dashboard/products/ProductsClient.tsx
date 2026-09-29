@@ -37,6 +37,8 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
     const [editingProduct, setEditingProduct] = useState<Product | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
+    const [confirmingProductId, setConfirmingProductId] = useState<string | null>(null)
+    const [catalogFeedback, setCatalogFeedback] = useState('')
     const [imageFile, setImageFile] = useState<File | null>(null)
     const [imagePreview, setImagePreview] = useState<string | null>(null)
 
@@ -149,6 +151,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                 description: description || null,
                 image_url: imageUrl,
                 in_stock: inStock,
+                availability_confirmed_at: new Date().toISOString(),
                 item_type: itemType,
                 user_id: user.id,
             }
@@ -156,7 +159,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
             if (editingProduct) {
                 const { error: updateError } = await supabase
                     .from('products')
-                    .update(productData)
+                    .update({ ...productData, updated_at: new Date().toISOString() })
                     .eq('id', editingProduct.id)
 
                 if (updateError) throw updateError
@@ -196,13 +199,35 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
 
         const { error } = await supabase
             .from('products')
-            .update({ in_stock: newStockState })
+            .update({ in_stock: newStockState, availability_confirmed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
             .eq('id', product.id)
 
         if (error) {
             console.error('Failed to toggle stock:', error)
             await fetchProducts()
         }
+    }
+
+    const handleConfirmAvailability = async (product: Product) => {
+        setConfirmingProductId(product.id)
+        setError('')
+        setCatalogFeedback('')
+        const confirmedAt = new Date().toISOString()
+        const { data, error } = await supabase
+            .from('products')
+            .update({ in_stock: true, availability_confirmed_at: confirmedAt, updated_at: confirmedAt })
+            .eq('id', product.id)
+            .eq('user_id', user.id)
+            .select('id')
+            .maybeSingle()
+        if (error || !data) {
+            setCatalogFeedback('Could not confirm availability. Please refresh and try again.')
+            await fetchProducts()
+        } else {
+            setProducts(current => current.map(item => item.id === product.id ? { ...item, in_stock: true, availability_confirmed_at: confirmedAt, updated_at: confirmedAt } : item))
+            setCatalogFeedback(`Availability for ${product.name} confirmed today.`)
+        }
+        setConfirmingProductId(null)
     }
 
     const handleDelete = async (productId: string) => {
@@ -230,16 +255,16 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
         <div className="max-w-6xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Products & Services Catalog</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">Your products and services</h1>
                     <p className="text-gray-500">
-                        {activeProductCount} / {isPro ? '∞' : '5'} active items listed
+                        {activeProductCount} / {isPro ? 'unlimited' : '5'} items on your page
                     </p>
                 </div>
 
                 {canAddMore ? (
                     <Button onClick={() => setShowForm(true)} className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 font-bold">
                         <Plus className="w-4 h-4 mr-2" />
-                        Add Item / Service
+                        Add product or service
                     </Button>
                 ) : (
                     <Button variant="outline" onClick={() => router.push('/dashboard/settings#upgrade')} className="w-full sm:w-auto">
@@ -247,6 +272,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                     </Button>
                 )}
             </div>
+            {catalogFeedback && <p role="status" className={`mb-4 rounded-xl border px-4 py-3 text-sm ${catalogFeedback.startsWith('Could not') ? 'border-red-200 bg-red-50 text-red-700' : 'border-emerald-200 bg-emerald-50 text-emerald-800'}`}>{catalogFeedback}</p>}
 
             {/* Product limit warning */}
             {!isPro && activeProductCount >= 2 && (
@@ -254,10 +280,10 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                     <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
                     <div>
                         <p className="font-medium text-orange-800">
-                            {activeProductCount >= 5 ? 'Catalog limit reached!' : 'Almost at limit!'}
+                            {activeProductCount >= 5 ? 'You have reached your 5-item limit.' : 'You are close to your 5-item limit.'}
                         </p>
                         <p className="text-sm text-orange-700 mt-1">
-                            Free accounts can add up to 5 items. Upgrade to Pro for unlimited items, your personal brand subdomain ({user.business_slug ? `${user.business_slug}.qriblo.com` : 'yourbrand.qriblo.com'}), and more Virtual Assistant capacity.
+                            Free includes up to 5 products or services and no assistant messages. Pro includes unlimited items and 500 assistant messages each month.
                         </p>
                     </div>
                 </div>
@@ -267,7 +293,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
             {showForm && (
                 <Card className="mb-6 border-orange-200 shadow-md">
                     <CardHeader className="flex flex-row items-center justify-between border-b border-gray-100 bg-gray-50">
-                        <CardTitle>{editingProduct ? 'Edit Catalog Item' : 'Add New Item / Service'}</CardTitle>
+                        <CardTitle>{editingProduct ? 'Edit product or service' : 'Add product or service'}</CardTitle>
                         <Button variant="ghost" size="icon" onClick={resetForm}>
                             <X className="w-4 h-4" />
                         </Button>
@@ -276,7 +302,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                         <form onSubmit={handleSubmit} className="space-y-4">
                             {/* Type Selector */}
                             <div className="space-y-2">
-                                <label className="text-sm font-bold text-gray-700">Listing Type</label>
+                                <label className="text-sm font-bold text-gray-700">What are you adding?</label>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <label className="flex items-center gap-2 px-4 py-2 border rounded-xl cursor-pointer hover:border-orange-500 bg-white">
                                         <input
@@ -288,7 +314,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                                             className="text-orange-600 focus:ring-orange-500"
                                         />
                                         <ShoppingBag className="w-4 h-4 text-orange-600" />
-                                        <span className="text-sm font-semibold">Physical Product</span>
+                                        <span className="text-sm font-semibold">Product</span>
                                     </label>
                                     <label className="flex items-center gap-2 px-4 py-2 border rounded-xl cursor-pointer hover:border-orange-500 bg-white">
                                         <input
@@ -300,7 +326,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                                             className="text-orange-600 focus:ring-orange-500"
                                         />
                                         <Briefcase className="w-4 h-4 text-orange-600" />
-                                        <span className="text-sm font-semibold">Service / Booking</span>
+                                        <span className="text-sm font-semibold">Service</span>
                                     </label>
                                 </div>
                             </div>
@@ -361,7 +387,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                                     className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500"
                                 />
                                 <label htmlFor="in_stock" className="text-sm font-medium text-gray-800 cursor-pointer">
-                                    {itemType === 'service' ? 'Currently accepting bookings' : 'Currently in stock & available for purchase'}
+                                    {itemType === 'service' ? 'Taking booking requests' : 'In stock and ready to sell'}
                                 </label>
                             </div>
 
@@ -454,7 +480,8 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
             ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {products.map((product) => {
-                        const isInStock = product.in_stock !== false
+                        const isInStock = product.in_stock === true
+                        const isStockUnknown = product.in_stock == null
                         const isService = product.item_type === 'service'
 
                         return (
@@ -478,7 +505,7 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                                         {/* Badges */}
                                         <div className="absolute top-2 left-2 flex gap-1.5 flex-wrap">
                                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm ${isInStock ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'}`}>
-                                                {isInStock ? 'IN STOCK' : 'OUT OF STOCK'}
+                                                {isInStock ? 'IN STOCK' : isStockUnknown ? 'NOT CONFIRMED' : 'OUT OF STOCK'}
                                             </span>
                                             {isService && (
                                                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white shadow-sm">
@@ -511,11 +538,20 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                                     >
                                         {isInStock ? (
                                             <><Check className="w-3.5 h-3.5 mr-1" /> Available (Click to mark Out of Stock)</>
+                                        ) : isStockUnknown ? (
+                                            <><AlertCircle className="w-3.5 h-3.5 mr-1" /> Availability not confirmed (Click to mark Available)</>
                                         ) : (
                                             <><Ban className="w-3.5 h-3.5 mr-1" /> Out of Stock (Click to mark Available)</>
                                         )}
                                     </Button>
-
+                                    {isInStock && (
+                                        <Button variant="outline" size="sm" disabled={confirmingProductId === product.id} onClick={() => handleConfirmAvailability(product)} className="w-full text-xs font-semibold border-blue-200 text-blue-700 hover:bg-blue-50">
+                                            {confirmingProductId === product.id ? <><Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> Confirming...</> : <><Check className="mr-1 h-3.5 w-3.5" /> Confirm availability today</>}
+                                        </Button>
+                                    )}
+                                    <p className="px-1 text-[11px] text-gray-500">
+                                        {product.availability_confirmed_at ? `Seller last confirmed ${new Date(product.availability_confirmed_at).toLocaleDateString()}` : 'No seller confirmation recorded yet'}
+                                    </p>
 
                                     <div className="flex gap-2">
                                         <Button
