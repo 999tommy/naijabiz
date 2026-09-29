@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { VerifiedBadge } from '@/components/VerifiedBadge'
@@ -241,6 +241,14 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'quarterly' | 'biannual' | 'yearly'>('monthly')
   const [proOpen, setProOpen] = useState(false)
+  const [navScrolled, setNavScrolled] = useState(false)
+
+  useEffect(() => {
+    const updateNav = () => setNavScrolled(window.scrollY > 8)
+    updateNav()
+    window.addEventListener('scroll', updateNav, { passive: true })
+    return () => window.removeEventListener('scroll', updateNav)
+  }, [])
 
   const getPrice = () => {
     switch (billingCycle) {
@@ -256,7 +264,7 @@ export default function PricingPage() {
 
   return (
     <div className="qr-pricing">
-      <header className="qr-pricing-nav">
+      <header className={"qr-pricing-nav" + (navScrolled ? " is-scrolled" : "")}>
         <nav className="qr-pricing-nav-inner" aria-label="Main navigation">
           <Link href="/" className="qr-pricing-logo" aria-label="Qriblo home"><Image src="/logo.png" alt="Qriblo" width={160} height={54} priority /></Link>
           <div className="qr-pricing-nav-links"><Link href="/#platform">Platform</Link><Link href="/directory">Discover</Link><Link href="/pricing" aria-current="page">Pricing</Link><Link href="/agents">Agents</Link></div>

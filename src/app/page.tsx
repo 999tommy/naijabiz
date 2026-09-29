@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ArrowDown, ArrowRight, BadgeCheck, BarChart3, Bot, CalendarDays, Check, ChevronRight, Globe2, MessageCircle, Package, ShieldCheck, ShoppingBag, Sparkles, Star, X } from 'lucide-react'
 import { MasterChatWidget } from '@/components/MasterChatWidget'
 
@@ -13,15 +13,15 @@ const problems = [
   ['The trust gap', 'New customers need to know who you are before they feel ready to order.', '04'],
 ]
 const steps = [
-  ['Create your business page', 'Add your business details, products or services, and prices.', '01'],
+  ['Create your brand page', 'Add your business details, products or services, and prices.', '01'],
   ['Share your page', 'Put your link on WhatsApp, social media, or flyers.', '02'],
   ['Customers see what you offer', 'They can look at your products, read reviews, and ask questions.', '03'],
   ['Your assistant helps', 'It answers questions and collects order or booking requests.', '04'],
 ]
 const capabilities = [
-  [ShoppingBag, 'Your business page', 'Show customers what you do, what you sell, and how to reach you.'],
+  [ShoppingBag, 'Your brand page', 'Show customers what you do, what you sell, and how to reach you.'],
   [Package, 'Products and services', 'Add photos, prices and details. Customers can order or ask to book.'],
-  [Bot, 'A helper for your business', 'Answer common questions and help customers order or ask to book.'],
+  [Bot, 'A helper for your brand', 'Answer common questions and help customers order or ask to book.'],
   [Star, 'Details customers can trust', 'Show your reviews, location, products and contact details in one place.'],
 ]
 const proof = [
@@ -40,9 +40,26 @@ function BrandIllustration({ kind }: { kind: number }) {
 
 export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [navScrolled, setNavScrolled] = useState(false)
+
+  useEffect(() => {
+    const updateNav = () => {
+      const platform = document.getElementById('platform')
+      const nav = document.querySelector('.qr-home .qr-nav')
+      if (!platform || !nav) return
+      setNavScrolled(platform.getBoundingClientRect().top <= nav.getBoundingClientRect().height)
+    }
+    updateNav()
+    window.addEventListener('scroll', updateNav, { passive: true })
+    window.addEventListener('resize', updateNav)
+    return () => {
+      window.removeEventListener('scroll', updateNav)
+      window.removeEventListener('resize', updateNav)
+    }
+  }, [])
 
   return <main className="qr-home">
-    <header className="qr-nav">
+    <header className={"qr-nav" + (navScrolled ? " is-scrolled" : "")}>
       <nav className="qr-nav-inner">
         <Link href="/" aria-label="Qriblo home" className="qr-wordmark"><Image src="/logo.png" alt="Qriblo" width={150} height={50} priority /></Link>
         <div className="qr-nav-links"><Link href="#platform">Platform</Link><Link href="/directory">Discover</Link><Link href="/pricing">Pricing</Link><Link href="/agents">Agents</Link></div>
@@ -55,10 +72,9 @@ export default function HomePage() {
     <section className="qr-hero">
       <div className="qr-hero-orbit" aria-hidden="true" /><div className="qr-hero-lines" aria-hidden="true" />
       <div className="qr-hero-inner">
-        <p className="qr-eyebrow qr-hero-eyebrow"><span /> YOUR BUSINESS, A LITTLE CLOSER</p>
         <h1>Your customers are looking.<br /><em>Qriblo brings them closer.</em></h1>
-        <p className="qr-hero-copy">Give customers one place to browse your products or services. Qriblo provides a virtual assistant to answer their questions and collect the details for an order or booking request—on your Qriblo page or WhatsApp.</p>
-        <div className="qr-hero-buttons"><Link href="/signup" className="qr-pill qr-pill-accent">Create your business page <ArrowRight size={15} /></Link><div className="qr-hero-secondary"><Link href="#how-it-works" className="qr-pill qr-pill-outline">See how it works <ArrowDown size={14} /></Link><a href="https://wa.me/2347047027012" target="_blank" rel="noopener noreferrer" className="qr-pill qr-pill-whatsapp"><MessageCircle size={15} />Chat with Qriblo</a></div></div>
+        <p className="qr-hero-copy">Give customers one place to browse your products or services. Qriblo’s virtual assistant can answer questions and collect order or booking requests on your page or WhatsApp.</p>
+        <div className="qr-hero-buttons"><Link href="/signup" className="qr-pill qr-pill-accent">Create a professional site <ArrowRight size={15} /></Link><div className="qr-hero-secondary"><Link href="#how-it-works" className="qr-pill qr-pill-outline">See how it works <ArrowDown size={14} /></Link><a href="https://wa.me/2347047027012" target="_blank" rel="noopener noreferrer" className="qr-pill qr-pill-whatsapp"><MessageCircle size={15} />Chat with Qriblo</a></div></div>
         <div className="qr-hero-scroll"><span />SCROLL TO EXPLORE</div>
       </div>
     </section>
