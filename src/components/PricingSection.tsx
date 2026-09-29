@@ -88,7 +88,7 @@ export function PricingSection() {
                                 <Bot className="w-5 h-5 text-orange-600 shrink-0" />
                                 <div>
                                     <strong className="text-orange-950 block">Virtual Assistant (24/7 Sales Closer)</strong>
-                                    <span className="text-xs text-gray-600 block">Catalog aware, Pidgin persona, Stock checks & 1-click WhatsApp order capture</span>
+                                    <span className="text-xs text-gray-600 block">Catalog aware, Pidgin persona, Seller-set stock status & 1-click WhatsApp order capture</span>
                                 </div>
                             </li>
                             <li className="flex items-center gap-3 font-semibold text-gray-900">

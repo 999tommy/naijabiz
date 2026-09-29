@@ -63,7 +63,6 @@ export interface Product {
     image_url: string | null
     is_active: boolean
     in_stock?: boolean
-    availability_confirmed_at?: string | null
     item_type?: 'product' | 'service'
     created_at: string
     updated_at: string

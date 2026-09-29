@@ -48,8 +48,6 @@ function getFormattedTime() {
     return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
-function isCatalogStale(confirmedAt?: string) { const age = confirmedAt ? Date.now() - new Date(confirmedAt).getTime() : Number.POSITIVE_INFINITY; return !Number.isFinite(age) || age < 0 || age > 14 * 24 * 60 * 60 * 1000 }
-
 const MASTER_CHAT_STORAGE_KEY = 'qriblo_master_chat_messages'
 const MASTER_CHAT_VENDOR_KEY = 'qriblo_master_chat_vendor'
 
@@ -526,8 +524,7 @@ export function MasterChatWidget() {
                                                 <div className="text-xs font-semibold text-[#222] line-clamp-2">{product.title}</div>
                                                 <div className="text-xs font-bold text-[#66351f]">{product.price || 'Check listing'}</div>
                                                 <div className="text-[10px] text-[#66351f]/75">{product.source}{product.external ? ' · External listing' : ' · Qriblo seller'}</div>
-                                                <div className="text-[10px] text-[#66351f]/70">{product.external ? 'Price and availability may change' : product.availability === 'in_stock' ? 'Seller-listed in stock · reconfirm before paying' : product.availability === 'out_of_stock' ? 'Seller-listed unavailable' : 'Availability not confirmed'}</div>
-                                                {!product.external && <div className="text-[10px] text-[#66351f]/70">{product.availabilityConfirmedAt ? `Seller last confirmed ${new Date(product.availabilityConfirmedAt).toLocaleDateString()}` : 'Seller has not reconfirmed availability yet'}{isCatalogStale(product.availabilityConfirmedAt) ? ' · please reconfirm' : ''}</div>}
+                                                <div className="text-[10px] text-[#66351f]/70">{product.external ? 'Price and availability may change' : product.availability === 'in_stock' ? 'Seller marked in stock' : product.availability === 'out_of_stock' ? 'Seller-listed unavailable' : 'Availability not confirmed'}</div>
                                                 {!product.external && product.serviceArea && <div className="text-[10px] text-[#66351f]/70">Service area: {product.serviceArea}</div>}
                                                 {!product.external && <div className="text-[10px] text-[#66351f]/70">Payment: {product.paymentMethods?.length ? product.paymentMethods.join(', ') : 'Ask seller'}</div>}
                                                 {!product.external && product.sellerMedianResponseHours != null && <div className="text-[10px] text-[#66351f]/70">Typical seller response: about {product.sellerMedianResponseHours} hours</div>}
@@ -537,14 +534,14 @@ export function MasterChatWidget() {
                                                         <a href={product.link} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-[#66351f] px-2.5 py-1.5 text-[10px] font-bold text-white">View listing</a>
                                                     ) : (
                                                         <>
-                                                            {product.availability === 'out_of_stock' || product.availability === 'unknown' || isCatalogStale(product.availabilityConfirmedAt) ? (
-                                                                <a href={product.link} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-gray-600 px-2.5 py-1.5 text-[10px] font-bold text-white">Confirm with seller</a>
+                                                            {product.availability !== 'in_stock' ? (
+                                                                <a href={product.link} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-gray-600 px-2.5 py-1.5 text-[10px] font-bold text-white">View listing</a>
                                                             ) : product.itemType === 'service' ? (
                                                                 <a href={`${product.link}#booking-panel`} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-[#66351f] px-2.5 py-1.5 text-[10px] font-bold text-white">Book appointment</a>
                                                             ) : (
                                                                 <a href={`${product.link}?addToOrder=${encodeURIComponent(product.id.replace(/^qriblo-/, ''))}`} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-[#66351f] px-2.5 py-1.5 text-[10px] font-bold text-white">Add to order</a>
                                                             )}
-                                                            <a href={product.sellerWhatsapp ? `https://wa.me/${product.sellerWhatsapp.replace(/\D/g, '').replace(/^0/, '234')}?text=${encodeURIComponent(`Hello, I found ${product.title} on Qriblo. Can you confirm current availability, delivery to my area, and payment options?`)}` : product.link} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-[#66351f]/30 px-2.5 py-1.5 text-[10px] font-bold text-[#66351f]">Ask seller</a>
+                                                            <a href={product.sellerWhatsapp ? `https://wa.me/${product.sellerWhatsapp.replace(/\D/g, '').replace(/^0/, '234')}?text=${encodeURIComponent(`${product.availability === 'in_stock' ? `Hello, I found ${product.title} on Qriblo. Can you tell me about delivery to my area and payment options?` : `Hello, I found ${product.title} on Qriblo. Is it available, and can you deliver to my area? What payment options do you accept?`}`)}` : product.link} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-[#66351f]/30 px-2.5 py-1.5 text-[10px] font-bold text-[#66351f]">Ask seller</a>
                                                         </>
                                                     )}
                                                 </div>

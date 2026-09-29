@@ -1,6 +1,7 @@
 "use client"
 
 import { FormEvent, useState } from 'react'
+import Image from 'next/image'
 import { ArrowRight, LockKeyhole, ShieldCheck } from 'lucide-react'
 
 export default function LoginForm() {
@@ -38,7 +39,7 @@ export default function LoginForm() {
     }
     return <main className="nimda-login-screen">
         <div className="nimda-login-card">
-            <a className="nimda-brand" href="/"><span>Q</span><b>Qriblo</b><small>ADMIN</small></a>
+            <a className="nimda-brand" href="/"><Image src="/smal-logo.png" alt="Qriblo" width={42} height={42} priority/><b>Qriblo</b><small>ADMIN</small></a>
             <div className="nimda-login-icon"><ShieldCheck size={22}/></div>
             <p className="nimda-kicker">PRIVATE ADMIN AREA</p>
             <h1>Good morning.<br/><em>Let’s get to work.</em></h1>

@@ -4488,3 +4488,108 @@ button:focus-visible {
 .nimda-login-screen{--n-wine:#3a101d;--n-peach:#f4c7a1;min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at 13% 12%,#f6dfca 0,transparent 32%),radial-gradient(ellipse at 88% 88%,#edd3c3 0,transparent 34%),#fff9f3;color:#392824;font-family:var(--font-montserrat),Arial,sans-serif}.nimda-login-card{width:min(100%,440px);padding:28px 36px 24px;border:1px solid #ecdcd0;border-radius:20px;background:rgba(255,255,255,.84);box-shadow:0 28px 80px #3a101d12}.nimda-login-card>.nimda-brand{justify-content:center;padding:0 0 27px;color:var(--n-wine)}.nimda-login-icon{width:42px;height:42px;display:grid;place-items:center;margin:0 auto 14px;border-radius:13px;color:#984a29;background:#faebde}.nimda-login-card>.nimda-kicker{text-align:center}.nimda-login-card h1{margin:0;color:var(--n-wine);font:36px/1.05 Georgia,serif;letter-spacing:-.05em;text-align:center}.nimda-login-card h1 em{color:#b3532c;font-style:normal}.nimda-login-copy{max-width:300px;margin:12px auto 20px;color:#80716c;font-size:10px;line-height:1.7;text-align:center}.nimda-login-form{display:grid;gap:8px}.nimda-login-form label{margin-top:5px;color:#4d3b36;font-size:9px;font-weight:700}.nimda-login-form>input:not([type=hidden]),.nimda-password-wrap{width:100%;height:42px;padding:0 12px;border:1px solid #e9ded6;border-radius:9px;background:#fff;color:#392824;font:11px inherit;outline:0}.nimda-login-form>input:focus,.nimda-password-wrap:focus-within{border-color:#ba714a;box-shadow:0 0 0 3px #ba714a1c}.nimda-login-form input::placeholder{color:#b2a49f}.nimda-password-wrap{display:flex;align-items:center;gap:8px;color:#a18b7e}.nimda-password-wrap input{width:100%;border:0;outline:0;font:11px inherit}.nimda-login-form button{height:43px;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;border:0;border-radius:9px;color:#fff8f0;background:var(--n-wine);font:700 11px inherit;cursor:pointer}.nimda-login-form button:hover{background:#572030}.nimda-login-form button:disabled{opacity:.65}.nimda-form-error{margin:2px 0;padding:9px 10px;border:1px solid #f0c4bb;border-radius:8px;color:#963c2d;background:#fff0ed;font-size:9px}.nimda-lock-note{display:flex;justify-content:center;align-items:center;gap:5px;margin:16px 0 0;color:#9b8d86;font-size:8px}.nimda-lock-note svg{width:12px}.nimda-login-footer{position:fixed;bottom:18px;display:flex;gap:8px;align-items:center;color:#9c8c84;font-size:8px}.nimda-login-footer span{width:3px;height:3px;border-radius:50%;background:#c07e5d}.nimda-honeypot{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;opacity:0!important}
 @media(max-width:1000px){.nimda-attention-grid,.nimda-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nimda-sidebar{width:220px}.nimda-main{margin-left:220px}}
 @media(max-width:700px){.nimda-sidebar{transform:translateX(-105%);transition:transform .2s ease;width:260px}.nimda-sidebar.is-open{transform:translateX(0)}.nimda-backdrop{position:fixed;inset:0;z-index:55;display:block;border:0;background:#1e0b11a8}.nimda-main{margin-left:0}.nimda-mobile-menu{display:block;border:0;background:none;color:var(--n-wine);font-size:20px}.nimda-topbar{height:56px;padding:0 15px}.nimda-breadcrumb{margin-right:auto;margin-left:10px}.nimda-top-actions{gap:8px}.nimda-today{display:none}.nimda-content{padding:18px 14px 28px}.nimda-welcome{min-height:unset;align-items:flex-start;flex-direction:column;padding:21px}.nimda-welcome-chip{width:100%;grid-template-columns:1fr auto;align-items:center}.nimda-welcome-chip span{grid-column:1/-1}.nimda-welcome-chip small{grid-column:2;grid-row:2}.nimda-attention-grid{gap:7px}.nimda-attention-card{min-height:70px;gap:8px;padding:10px}.nimda-attention-card b{font-size:19px}.nimda-attention-card span{font-size:8px}.nimda-kpi-grid{gap:7px}.nimda-kpi-grid article{min-height:130px;padding:12px}.nimda-kpi-grid article>b{font-size:22px}.nimda-grid-two{grid-template-columns:1fr}.nimda-catalog-alert{align-items:flex-start;flex-wrap:wrap;padding:14px}.nimda-catalog-alert>a{margin-left:53px}.nimda-section-heading h2,.nimda-panel-heading h2{font-size:20px}.nimda-section-heading>span{max-width:105px;text-align:right}.nimda-panel{padding:14px}.nimda-search input{width:120px}.nimda-table td:first-child{min-width:195px}.nimda-login-card{padding:24px 22px}.nimda-login-card h1{font-size:32px}}
+
+
+/* Admin growth, referral, payment and compact chart layouts */
+.nimda-brand>img{width:38px;height:38px;flex:0 0 auto;object-fit:contain;border-radius:9px}
+.nimda-brand>span{display:none}
+.nimda-sidebar nav button{font-family:var(--font-montserrat),Arial,sans-serif;font-size:11px}
+.nimda-panel-note a{color:#a64d2a;font-weight:700;text-decoration:underline;text-underline-offset:2px}
+.nimda-growth-layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(260px,.8fr);gap:13px}
+.nimda-traffic-panel,.nimda-sources-panel{min-width:0}
+.nimda-traffic-chart{width:100%;height:190px;overflow:hidden;margin-top:9px}
+.nimda-traffic-chart svg{display:block;width:100%;height:100%;overflow:visible}
+.nimda-chart-gridline{stroke:#eee7e1;stroke-width:1;stroke-dasharray:3 5}
+.nimda-chart-line{fill:none;stroke:#c65a24;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.nimda-chart-dot{fill:#fff7ef;stroke:#c65a24;stroke-width:2;vector-effect:non-scaling-stroke}
+.nimda-chart-labels{display:flex;justify-content:space-between;gap:8px;padding:4px 1px 0;color:#948681;font-size:8px}
+.nimda-positive-pill,.nimda-neutral-pill{display:inline-flex;padding:6px 9px;border-radius:99px;background:#eaf5ee;color:#397b54;font-size:8px;font-weight:800;white-space:nowrap}
+.nimda-neutral-pill{background:#f3efec;color:#82736e}
+.nimda-source-row{margin-top:15px}
+.nimda-source-row>div:first-child{display:flex;justify-content:space-between;gap:10px;color:#746762;font-size:9px}
+.nimda-source-row>div:first-child span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nimda-source-row>div:first-child b{flex:0 0 auto;color:#483733;font-size:9px}
+.nimda-source-track{height:6px;margin-top:7px;overflow:hidden;border-radius:99px;background:#f1eae5}
+.nimda-source-track i{height:100%;display:block;border-radius:inherit;background:linear-gradient(90deg,#c65a24,#e9a276)}
+.nimda-referral-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:13px}
+.nimda-referral-stats article{min-width:0;display:grid;gap:5px;padding:15px;border:1px solid #ece5df;border-radius:13px;background:#fff}
+.nimda-referral-stats article>span{color:#847772;font-size:9px}
+.nimda-referral-stats article>b{overflow:hidden;color:#3a101d;font:24px Georgia,serif;text-overflow:ellipsis;white-space:nowrap}
+.nimda-referral-stats article>small{color:#978983;font-size:8px}
+.nimda-referral-panel{padding:18px}
+.nimda-referral-row{display:grid;grid-template-columns:minmax(180px,1.2fr) minmax(220px,1.3fr) minmax(115px,.75fr) minmax(150px,.9fr);align-items:center;gap:13px;padding:14px 0;border-top:1px solid #f0ebe7}
+.nimda-referral-person{display:flex;align-items:center;gap:9px;min-width:0}
+.nimda-referral-person>div{min-width:0;display:grid;gap:4px}
+.nimda-referral-person>div>b{overflow:hidden;color:#45342f;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
+.nimda-referral-person small{overflow:hidden;color:#91827c;font-size:8px;text-overflow:ellipsis;white-space:nowrap}
+.nimda-referral-avatar{width:32px;height:32px;display:grid;place-items:center;flex:0 0 auto;border-radius:10px;color:#62311e;background:#f7e7d9;font:17px Georgia,serif}
+.nimda-referral-numbers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.nimda-referral-numbers>span{display:grid;gap:4px;color:#92847e;font-size:7px}
+.nimda-referral-numbers b{color:#493933;font-size:10px}
+.nimda-bank-details{min-width:0;color:#766863;font-size:8px}
+.nimda-bank-details summary{cursor:pointer;color:#a64d2a;font-weight:700}
+.nimda-bank-details>div{display:grid;gap:3px;margin-top:7px;padding:8px;border:1px solid #eee5dd;border-radius:8px;background:#fffaf5}
+.nimda-bank-details>div b{color:#4a3832}
+.nimda-bank-details code{color:#643720;font:700 10px ui-monospace,monospace}
+.nimda-referral-action{display:grid;justify-items:end;gap:6px}
+.nimda-referral-action>b{color:#3e7850;font-size:9px}
+.nimda-referral-action small{color:#91827c;font-size:8px}
+.nimda-referral-action button{min-height:33px;padding:0 10px;border:0;border-radius:8px;background:#3b7953;color:#fff;font:700 8px var(--font-montserrat),Arial,sans-serif;cursor:pointer}
+.nimda-referral-action button:disabled{cursor:not-allowed;opacity:.5}
+.nimda-payout-history{margin-top:13px;padding-top:12px;border-top:1px solid #eee8e3}
+.nimda-payout-history h3{margin:0 0 8px;color:#4b3933;font:16px Georgia,serif}
+.nimda-payout-history>div{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid #f4efeb;color:#776a65;font-size:8px}
+.nimda-payout-history>div b{white-space:nowrap}
+.nimda-payments{padding:18px}
+.nimda-payment-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:15px 0}
+.nimda-payment-summary>div{display:grid;gap:5px;padding:12px;border:1px solid #eee7e1;border-radius:10px;background:#fcfaf8}
+.nimda-payment-summary small{color:#8d807a;font-size:8px}
+.nimda-payment-summary b{color:#3a101d;font:21px Georgia,serif}
+.nimda-payment-list>article{display:grid;grid-template-columns:minmax(150px,.8fr) minmax(0,1.3fr) minmax(140px,.9fr);align-items:center;gap:12px;padding:11px 0;border-top:1px solid #f0ebe7}
+.nimda-payment-main{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.nimda-payment-main>b{color:#45342f;font:17px Georgia,serif;white-space:nowrap}
+.nimda-payment-status{padding:4px 7px;border-radius:99px;background:#f2efed;color:#786a65;font-size:7px;font-weight:800;text-transform:uppercase}
+.nimda-payment-status.success{background:#e9f5ec;color:#33774e}
+.nimda-payment-status.failed{background:#fff0ed;color:#a84336}
+.nimda-payment-details{min-width:0;display:grid;gap:4px}
+.nimda-payment-details>span{overflow:hidden;color:#4a3934;font-size:9px;text-overflow:ellipsis;white-space:nowrap}
+.nimda-payment-details small{overflow:hidden;color:#94857f;font-size:8px;text-overflow:ellipsis;white-space:nowrap}
+.nimda-payment-reference{min-width:0;display:grid;gap:4px;text-align:right}
+.nimda-payment-reference code{overflow:hidden;color:#8b7d77;font:8px ui-monospace,monospace;text-overflow:ellipsis;white-space:nowrap}
+.nimda-payment-reference time{color:#9d908a;font-size:8px}
+@media(max-width:1000px){
+ .nimda-growth-layout{grid-template-columns:1fr}
+ .nimda-referral-row{grid-template-columns:minmax(0,1fr) minmax(210px,1fr);gap:10px}
+ .nimda-bank-details{grid-column:1}
+ .nimda-referral-action{grid-column:2;grid-row:2}
+ .nimda-payment-list>article{grid-template-columns:minmax(135px,.8fr) minmax(0,1.3fr) minmax(115px,.8fr)}
+}
+@media(max-width:700px){
+ .nimda-referral-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .nimda-referral-stats article{padding:12px}
+ .nimda-referral-stats article>b{font-size:21px}
+ .nimda-referral-panel,.nimda-payments{padding:13px}
+ .nimda-referral-panel>.nimda-panel-heading{align-items:flex-start;flex-direction:column}
+ .nimda-referral-panel .nimda-search{width:100%}
+ .nimda-referral-panel .nimda-search input{width:100%}
+ .nimda-referral-row{grid-template-columns:minmax(0,1fr) auto;gap:9px;padding:13px 0}
+ .nimda-referral-person{grid-column:1/-1}
+ .nimda-referral-numbers{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr));padding:8px 0}
+ .nimda-referral-numbers>span{font-size:7px}
+ .nimda-bank-details{grid-column:1}
+ .nimda-referral-action{grid-column:2;grid-row:auto;align-self:center}
+ .nimda-referral-action button{max-width:142px;white-space:normal}
+ .nimda-payout-history>div{align-items:flex-start}
+ .nimda-traffic-chart{height:155px}
+ .nimda-traffic-panel,.nimda-sources-panel{padding:13px}
+ .nimda-traffic-panel>.nimda-panel-heading{align-items:flex-start}
+ .nimda-positive-pill,.nimda-neutral-pill{max-width:112px;white-space:normal;text-align:center}
+ .nimda-payment-list>article{grid-template-columns:minmax(0,1fr) auto;gap:7px;padding:12px 0}
+ .nimda-payment-main{grid-column:1/-1}
+ .nimda-payment-details{grid-column:1/-1}
+ .nimda-payment-reference{grid-column:1/-1;display:flex;justify-content:space-between;gap:8px;text-align:left}
+ .nimda-payment-reference code{max-width:62%}
+ .nimda-payment-summary{gap:6px}
+ .nimda-payment-summary>div{padding:9px}
+ .nimda-payment-summary b{font-size:17px}
+}

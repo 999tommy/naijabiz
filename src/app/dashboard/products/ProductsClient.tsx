@@ -37,7 +37,6 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
     const [editingProduct, setEditingProduct] = useState<Product | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
-    const [confirmingProductId, setConfirmingProductId] = useState<string | null>(null)
     const [catalogFeedback, setCatalogFeedback] = useState('')
     const [imageFile, setImageFile] = useState<File | null>(null)
     const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -151,7 +150,6 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                 description: description || null,
                 image_url: imageUrl,
                 in_stock: inStock,
-                availability_confirmed_at: new Date().toISOString(),
                 item_type: itemType,
                 user_id: user.id,
             }
@@ -199,35 +197,13 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
 
         const { error } = await supabase
             .from('products')
-            .update({ in_stock: newStockState, availability_confirmed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+            .update({ in_stock: newStockState, updated_at: new Date().toISOString() })
             .eq('id', product.id)
 
         if (error) {
             console.error('Failed to toggle stock:', error)
             await fetchProducts()
         }
-    }
-
-    const handleConfirmAvailability = async (product: Product) => {
-        setConfirmingProductId(product.id)
-        setError('')
-        setCatalogFeedback('')
-        const confirmedAt = new Date().toISOString()
-        const { data, error } = await supabase
-            .from('products')
-            .update({ in_stock: true, availability_confirmed_at: confirmedAt, updated_at: confirmedAt })
-            .eq('id', product.id)
-            .eq('user_id', user.id)
-            .select('id')
-            .maybeSingle()
-        if (error || !data) {
-            setCatalogFeedback('Could not confirm availability. Please refresh and try again.')
-            await fetchProducts()
-        } else {
-            setProducts(current => current.map(item => item.id === product.id ? { ...item, in_stock: true, availability_confirmed_at: confirmedAt, updated_at: confirmedAt } : item))
-            setCatalogFeedback(`Availability for ${product.name} confirmed today.`)
-        }
-        setConfirmingProductId(null)
     }
 
     const handleDelete = async (productId: string) => {
@@ -545,13 +521,10 @@ export default function ProductsClient({ user, initialProducts }: ProductsClient
                                         )}
                                     </Button>
                                     {isInStock && (
-                                        <Button variant="outline" size="sm" disabled={confirmingProductId === product.id} onClick={() => handleConfirmAvailability(product)} className="w-full text-xs font-semibold border-blue-200 text-blue-700 hover:bg-blue-50">
-                                            {confirmingProductId === product.id ? <><Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> Confirming...</> : <><Check className="mr-1 h-3.5 w-3.5" /> Confirm availability today</>}
-                                        </Button>
+                                        <p className="px-1 text-[11px] text-gray-500">
+                                            Customers see this as in stock until you change its status.
+                                        </p>
                                     )}
-                                    <p className="px-1 text-[11px] text-gray-500">
-                                        {product.availability_confirmed_at ? `Seller last confirmed ${new Date(product.availability_confirmed_at).toLocaleDateString()}` : 'No seller confirmation recorded yet'}
-                                    </p>
 
                                     <div className="flex gap-2">
                                         <Button

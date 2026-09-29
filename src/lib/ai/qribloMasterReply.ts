@@ -28,7 +28,7 @@ export async function qribloMasterResponse(messages: Message[]): Promise<MasterA
     // Parallel fetch: internal directory & catalog
     const [businessesRes, productsRes] = await Promise.all([
         supabase.from('users').select('business_name, business_slug, location, service_area, payment_methods').eq('plan', 'pro').limit(50),
-        orQuery ? supabase.from('products').select('id, name, price, description, image_url, in_stock, item_type, updated_at, availability_confirmed_at, users!inner(id, business_name, business_slug, whatsapp_number, location, service_area, payment_methods)').eq('is_active', true).or(orQuery).order('updated_at', { ascending: false }).limit(10) : Promise.resolve({ data: [] }),
+        orQuery ? supabase.from('products').select('id, name, price, description, image_url, in_stock, item_type, updated_at, users!inner(id, business_name, business_slug, whatsapp_number, location, service_area, payment_methods)').eq('is_active', true).or(orQuery).order('updated_at', { ascending: false }).limit(10) : Promise.resolve({ data: [] }),
     ])
 
     const fetchedProducts = productsRes.data || []
@@ -65,23 +65,21 @@ export async function qribloMasterResponse(messages: Message[]): Promise<MasterA
         const description = String(product.description || '').toLowerCase()
         return score + (name.includes(keyword) ? 3 : description.includes(keyword) ? 1 : 0)
     }, 0)
-    const byRelevanceFreshnessAndResponse = (a: any, b: any) => {
+    const byRelevanceAndResponse = (a: any, b: any) => {
         const relevanceOrder = productRelevance(b) - productRelevance(a)
         if (relevanceOrder) return relevanceOrder
-        const freshnessOrder = new Date(b.availability_confirmed_at || 0).getTime() - new Date(a.availability_confirmed_at || 0).getTime()
-        if (freshnessOrder) return freshnessOrder
         const aHours = sellerOrderStats.get(a.seller?.id)?.medianResponseHours
         const bHours = sellerOrderStats.get(b.seller?.id)?.medianResponseHours
         return aHours != null && bHours != null ? aHours - bHours : 0
     }
-    const availableQribloProducts = products.filter((product: any) => product.in_stock === true).sort(byRelevanceFreshnessAndResponse)
-    const unknownStockQribloProducts = products.filter((product: any) => product.in_stock == null).sort(byRelevanceFreshnessAndResponse)
-    const unavailableQribloProducts = products.filter((product: any) => product.in_stock === false).sort(byRelevanceFreshnessAndResponse)
-    const freshQribloProducts = availableQribloProducts.filter(isFreshSellerConfirmation)
+    const availableQribloProducts = products.filter((product: any) => product.in_stock === true).sort(byRelevanceAndResponse)
+    const unknownStockQribloProducts = products.filter((product: any) => product.in_stock == null).sort(byRelevanceAndResponse)
+    const unavailableQribloProducts = products.filter((product: any) => product.in_stock === false).sort(byRelevanceAndResponse)
+    const inStockQribloProducts = availableQribloProducts
     const rankedQribloProducts = [...availableQribloProducts, ...unknownStockQribloProducts, ...unavailableQribloProducts]
 
     // Use external marketplaces only when Qriblo has no active, available seller match.
-    if (intent === 'shopping' && freshQribloProducts.length === 0) {
+    if (intent === 'shopping' && inStockQribloProducts.length === 0) {
         // Step 1: Check vector store cache (instant semantic similarity match)
         const { searchVectorProducts, saveDiscoveredProducts } = await import('@/lib/marketplace/vectorStore')
         const cachedProducts = await searchVectorProducts(lastUserMsg, 0.68, 6)
@@ -125,7 +123,7 @@ export async function qribloMasterResponse(messages: Message[]): Promise<MasterA
         : ''
 
     const productContext = rankedQribloProducts.length > 0
-        ? `\nMARKETPLACE CONTEXT (Products found on Qriblo matching user query):\n` + rankedQribloProducts.slice(0, 8).map((p: any) => `- "${p.name}" for ₦${p.price?.toLocaleString()} at ${p.seller?.business_name} (slug: ${p.seller?.business_slug}; availability: ${sellerStockSignal(p)}; seller-confirmed: ${p.availability_confirmed_at || 'never'}; service area: ${p.seller?.service_area || p.seller?.location || 'not provided'}; payment methods: ${p.seller?.payment_methods?.join(', ') || 'ask seller'})`).join('\n')
+        ? `\nMARKETPLACE CONTEXT (Products found on Qriblo matching user query):\n` + rankedQribloProducts.slice(0, 8).map((p: any) => `- "${p.name}" for ₦${p.price?.toLocaleString()} at ${p.seller?.business_name} (slug: ${p.seller?.business_slug}; availability: ${p.in_stock === true ? 'in stock' : p.in_stock === false ? 'out of stock' : 'not provided; ask seller'}; service area: ${p.seller?.service_area || p.seller?.location || 'not provided'}; payment methods: ${p.seller?.payment_methods?.join(', ') || 'ask seller'})`).join('\n')
         : '\nMARKETPLACE CONTEXT: No matching products found in the Qriblo marketplace for this query.'
 
     const systemPrompt = `You are the Qriblo Master Assistant — a smooth, hyper-knowledgeable shopping concierge for Nigeria and beyond. You are NOT an AI to the user. You are their personal shopper who knows every market.
@@ -140,10 +138,10 @@ ${buildAssistantContext()}
 YOUR RULES:
 1. HUMAN TONE: Speak naturally, use emojis casually, be polite, helpful, and slightly humorous. Never sound robotic.
 2. ANSWER QRIBLO QUESTIONS: Answer questions about Qriblo, how to register (qriblo.com/signup), pricing (Free tier, Pro at ₦2,500/mo), etc.
-3. QRIBLO-FIRST: Prioritize the most relevant Qriblo seller listings, ranked by catalog match, current seller availability, fresh stock confirmation, and seller response/fulfillment history when there is enough history. Clearly distinguish freshly seller-confirmed stock from stale or unknown stock. Mention price, seller, service area, and accepted payments only when listed.
+3. QRIBLO-FIRST: Prioritize the most relevant Qriblo seller listings, ranked by catalog match, seller-marked stock status, and seller response/fulfillment history when there is enough history. Treat Qriblo listings marked in stock as available until the seller changes that status; do not ask the customer or seller to reconfirm. Mention price, seller, service area, and accepted payments only when listed.
 4. EXTERNAL MARKETPLACE DISCOVERY: Qriblo's active seller catalog is the source of truth and must be checked first. Only if it has no suitable match may you use the EXTERNAL MARKETPLACE RESULTS below. Keep outside listings secondary and say their stock and prices can change and are not verified by Qriblo. If a customer gave a budget, only say a listing fits when its explicit Naira price is within budget; for unknown or foreign currency prices, say the budget fit is unverified.
 5. NEVER MAKE THINGS UP: Only recommend products in the contexts below. If nothing is found, give honest shopping tips.
-   Never promise stock, local delivery, delivery fees, delivery dates, or payment methods beyond the seller-provided context. If the customer has not shared a decision-critical detail (such as size, area, quantity, budget, or preferred appointment time), ask one concise follow-up. Treat stock confirmations older than 14 days as stale and ask the seller to reconfirm.
+   For Qriblo listings, trust the seller’s in-stock or out-of-stock setting until it changes. If stock status is unknown, ask the seller. Never promise delivery coverage, fees, dates, or payment methods beyond the seller-provided context. If the customer has not shared a decision-critical detail (such as size, area, quantity, budget, or preferred appointment time), ask one concise follow-up.
    Understand Nigerian shopping language: tokunbo/fairly used means pre-owned, 'original' means the customer cares about authenticity, and '20k' means a ₦20,000 budget cap unless context says otherwise. Do not claim authenticity or condition unless the seller listed it. Ask location before promising coverage.
 6. IN-CHAT VENDOR HANDOVER: If the user wants to order from a specific Qriblo brand (e.g. "Take me to Tola's Kitchen"), append:
    [CONNECT_VENDOR: vendor_name_or_slug]
@@ -199,13 +197,12 @@ Be clear about which information came from Qriblo seller profiles and which come
                 sellerSlug: slug, sellerWhatsapp: normalizeNigerianWhatsApp(p.seller?.whatsapp_number),
                 serviceArea: p.seller?.service_area || p.seller?.location || undefined,
                 paymentMethods: p.seller?.payment_methods || [], itemType, updatedAt: p.updated_at || undefined,
-                availabilityConfirmedAt: p.availability_confirmed_at || undefined,
                 sellerMedianResponseHours: sellerOrderStats.get(p.seller?.id)?.medianResponseHours,
                 sellerCompletedRate: sellerOrderStats.get(p.seller?.id)?.completedRate,
                 sellerOrderSampleSize: sellerOrderStats.get(p.seller?.id)?.sampleSize,
             })
         }
-        for (const p of (intent === 'shopping' && freshQribloProducts.length === 0 ? externalResults.slice(0, 3) : [])) {
+        for (const p of (intent === 'shopping' && inStockQribloProducts.length === 0 ? externalResults.slice(0, 3) : [])) {
             let url: URL
             try { url = new URL(p.link) } catch { continue }
             if (url.protocol !== 'https:') continue
@@ -279,19 +276,6 @@ function parseExplicitNairaPrice(value: string | null | undefined): number | nul
     const multiplier = suffix === 'k' || suffix === 'thousand' ? 1000 : suffix === 'm' || suffix === 'million' ? 1000000 : 1
     const price = amount * multiplier
     return price <= 1000000000 ? price : null
-}
-
-function isFreshSellerConfirmation(product: any): boolean {
-    if (product.in_stock !== true || !product.availability_confirmed_at) return false
-    const confirmedAt = new Date(product.availability_confirmed_at).getTime()
-    const age = Date.now() - confirmedAt
-    return Number.isFinite(confirmedAt) && age >= 0 && age <= 14 * 24 * 60 * 60 * 1000
-}
-
-function sellerStockSignal(product: any): string {
-    if (product.in_stock === false) return 'seller-marked unavailable'
-    if (product.in_stock !== true) return 'unknown; ask seller'
-    return isFreshSellerConfirmation(product) ? 'seller-confirmed in stock' : 'marked in stock, confirmation older than 14 days; ask seller'
 }
 
 function normalizeNigerianWhatsApp(value?: string | null): string | undefined {

@@ -370,21 +370,22 @@ async function sendWhatsAppMasterResponse(
     const linkSummary = recommendations.slice(0, 3).map(product => {
         if (product.external) return `\n• ${product.title}${product.price ? ` — ${product.price}` : ''} (${product.source}; external listing)\n${product.link}\nStock and price may change.`
         const storeUrl = `${baseUrl}${product.link}`
-        const confirmedAt = product.availabilityConfirmedAt ? new Date(product.availabilityConfirmedAt).getTime() : 0
-        const confirmationAge = Date.now() - confirmedAt
-        const stockIsFresh = product.availability === 'in_stock' && Number.isFinite(confirmedAt) && confirmationAge >= 0 && confirmationAge <= 14 * 24 * 60 * 60 * 1000
-        const nextStepUrl = product.availability === 'out_of_stock' || !stockIsFresh
-            ? storeUrl
-            : product.itemType === 'service'
+        const isInStock = product.availability === 'in_stock'
+        const nextStepUrl = isInStock
+            ? product.itemType === 'service'
                 ? `${storeUrl}#booking-panel`
                 : `${storeUrl}?addToOrder=${encodeURIComponent(product.id.replace(/^qriblo-/, ''))}`
+            : storeUrl
         const phone = (product.sellerWhatsapp || '').replace(/\D/g, '').replace(/^0/, '234')
-        const askUrl = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(`Hello, I found ${product.title} on Qriblo. Can you confirm current availability, delivery to my area, and payment options?`)}` : storeUrl
-        const availability = stockIsFresh ? 'Recently seller-confirmed in stock; reconfirm before paying.' : 'Availability needs seller confirmation.'
+        const sellerMessage = isInStock
+            ? `Hello, I found ${product.title} on Qriblo. Can you tell me about delivery to my area and payment options?`
+            : `Hello, I found ${product.title} on Qriblo. Is it available, and can you deliver to my area? What payment options do you accept?`
+        const askUrl = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(sellerMessage)}` : storeUrl
+        const availability = isInStock ? 'Seller marks this item in stock.' : product.availability === 'out_of_stock' ? 'Seller marks this item out of stock.' : 'Ask the seller to confirm stock status.'
         const facts = [product.serviceArea ? `Area: ${product.serviceArea}` : 'Area: ask seller', product.paymentMethods?.length ? `Payment: ${product.paymentMethods.join(', ')}` : 'Payment: ask seller']
         if (product.sellerMedianResponseHours != null) facts.push(`Typical response: about ${product.sellerMedianResponseHours}h`)
         if (product.sellerCompletedRate != null) facts.push(`${product.sellerCompletedRate}% completed from ${product.sellerOrderSampleSize} recent resolved orders`)
-        const action = !stockIsFresh ? 'Check with seller:' : product.itemType === 'service' ? 'Book/request:' : 'Add to order:'
+        const action = isInStock ? product.itemType === 'service' ? 'Book/request:' : 'Add to order:' : product.availability === 'unknown' ? 'Ask seller:' : 'View listing:'
         return `\n• ${product.title}${product.price ? ` — ${product.price}` : ''} (${product.source})\n${availability} ${facts.join(' · ')}\n${action} ${nextStepUrl}\nAsk seller: ${askUrl}`
     }).join('\n')
     await sendWhatsAppMessage(to, `${text}${linkSummary ? `\n\nMatching listings:${linkSummary}` : ''}`)
@@ -392,7 +393,7 @@ async function sendWhatsAppMasterResponse(
         if (!product.imageUrl || !isHttpsUrl(product.imageUrl)) continue
         const availability = product.external
             ? 'External listing; price and availability may change.'
-            : product.availability === 'in_stock' ? 'Listed in stock; confirm with seller.' : 'Please confirm availability with seller.'
+            : product.availability === 'in_stock' ? 'Seller marks this item in stock.' : product.availability === 'out_of_stock' ? 'Seller marks this item out of stock.' : 'Stock status not set; ask the seller.'
         const caption = [
             product.title,
             product.price || 'See listing for price',

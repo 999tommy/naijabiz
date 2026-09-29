@@ -17,5 +17,4 @@ export interface ProductRecommendation {
     sellerMedianResponseHours?: number
     sellerCompletedRate?: number
     sellerOrderSampleSize?: number
-    availabilityConfirmedAt?: string
 }
