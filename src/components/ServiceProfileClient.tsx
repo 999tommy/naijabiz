@@ -75,7 +75,7 @@ export function ServiceProfileClient({
     }
 
     const isVaEnabled = waWhatsappEnabled || false
-    const whatsappNumber = isVaEnabled ? '2347047027012' : business.whatsapp_number
+    const whatsappNumber = isVaEnabled ? '2347047207012' : business.whatsapp_number
     const slug = business.business_slug
     const fallbackServiceName = 'General appointment'
     const [selectedService, setSelectedService] = useState(products[0]?.name || fallbackServiceName)
@@ -179,7 +179,7 @@ export function ServiceProfileClient({
                             </div>
                         )}
                     </div>
-                    
+
                     <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2 flex-wrap">
                             <h1 className="text-3xl md:text-5xl font-black tracking-tight" style={{ color: pageTheme.headingText }}>
@@ -189,7 +189,7 @@ export function ServiceProfileClient({
                                 <VerifiedBadge size="md" isCommunityVerified={!isPro} />
                             )}
                         </div>
-                        
+
                         <div className="flex flex-wrap items-center gap-3 text-sm font-medium mb-6" style={{ color: pageTheme.mutedText }}>
                             {business.category && (
                                 <span className="flex items-center gap-1.5 border px-3 py-1 rounded-full shadow-sm" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder, color: pageTheme.bodyText }}>
@@ -240,7 +240,7 @@ export function ServiceProfileClient({
                     <div className="mb-16">
                         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
                             <div>
-                            <h2 className="text-2xl font-black" style={{ color: pageTheme.headingText }}>Services & Packages</h2>
+                                <h2 className="text-2xl font-black" style={{ color: pageTheme.headingText }}>Services & Packages</h2>
                                 <p className="text-sm mt-1" style={{ color: pageTheme.mutedText }}>
                                     Choose a service, then send your preferred date and time on WhatsApp.
                                 </p>
@@ -381,42 +381,42 @@ export function ServiceProfileClient({
 
                 {/* Reviews */}
                 <div className="mb-16">
-                        <h2 className="text-2xl font-black mb-6" style={{ color: pageTheme.headingText }}>Client Reviews</h2>
-                        {reviews.length > 0 ? (
-                            <div className="grid sm:grid-cols-2 gap-4">
-                                {reviews.map((review) => (
-                                    <div key={review.id} className="p-5 rounded-2xl border shadow-sm" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder }}>
-                                        <div className="flex items-center gap-1 mb-3">
-                                            {[...Array(5)].map((_, i) => (
-                                                <Star
-                                                    key={i}
-                                                    className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-200'}`}
-                                                />
-                                            ))}
-                                        </div>
-                                        {review.comment && <p className="text-gray-700 italic mb-4">&ldquo;{review.comment}&rdquo;</p>}
-                                        <div className="flex items-center justify-between">
-                                            <p className="font-semibold text-sm text-gray-900">{review.customer_name}</p>
-                                            <span className="text-xs text-gray-400">{new Date(review.created_at).toLocaleDateString()}</span>
-                                        </div>
+                    <h2 className="text-2xl font-black mb-6" style={{ color: pageTheme.headingText }}>Client Reviews</h2>
+                    {reviews.length > 0 ? (
+                        <div className="grid sm:grid-cols-2 gap-4">
+                            {reviews.map((review) => (
+                                <div key={review.id} className="p-5 rounded-2xl border shadow-sm" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder }}>
+                                    <div className="flex items-center gap-1 mb-3">
+                                        {[...Array(5)].map((_, i) => (
+                                            <Star
+                                                key={i}
+                                                className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-200'}`}
+                                            />
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-12 rounded-2xl border border-dashed" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder }}>
-                                <p style={{ color: pageTheme.mutedText }}>No reviews yet.</p>
-                            </div>
-                        )}
-                        <div className="mt-6 text-center">
-                            <Link href={reviewHref || `/${slug}/review`}>
-                                <Button variant="outline" className="font-semibold rounded-full px-8" style={{ borderColor: pageTheme.accent, color: pageTheme.accent }}>
-                                    Leave a Review
-                                </Button>
-                            </Link>
+                                    {review.comment && <p className="text-gray-700 italic mb-4">&ldquo;{review.comment}&rdquo;</p>}
+                                    <div className="flex items-center justify-between">
+                                        <p className="font-semibold text-sm text-gray-900">{review.customer_name}</p>
+                                        <span className="text-xs text-gray-400">{new Date(review.created_at).toLocaleDateString()}</span>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
+                    ) : (
+                        <div className="text-center py-12 rounded-2xl border border-dashed" style={{ background: pageTheme.cardBg, borderColor: pageTheme.cardBorder }}>
+                            <p style={{ color: pageTheme.mutedText }}>No reviews yet.</p>
+                        </div>
+                    )}
+                    <div className="mt-6 text-center">
+                        <Link href={reviewHref || `/${slug}/review`}>
+                            <Button variant="outline" className="font-semibold rounded-full px-8" style={{ borderColor: pageTheme.accent, color: pageTheme.accent }}>
+                                Leave a Review
+                            </Button>
+                        </Link>
                     </div>
+                </div>
             </main>
-            
+
             <AiChatWidget business={business} />
         </div>
     )

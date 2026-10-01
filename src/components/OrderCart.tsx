@@ -149,7 +149,7 @@ Please confirm my order. Thank you!`
         const message = generateOrderMessage()
 
         if (orderMethod === 'whatsapp') {
-            const finalWaNumber = waWhatsappEnabled ? '2347047027012' : whatsappNumber
+            const finalWaNumber = waWhatsappEnabled ? '2347047207012' : whatsappNumber
             const whatsappUrl = generateWhatsAppLink(finalWaNumber, message)
             window.open(whatsappUrl, '_blank')
         } else if (instagramHandle) {
@@ -405,8 +405,8 @@ Please confirm my order. Thank you!`
                                         style={{ backgroundColor: customerName.trim() ? accent : undefined, color: customerName.trim() ? accentText : undefined }}
                                     >
                                         <Send className="w-5 h-5 mr-2" />
-                                        {orderMethod === 'whatsapp' 
-                                            ? (waWhatsappEnabled ? 'Send Order to Assistant' : 'Send Order via WhatsApp') 
+                                        {orderMethod === 'whatsapp'
+                                            ? (waWhatsappEnabled ? 'Send Order to Assistant' : 'Send Order via WhatsApp')
                                             : 'Send Order via Instagram'}
                                     </Button>
                                     <p className="text-xs text-gray-500 text-center mt-2">

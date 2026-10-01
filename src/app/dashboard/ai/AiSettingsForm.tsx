@@ -347,7 +347,7 @@ export function AiSettingsForm({ user, productCount }: AiSettingsFormProps) {
                                         <p className="text-xs text-gray-500">Strict corporate English, structured and direct.</p>
                                     </div>
                                 </label>
-                                
+
                                 <label className="flex items-start gap-3 p-3 border rounded-xl cursor-pointer hover:border-orange-500 transition-colors bg-white">
                                     <input
                                         type="radio"
@@ -490,14 +490,14 @@ export function AiSettingsForm({ user, productCount }: AiSettingsFormProps) {
                                     </p>
                                     <div className="flex gap-2 items-center">
                                         <div className="flex-1 bg-gray-50 p-3 text-sm font-mono border border-gray-200 rounded-lg text-gray-800 truncate">
-                                            https://wa.me/2347047027012?text=hi%20{user.business_slug}
+                                            https://wa.me/2347047207012?text=hi%20{user.business_slug}
                                         </div>
-                                        <Button 
-                                            type="button" 
+                                        <Button
+                                            type="button"
                                             variant="outline"
                                             className="shrink-0 text-green-700 border-green-200 hover:bg-green-50"
                                             onClick={() => {
-                                                navigator.clipboard.writeText(`https://wa.me/2347047027012?text=hi%20${user.business_slug}`)
+                                                navigator.clipboard.writeText(`https://wa.me/2347047207012?text=hi%20${user.business_slug}`)
                                                 toast('Link copied!')
                                             }}
                                         >
@@ -515,7 +515,7 @@ export function AiSettingsForm({ user, productCount }: AiSettingsFormProps) {
                                 </>
                             ) : (
                                 <>
-                            <Save className="w-4 h-4 mr-2" /> Save Virtual Assistant Settings
+                                    <Save className="w-4 h-4 mr-2" /> Save Virtual Assistant Settings
                                 </>
                             )}
                         </Button>
@@ -564,8 +564,8 @@ export function AiSettingsForm({ user, productCount }: AiSettingsFormProps) {
                         {sandboxMessages.map((m, i) => (
                             <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                 <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${m.role === 'user'
-                                        ? 'bg-orange-600 text-white rounded-br-none'
-                                        : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none'
+                                    ? 'bg-orange-600 text-white rounded-br-none'
+                                    : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none'
                                     }`}>
                                     {m.content}
                                 </div>
