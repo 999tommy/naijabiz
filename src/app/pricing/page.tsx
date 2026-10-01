@@ -268,8 +268,8 @@ export default function PricingPage() {
         <nav className="qr-pricing-nav-inner" aria-label="Main navigation">
           <Link href="/" className="qr-pricing-logo" aria-label="Qriblo home"><Image src="/logo.png" alt="Qriblo" width={160} height={54} priority /></Link>
           <div className="qr-pricing-nav-links"><Link href="/#platform">Platform</Link><Link href="/directory">Discover</Link><Link href="/pricing" aria-current="page">Pricing</Link><Link href="/agents">Agents</Link></div>
-          <div className="qr-pricing-nav-actions"><a className="qr-pricing-whatsapp" href="https://wa.me/2347047027012" target="_blank" rel="noopener noreferrer"><MessageCircle size={14}/>WhatsApp</a><Link href="/login">Log in</Link><Link className="qr-pricing-nav-cta" href="/signup">Create a professional site <ArrowRight size={15}/></Link></div>
-          <a className="qr-pricing-mobile-whatsapp" href="https://wa.me/2347047027012" aria-label="Chat with Qriblo on WhatsApp" target="_blank" rel="noopener noreferrer"><MessageCircle size={17}/></a>
+          <div className="qr-pricing-nav-actions"><a className="qr-pricing-whatsapp" href="https://wa.me/2347047027012?text=Hello%20Qriblo" target="_blank" rel="noopener noreferrer"><MessageCircle size={14}/>WhatsApp</a><Link href="/login">Log in</Link><Link className="qr-pricing-nav-cta" href="/signup">Create a professional site <ArrowRight size={15}/></Link></div>
+          <a className="qr-pricing-mobile-whatsapp" href="https://wa.me/2347047027012?text=Hello%20Qriblo" aria-label="Chat with Qriblo on WhatsApp" target="_blank" rel="noopener noreferrer"><MessageCircle size={17}/></a>
           <Link className="qr-pricing-mobile-cta" href="/signup">Create a professional site <ArrowRight size={14}/></Link>
         </nav>
       </header>
@@ -332,7 +332,7 @@ export default function PricingPage() {
 
           <div className="qr-pricing-assistant">
             <div className="qr-pricing-assistant-icon"><MessageCircle/></div>
-            <div><p className="qr-pricing-eyebrow qr-pricing-eyebrow-light"><span/> YOUR VIRTUAL ASSISTANT</p><h3>Help for shoppers.<br/>Support for sellers.</h3><p>Message Qriblo on WhatsApp to discover businesses, shop products, place an order, or request an appointment. Pro virtual assistants answer questions and collect order or booking details; the business confirms availability and next steps. Free includes no assistant messages; Pro includes 500 each month.</p><a href="https://wa.me/2347047027012">Chat with Qriblo on WhatsApp <ArrowRight size={15}/></a></div>
+            <div><p className="qr-pricing-eyebrow qr-pricing-eyebrow-light"><span/> YOUR VIRTUAL ASSISTANT</p><h3>Help for shoppers.<br/>Support for sellers.</h3><p>Message Qriblo on WhatsApp to discover businesses, shop products, place an order, or request an appointment. Pro virtual assistants answer questions and collect order or booking details; the business confirms availability and next steps. Free includes no assistant messages; Pro includes 500 each month.</p><a href="https://wa.me/2347047027012?text=Hello%20Qriblo">Chat with Qriblo on WhatsApp <ArrowRight size={15}/></a></div>
             <div className="qr-pricing-assistant-note"><Bot/><span>On your page<br/>and WhatsApp</span></div>
           </div>
 
